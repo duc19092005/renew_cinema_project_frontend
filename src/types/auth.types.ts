@@ -26,6 +26,11 @@ export interface ApiSuccessResponse<T = null> {
   data: T;
 }
 
+// Response cho Logout
+export interface LogoutResponse {
+  message: string;
+}
+
 // ... Các type cũ giữ nguyên
 
 // Request Body cho Login

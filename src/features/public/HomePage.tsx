@@ -1,12 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, ChevronDown, LogOut, Settings, UserCircle } from 'lucide-react';
+import { User, ChevronDown, LogOut, Settings, UserCircle, AlertCircle, Loader2 } from 'lucide-react';
+import axios from 'axios';
+import { authApi } from '../../api/authApi';
+import type { ApiErrorResponse } from '../../types/auth.types';
+import LogoutModal from '../../components/LogoutModal';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<{ username: string } | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
+  const [logoutLoading, setLogoutLoading] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   // Load thông tin user từ LocalStorage khi vào trang
   useEffect(() => {
@@ -30,11 +37,30 @@ const HomePage: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    // Xóa user info
-    localStorage.removeItem('user_info');
-    // Ở đây có thể gọi thêm API Logout để xóa Cookie HttpOnly nếu cần
-    navigate('/login');
+  const handleLogoutClick = () => {
+    setIsLogoutModalOpen(true);
+    setLogoutError(null);
+  };
+
+  const handleLogoutConfirm = async () => {
+    setLogoutError(null);
+    setLogoutLoading(true);
+    try {
+      await authApi.logout();
+      // Xóa user info local sau khi backend đã logout (xóa cookie)
+      localStorage.removeItem('user_info');
+      setIsLogoutModalOpen(false);
+      navigate('/login');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response) {
+        const data = error.response.data as ApiErrorResponse;
+        setLogoutError(data.message || 'Logout failed.');
+      } else {
+        setLogoutError('Unable to connect to server.');
+      }
+    } finally {
+      setLogoutLoading(false);
+    }
   };
 
   return (
@@ -89,7 +115,7 @@ const HomePage: React.FC = () => {
                 <div className="border-t border-gray-800 mt-1"></div>
                 
                 <button 
-                  onClick={handleLogout}
+                  onClick={handleLogoutClick}
                   className="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-900/20 hover:text-red-400 flex items-center gap-3 transition-colors font-bold"
                 >
                   <LogOut className="w-4 h-4" />
@@ -100,6 +126,16 @@ const HomePage: React.FC = () => {
           )}
         </div>
       </header>
+
+      {/* Thông báo lỗi Logout (giống style LoginForm) */}
+      {logoutError && (
+        <div className="pt-24 px-6 container mx-auto">
+          <div className="mb-4 p-4 rounded-lg bg-red-900/40 border border-red-500/50 flex items-center text-red-100">
+            <AlertCircle className="w-5 h-5 mr-3 shrink-0 text-red-500" />
+            <span className="text-sm font-medium">{logoutError}</span>
+          </div>
+        </div>
+      )}
 
       {/* --- BODY CONTENT (Placeholder) --- */}
       <main className="pt-24 px-6 container mx-auto">
@@ -123,6 +159,15 @@ const HomePage: React.FC = () => {
           ))}
         </div>
       </main>
+
+      {/* Logout Modal */}
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleLogoutConfirm}
+        loading={logoutLoading}
+        error={logoutError}
+      />
     </div>
   );
 };

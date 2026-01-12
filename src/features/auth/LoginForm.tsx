@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom'; // Dùng để chuyển trang
 import axios from 'axios';
 import { Clapperboard, Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
 import { authApi } from '../../api/authApi';
 import type { LoginRequest, ApiErrorResponse } from '../../types/auth.types';
+// Removed cookie reading logic - using HttpOnly cookie
 
 // --- Reusable InputField (Giữ nguyên style rạp phim) ---
 const InputField = ({ label, name, type = 'text', icon: Icon, placeholder, value, onChange }: any) => (
@@ -35,6 +36,37 @@ const LoginForm: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+    // Check user info từ localStorage - nếu đã có thì có thể đã login
+    // (Không check cookie vì là HttpOnly)
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user_info');
+        if (storedUser) {
+            try {
+                const userInfo = JSON.parse(storedUser);
+                if (userInfo && userInfo.roles && userInfo.roles.length > 0) {
+                    // Có user info, redirect đến role selection hoặc trang tương ứng
+                    if (userInfo.roles.length === 1) {
+                        const roleConfig: Record<string, string> = {
+                            Customer: '/home',
+                            Cashier: '/cashier',
+                            Admin: '/admin',
+                            MovieManager: '/movie-manager',
+                            TheaterManager: '/theater-manager',
+                            FacilitiesManager: '/facilities-manager',
+                        };
+                        const route = roleConfig[userInfo.roles[0]] || '/role-selection';
+                        navigate(route, { replace: true });
+                    } else {
+                        navigate('/role-selection', { replace: true });
+                    }
+                }
+            } catch (error) {
+                // Invalid user info, allow login
+                console.warn('Invalid user info in storage:', error);
+            }
+        }
+    }, [navigate]);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -50,22 +82,34 @@ const LoginForm: React.FC = () => {
                 password: formData.password
             };
 
+            console.log('Attempting login with:', { email: payload.email });
             const res = await authApi.regularLogin(payload);
+            console.log('Login response:', res);
 
             if (res.isSuccess) {
-                // Lưu thông tin user để hiển thị ở Home (Token đã nằm trong Cookie HttpOnly)
+                // Lưu thông tin user để hiển thị ở Home
+                // Token đã được set trong HttpOnly cookie bởi backend
                 localStorage.setItem('user_info', JSON.stringify(res.data));
 
-                // Chuyển hướng sang trang Home
-                navigate('/home');
+                // Chuyển hướng sang trang chọn role
+                navigate('/role-selection');
+            } else {
+                setErrorMsg('Login failed. Please check your credentials.');
             }
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                const data = error.response.data as ApiErrorResponse;
-                // Hiển thị message lỗi từ server: "Invalid Password", "User Not Found"...
-                setErrorMsg(data.message || 'Login failed.');
+            console.error('Login error:', error);
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    const data = error.response.data as ApiErrorResponse;
+                    // Hiển thị message lỗi từ server: "Invalid Password", "User Not Found"...
+                    setErrorMsg(data.message || 'Login failed.');
+                } else if (error.request) {
+                    setErrorMsg('Unable to connect to server. Please check if the server is running.');
+                } else {
+                    setErrorMsg('An error occurred. Please try again.');
+                }
             } else {
-                setErrorMsg('Unable to connect to server.');
+                setErrorMsg('An unexpected error occurred.');
             }
         } finally {
             setLoading(false);

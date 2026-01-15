@@ -36,4 +36,11 @@ export const authApi = {
     const response = await axiosClient.post<LogoutResponse>('/identity_access_/Logout');
     return response.data;
   },
+  getProfile: async (): Promise<ApiSuccessResponse<UserLoginData>> => {
+    // URL: http://localhost:5032/api/v1/identity_access_/get-profile
+    const response = await axiosClient.get<ApiSuccessResponse<UserLoginData>>(
+      '/identity_access_/get-profile'
+    );
+    return response.data;
+  },
 };

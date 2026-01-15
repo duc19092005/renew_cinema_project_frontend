@@ -13,8 +13,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
   const { theme } = useTheme();
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'cinemas', label: 'Quản lý rạp', icon: Building2 },
-    { id: 'seat-reports', label: 'Báo cáo ghế', icon: BarChart3 },
+    { id: 'cinemas', label: 'Cinema Management', icon: Building2 },
+    { id: 'seat-reports', label: 'Seat Reports', icon: BarChart3 },
   ];
 
   return (

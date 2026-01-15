@@ -6,11 +6,9 @@ import {
   LogOut,
   Settings,
   UserCircle,
-  Loader2,
   AlertCircle,
   Sun,
   Moon,
-  Palette,
   Sparkles,
 } from 'lucide-react';
 import { facilitiesApi, type Cinema } from '../../api/facilitiesApi';
@@ -63,11 +61,22 @@ const FacilitiesManagerPage: React.FC = () => {
       }
 
       setUser(parsed);
+      // Gọi API ngay khi load page
       fetchCinemas();
     } catch {
       navigate('/login');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
+
+  // Gọi lại API khi chuyển sang tab cinemas nếu chưa có dữ liệu hoặc có lỗi
+  useEffect(() => {
+    if (activeTab === 'cinemas' && cinemas.length === 0 && !loading) {
+      console.log('Tab cinemas active, fetching cinemas...');
+      fetchCinemas();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
 
   // Đóng dropdown khi click outside
   useEffect(() => {
@@ -88,20 +97,29 @@ const FacilitiesManagerPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
+      console.log('Fetching cinemas...');
       const res = await facilitiesApi.getCinemaList();
-      setCinemas(res.data || []);
+      console.log('Cinemas response:', res);
+      const cinemasData = res.data || [];
+      console.log('Cinemas data:', cinemasData);
+      setCinemas(cinemasData);
     } catch (err) {
+      console.error('Error fetching cinemas:', err);
       if (axios.isAxiosError(err) && err.response) {
         const data = err.response.data as ApiErrorResponse;
+        console.error('Error response:', data);
         if (data.statusCode === 401) {
           // Token / cookie hết hạn → logout
           localStorage.removeItem('user_info');
           navigate('/login');
           return;
         }
-        setError(data.message || 'Failed to load cinemas.');
+        setError(data.message || 'Không thể tải danh sách rạp.');
+      } else if (axios.isAxiosError(err) && err.request) {
+        console.error('No response received:', err.request);
+        setError('Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.');
       } else {
-        setError('Unable to connect to server.');
+        setError('Đã xảy ra lỗi không xác định.');
       }
     } finally {
       setLoading(false);
@@ -139,7 +157,7 @@ const FacilitiesManagerPage: React.FC = () => {
       case 'dashboard':
         return <Dashboard cinemas={cinemas} loading={loading} />;
       case 'cinemas':
-        return <CinemaManagement cinemas={cinemas} onRefresh={fetchCinemas} />;
+        return <CinemaManagement cinemas={cinemas} loading={loading} error={error} onRefresh={fetchCinemas} />;
       case 'seat-reports':
         return <SeatReport />;
       default:
@@ -240,12 +258,12 @@ const FacilitiesManagerPage: React.FC = () => {
                     <p className={`text-xs uppercase font-bold ${
                       theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-300' : 'text-gray-400'
                     }`}>
-                      Chọn giao diện
+                      Select Theme
                     </p>
                     <p className={`text-xs mt-1 ${
                       theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200/70' : 'text-gray-500'
                     }`}>
-                      Demo - Chọn tone màu yêu thích
+                      Demo - Choose your favorite color tone
                     </p>
                   </div>
 
@@ -271,7 +289,7 @@ const FacilitiesManagerPage: React.FC = () => {
                       <div className={`text-xs ${
                         theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
                       }`}>
-                        Giao diện sáng
+                        Light Interface
                       </div>
                     </div>
                     {theme === 'light' && (
@@ -299,7 +317,7 @@ const FacilitiesManagerPage: React.FC = () => {
                       <div className={`text-xs ${
                         theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
                       }`}>
-                        Giao diện tối
+                        Dark Interface
                       </div>
                     </div>
                     {theme === 'dark' && (
@@ -327,7 +345,7 @@ const FacilitiesManagerPage: React.FC = () => {
                       <div className={`text-xs ${
                         theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
                       }`}>
-                        Tông màu Web3
+                        Web3 Color Tone
                       </div>
                     </div>
                     {theme === 'web3' && (
@@ -444,7 +462,7 @@ const FacilitiesManagerPage: React.FC = () => {
             </div>
           )}
 
-          {/* Error state */}
+          {/* Error state - chỉ hiển thị ở dashboard vì cinemas tab đã có error handling riêng */}
           {error && activeTab === 'dashboard' && (
             <div className={`mb-6 p-4 rounded-lg border flex items-center ${
               theme === 'dark'

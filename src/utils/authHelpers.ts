@@ -2,19 +2,17 @@
 // Helper functions để verify authentication với HttpOnly cookie
 
 import axios from 'axios';
-import { facilitiesApi } from '../api/facilitiesApi';
+import { authApi } from '../api/authApi';
 import type { ApiErrorResponse } from '../types/auth.types';
-import { getUserInfoFromStorage } from './authUtils';
 
 /**
- * Verify authentication bằng cách gọi API
+ * Verify authentication bằng cách gọi API get-profile
  * Cookie HttpOnly sẽ tự động được gửi với request
  */
 export const verifyAuth = async (): Promise<boolean> => {
   try {
-    // Thử gọi một API endpoint để verify token
-    // Sử dụng facilitiesApi.getCinemaList() vì nó yêu cầu authentication
-    await facilitiesApi.getCinemaList();
+    // Gọi API get-profile để verify token
+    await authApi.getProfile();
     return true;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -31,21 +29,36 @@ export const verifyAuth = async (): Promise<boolean> => {
 };
 
 /**
- * Verify authentication và lấy user info
+ * Verify authentication và lấy user info từ API get-profile
+ * Nếu chưa đăng nhập (401), sẽ return null để redirect về login
  */
 export const verifyAuthAndGetUser = async (): Promise<{ userId: string; username: string; roles: string[] } | null> => {
-  const userInfo = getUserInfoFromStorage();
-  if (!userInfo) {
+  try {
+    // Gọi API get-profile để lấy thông tin user và verify authentication
+    const response = await authApi.getProfile();
+    
+    if (response.isSuccess && response.data) {
+      // Cập nhật localStorage với thông tin mới nhất từ server
+      localStorage.setItem('user_info', JSON.stringify(response.data));
+      return response.data;
+    }
+    
+    // Nếu không có data, xóa user info và return null
+    localStorage.removeItem('user_info');
     return null;
-  }
-
-  // Verify token bằng cách gọi API
-  const isValid = await verifyAuth();
-  if (!isValid) {
-    // Token không hợp lệ, xóa user info
+  } catch (error) {
+    // Xử lý lỗi 401 (chưa đăng nhập) hoặc các lỗi khác
+    if (axios.isAxiosError(error) && error.response) {
+      const data = error.response.data as ApiErrorResponse;
+      if (data.statusCode === 401) {
+        // Chưa đăng nhập hoặc token không hợp lệ
+        localStorage.removeItem('user_info');
+        return null;
+      }
+    }
+    
+    // Nếu là lỗi network hoặc lỗi khác, xóa user info để đảm bảo an toàn
     localStorage.removeItem('user_info');
     return null;
   }
-
-  return userInfo;
 };

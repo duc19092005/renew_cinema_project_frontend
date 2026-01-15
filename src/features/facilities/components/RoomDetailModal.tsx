@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { X, Film, Users, Loader2, AlertCircle, Activity } from 'lucide-react';
+import { X, Film, Users, Loader2, AlertCircle, Activity, Plus, Check } from 'lucide-react';
 import { useTheme } from '../../../contexts/ThemeContext';
-import { facilitiesApi, type Room } from '../../../api/facilitiesApi';
+import { facilitiesApi, type Room, type MovieFormat } from '../../../api/facilitiesApi';
 import axios from 'axios';
 import type { ApiErrorResponse } from '../../../types/auth.types';
 
@@ -16,6 +16,13 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
   const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Movie format selection modal state
+  const [isMovieFormatModalOpen, setIsMovieFormatModalOpen] = useState(false);
+  const [movieFormats, setMovieFormats] = useState<MovieFormat[]>([]);
+  const [formatsLoading, setFormatsLoading] = useState(false);
+  const [formatsError, setFormatsError] = useState<string | null>(null);
+  const [selectedFormat, setSelectedFormat] = useState<MovieFormat | null>(null);
 
   useEffect(() => {
     if (isOpen && roomId) {
@@ -104,6 +111,52 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCreateShowtime = () => {
+    setIsMovieFormatModalOpen(true);
+    fetchMovieFormats();
+  };
+
+  const fetchMovieFormats = async () => {
+    setFormatsLoading(true);
+    setFormatsError(null);
+    setSelectedFormat(null);
+    try {
+      const res = await facilitiesApi.getMovieFormats();
+      setMovieFormats(res.data || []);
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response) {
+        const data = err.response.data as ApiErrorResponse;
+        setFormatsError(data.message || 'Không thể tải danh sách định dạng phim.');
+      } else {
+        setFormatsError('Không thể kết nối đến server.');
+      }
+    } finally {
+      setFormatsLoading(false);
+    }
+  };
+
+  const handleFormatSelect = (format: MovieFormat) => {
+    setSelectedFormat(format);
+  };
+
+  const handleConfirmFormat = () => {
+    if (selectedFormat) {
+      // TODO: Xử lý logic tạo phòng chiếu với format đã chọn
+      console.log('Selected format:', selectedFormat);
+      // Có thể gọi API tạo showtime ở đây
+      // Sau đó đóng modal
+      setIsMovieFormatModalOpen(false);
+      setSelectedFormat(null);
+    }
+  };
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    }).format(price);
   };
 
   if (!isOpen) return null;
@@ -274,9 +327,20 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
         </div>
 
         {/* Footer */}
-        <div className={`flex justify-end gap-3 p-6 border-t ${
+        <div className={`flex justify-between gap-3 p-6 border-t ${
           theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
         }`}>
+          <button
+            onClick={handleCreateShowtime}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
+              theme === 'web3'
+                ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white'
+                : 'bg-red-600 hover:bg-red-700 text-white'
+            }`}
+          >
+            <Plus className="w-4 h-4" />
+            Tạo phòng chiếu
+          </button>
           <button
             onClick={onClose}
             className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
@@ -289,6 +353,189 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
           </button>
         </div>
       </div>
+
+      {/* Movie Format Selection Modal */}
+      {isMovieFormatModalOpen && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => {
+              setIsMovieFormatModalOpen(false);
+              setSelectedFormat(null);
+            }}
+          />
+
+          {/* Modal */}
+          <div
+            className={`relative w-full max-w-3xl max-h-[90vh] rounded-xl border shadow-2xl transition-all flex flex-col ${
+              theme === 'dark'
+                ? 'bg-gray-900 border-gray-800'
+                : theme === 'web3'
+                  ? 'bg-gradient-to-br from-purple-900/95 to-cyan-900/95 border-purple-500/30 backdrop-blur-xl'
+                  : 'bg-white border-gray-200'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className={`flex items-center justify-between p-6 border-b ${
+              theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
+            }`}>
+              <h2 className={`text-2xl font-black ${
+                theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+              }`}>
+                Chọn định dạng phim
+              </h2>
+              <button
+                onClick={() => {
+                  setIsMovieFormatModalOpen(false);
+                  setSelectedFormat(null);
+                }}
+                className={`p-2 rounded-lg transition-colors ${
+                  theme === 'dark'
+                    ? 'hover:bg-gray-800 text-gray-400'
+                    : theme === 'web3'
+                      ? 'hover:bg-purple-800/30 text-purple-300'
+                      : 'hover:bg-gray-100 text-gray-600'
+                }`}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {formatsLoading && (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <Loader2 className={`w-12 h-12 animate-spin mx-auto mb-4 ${
+                      theme === 'web3' ? 'text-purple-400' : 'text-red-600'
+                    }`} />
+                    <p className={theme === 'dark' || theme === 'web3' ? 'text-gray-400' : 'text-gray-600'}>
+                      Đang tải danh sách định dạng...
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {formatsError && (
+                <div className={`p-4 rounded-lg border flex items-center ${
+                  theme === 'dark'
+                    ? 'bg-red-900/40 border-red-500/50 text-red-100'
+                    : theme === 'web3'
+                      ? 'bg-red-900/40 border-red-500/50 text-red-100'
+                      : 'bg-red-50 border-red-200 text-red-800'
+                }`}>
+                  <AlertCircle className="w-5 h-5 mr-3 shrink-0 text-red-500" />
+                  <span className="text-sm font-medium">{formatsError}</span>
+                </div>
+              )}
+
+              {!formatsLoading && !formatsError && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {movieFormats.map((format) => (
+                    <button
+                      key={format.formatId}
+                      onClick={() => handleFormatSelect(format)}
+                      className={`p-4 rounded-lg border text-left transition-all ${
+                        selectedFormat?.formatId === format.formatId
+                          ? theme === 'web3'
+                            ? 'border-purple-400 bg-purple-800/30 shadow-lg shadow-purple-500/20'
+                            : 'border-red-600 bg-red-50 shadow-lg'
+                          : theme === 'dark'
+                            ? 'bg-gray-800 border-gray-700 hover:border-gray-600'
+                            : theme === 'web3'
+                              ? 'bg-purple-800/20 border-purple-500/30 hover:border-purple-400/50'
+                              : 'bg-white border-gray-200 hover:border-red-300'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className={`font-bold text-lg ${
+                              theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                            }`}>
+                              {format.formatName}
+                            </h3>
+                            {selectedFormat?.formatId === format.formatId && (
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                                theme === 'web3'
+                                  ? 'bg-purple-500'
+                                  : 'bg-red-600'
+                              }`}>
+                                <Check className="w-4 h-4 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <p className={`text-sm mb-3 ${
+                            theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                          }`}>
+                            {format.formatDescription}
+                          </p>
+                          <p className={`text-lg font-black ${
+                            theme === 'web3'
+                              ? 'text-purple-300'
+                              : 'text-red-600'
+                          }`}>
+                            {formatPrice(format.movieFormatPrice)}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {!formatsLoading && !formatsError && movieFormats.length === 0 && (
+                <div className="text-center py-12">
+                  <Film className={`w-12 h-12 mx-auto mb-4 ${
+                    theme === 'dark' ? 'text-gray-600' : theme === 'web3' ? 'text-purple-600' : 'text-gray-400'
+                  }`} />
+                  <p className={theme === 'dark' || theme === 'web3' ? 'text-gray-400' : 'text-gray-500'}>
+                    Không có định dạng phim nào
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className={`flex justify-end gap-3 p-6 border-t ${
+              theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
+            }`}>
+              <button
+                onClick={() => {
+                  setIsMovieFormatModalOpen(false);
+                  setSelectedFormat(null);
+                }}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                  theme === 'dark'
+                    ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                    : theme === 'web3'
+                      ? 'bg-purple-800/50 hover:bg-purple-700/50 text-purple-200'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                }`}
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleConfirmFormat}
+                disabled={!selectedFormat}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                  !selectedFormat
+                    ? 'opacity-50 cursor-not-allowed'
+                    : ''
+                } ${
+                  theme === 'web3'
+                    ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white'
+                    : 'bg-red-600 hover:bg-red-700 text-white'
+                }`}
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

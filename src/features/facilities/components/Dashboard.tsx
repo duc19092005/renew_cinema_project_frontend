@@ -19,28 +19,28 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
 
   const stats = [
     {
-      label: 'Tổng số rạp',
+      label: 'Total Cinemas',
       value: totalCinemas,
       icon: Building2,
       color: 'from-red-600 to-red-800',
       change: '+2',
     },
     {
-      label: 'Tổng số phòng',
+      label: 'Total Rooms',
       value: totalRooms,
       icon: Film,
       color: 'from-blue-600 to-blue-800',
       change: '+5',
     },
     {
-      label: 'Rạp đang hoạt động',
+      label: 'Active Cinemas',
       value: activeCinemas,
       icon: Activity,
       color: 'from-green-600 to-green-800',
       change: '100%',
     },
     {
-      label: 'Tổng sức chứa',
+      label: 'Total Capacity',
       value: totalCapacity.toLocaleString(),
       icon: Users,
       color: 'from-purple-600 to-purple-800',
@@ -53,7 +53,7 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
       <div className="flex items-center justify-center py-16">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className={theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}>Đang tải thống kê...</p>
+          <p className={theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}>Loading statistics...</p>
         </div>
       </div>
     );
@@ -110,7 +110,7 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
           } ${
             theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
           }`}>
-            Danh sách rạp chiếu
+            Cinema List
           </h2>
         </div>
 
@@ -119,7 +119,7 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
             <AlertCircle className={`w-12 h-12 mx-auto mb-4 ${
               theme === 'dark' ? 'text-gray-600' : theme === 'web3' ? 'text-purple-600' : 'text-gray-400'
             }`} />
-            <p className={theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-300' : 'text-gray-400'}>Chưa có rạp chiếu nào</p>
+            <p className={theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-300' : 'text-gray-400'}>No cinemas available</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -154,10 +154,10 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
                 <div className="text-right">
                   <p className={`text-sm font-semibold ${
                     theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-                  }`}>{cinema.totalRooms} phòng</p>
+                  }`}>{cinema.totalRooms} rooms</p>
                   <p className={`text-xs ${
                     theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
-                  }`}>Đang hoạt động</p>
+                  }`}>Active</p>
                 </div>
               </div>
             ))}
@@ -176,10 +176,10 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
         }`}>
           <h3 className={`text-lg font-bold mb-4 ${
             theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-          }`}>Thống kê nhanh</h3>
+          }`}>Quick Statistics</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className={theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}>Tỷ lệ sử dụng phòng</span>
+              <span className={theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}>Room Utilization Rate</span>
               <span className={`font-bold ${
                 theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
               }`}>85%</span>
@@ -205,13 +205,13 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
         }`}>
           <h3 className={`text-lg font-bold mb-4 ${
             theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-          }`}>Hoạt động gần đây</h3>
+          }`}>Recent Activity</h3>
           <div className={`space-y-2 text-sm ${
             theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
           }`}>
-            <p>• Đã thêm 2 phòng chiếu mới</p>
-            <p>• Cập nhật thông tin rạp VietNam</p>
-            <p>• Báo cáo ghế tháng 12 đã được tạo</p>
+            <p>• Added 2 new auditoriums</p>
+            <p>• Updated VietNam cinema information</p>
+            <p>• December seat report created</p>
           </div>
         </div>
       </div>

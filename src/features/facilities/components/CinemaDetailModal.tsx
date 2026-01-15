@@ -5,6 +5,7 @@ import { facilitiesApi, type Cinema, type Room } from '../../../api/facilitiesAp
 import axios from 'axios';
 import type { ApiErrorResponse } from '../../../types/auth.types';
 import RoomDetailModal from './RoomDetailModal';
+import CreateAuditoriumModal from './CreateAuditoriumModal';
 
 interface CinemaDetailModalProps {
   cinemaId: string;
@@ -24,6 +25,9 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
   // Room detail modal state
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [isRoomDetailModalOpen, setIsRoomDetailModalOpen] = useState(false);
+  
+  // Create auditorium modal state
+  const [isCreateAuditoriumModalOpen, setIsCreateAuditoriumModalOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen && cinemaId) {
@@ -47,9 +51,9 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         const data = err.response.data as ApiErrorResponse;
-        setError(data.message || 'Không thể tải thông tin rạp.');
+        setError(data.message || 'Failed to load cinema information.');
       } else {
-        setError('Không thể kết nối đến server.');
+        setError('Unable to connect to server.');
       }
     } finally {
       setLoading(false);
@@ -167,7 +171,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
             <h2 className={`text-2xl font-black ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}>
-              Chi tiết rạp chiếu
+              Cinema Details
             </h2>
             <button
               onClick={onClose}
@@ -188,7 +192,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                 <div className="text-center">
                   <Loader2 className="w-12 h-12 animate-spin text-red-600 mx-auto mb-4" />
                   <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                    Đang tải thông tin...
+                    Loading information...
                   </p>
                 </div>
               </div>
@@ -228,7 +232,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                           ? 'bg-green-900/40 text-green-400 border-green-700'
                           : 'bg-green-50 text-green-700 border-green-300'
                       }`}>
-                        Hoạt động
+                        Active
                       </span>
                     </div>
                   </div>
@@ -240,7 +244,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                         <p className={`text-sm mb-2 ${
                           theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                         }`}>
-                          Mô tả
+                          Description
                         </p>
                         <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
                           {cinema.cinemaDescription}
@@ -257,7 +261,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                           <p className={`text-xs mb-1 ${
                             theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                           }`}>
-                            Địa chỉ
+                            Location
                           </p>
                           <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
                             {cinema.cinemaLocation}
@@ -293,12 +297,12 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                           <p className={`text-xs mb-1 ${
                             theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                           }`}>
-                            Tổng số phòng chiếu
+                            Total Auditoriums
                           </p>
                           <p className={`text-2xl font-black ${
                             theme === 'dark' ? 'text-white' : 'text-gray-900'
                           }`}>
-                            {cinema.totalRooms} phòng
+                            {cinema.totalRooms} rooms
                           </p>
                         </div>
                       </div>
@@ -318,15 +322,18 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                     <h3 className={`text-xl font-bold ${
                       theme === 'dark' ? 'text-white' : 'text-gray-900'
                     }`}>
-                      Danh sách phòng chiếu ({rooms.length})
+                      Auditorium List ({rooms.length})
                     </h3>
-                    <button className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
-                      theme === 'dark'
-                        ? 'bg-red-600 hover:bg-red-700 text-white'
-                        : 'bg-red-600 hover:bg-red-700 text-white'
-                    }`}>
+                    <button 
+                      onClick={() => setIsCreateAuditoriumModalOpen(true)}
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
+                        theme === 'dark'
+                          ? 'bg-red-600 hover:bg-red-700 text-white'
+                          : 'bg-red-600 hover:bg-red-700 text-white'
+                      }`}
+                    >
                       <Plus className="w-4 h-4" />
-                      Thêm phòng
+                      Add Auditorium
                     </button>
                   </div>
 
@@ -356,7 +363,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                               theme === 'dark' ? 'text-gray-600' : 'text-gray-400'
                             }`} />
                             <p className={theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}>
-                              Chưa có phòng chiếu nào
+                              No auditoriums available
                             </p>
                           </div>
                         ) : (
@@ -424,7 +431,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                                     }`}
                                   >
                                     <Eye className="w-3 h-3" />
-                                    Xem
+                                    View
                                   </button>
                                   <button className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors ${
                                     theme === 'dark'
@@ -432,7 +439,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                                       : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                   }`}>
                                     <Edit className="w-3 h-3" />
-                                    Sửa
+                                    Edit
                                   </button>
                                   <button className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors border ${
                                     theme === 'dark'
@@ -440,7 +447,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                                       : 'bg-red-50 hover:bg-red-100 text-red-600 border-red-300'
                                   }`}>
                                     <Trash2 className="w-3 h-3" />
-                                    Xóa
+                                    Delete
                                   </button>
                                 </div>
                               </div>
@@ -487,7 +494,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                   : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
               }`}
             >
-              Đóng
+              Close
             </button>
           </div>
         </div>
@@ -501,6 +508,20 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
           onClose={() => {
             setIsRoomDetailModalOpen(false);
             setSelectedRoomId(null);
+          }}
+        />
+      )}
+
+      {/* Create Auditorium Modal */}
+      {cinema?.cinemaId && (
+        <CreateAuditoriumModal
+          cinemaId={cinema.cinemaId}
+          isOpen={isCreateAuditoriumModalOpen}
+          onClose={() => setIsCreateAuditoriumModalOpen(false)}
+          onSuccess={async () => {
+            // Refresh danh sách phòng sau khi tạo thành công
+            await fetchCinemaRooms();
+            await fetchCinemaDetail();
           }}
         />
       )}

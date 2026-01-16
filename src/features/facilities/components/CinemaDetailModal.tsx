@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { X, Building2, MapPin, Phone, Film, Loader2, AlertCircle, Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { useTheme } from '../../../contexts/ThemeContext';
-import { facilitiesApi, type Cinema, type Room } from '../../../api/facilitiesApi';
+import { facilitiesApi, type Cinema, type Room, type Auditorium } from '../../../api/facilitiesApi';
 import axios from 'axios';
 import type { ApiErrorResponse } from '../../../types/auth.types';
 import RoomDetailModal from './RoomDetailModal';
@@ -16,11 +16,11 @@ interface CinemaDetailModalProps {
 const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen, onClose }) => {
   const { theme } = useTheme();
   const [cinema, setCinema] = useState<Cinema | null>(null);
-  const [rooms, setRooms] = useState<Room[]>([]);
+  const [auditoriums, setAuditoriums] = useState<Auditorium[]>([]);
   const [loading, setLoading] = useState(false);
-  const [roomsLoading, setRoomsLoading] = useState(false);
+  const [auditoriumsLoading, setAuditoriumsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [roomsError, setRoomsError] = useState<string | null>(null);
+  const [auditoriumsError, setAuditoriumsError] = useState<string | null>(null);
   
   // Room detail modal state
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
@@ -32,13 +32,13 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
   useEffect(() => {
     if (isOpen && cinemaId) {
       fetchCinemaDetail();
-      fetchCinemaRooms();
+      fetchCinemaAuditoriums();
     } else {
       // Reset state when modal closes
       setCinema(null);
-      setRooms([]);
+      setAuditoriums([]);
       setError(null);
-      setRoomsError(null);
+      setAuditoriumsError(null);
     }
   }, [isOpen, cinemaId]);
 
@@ -60,88 +60,28 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
     }
   };
 
-  // Seed data cho phòng chiếu (mock data để test)
-  const getSeedRooms = (): Room[] => {
-    return [
-      {
-        roomId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-        roomName: 'Phòng 1',
-        roomCapacity: 120,
-        roomStatus: 'active',
-        cinemaId: cinemaId,
-      },
-      {
-        roomId: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
-        roomName: 'Phòng 2',
-        roomCapacity: 150,
-        roomStatus: 'active',
-        cinemaId: cinemaId,
-      },
-      {
-        roomId: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
-        roomName: 'Phòng 3',
-        roomCapacity: 100,
-        roomStatus: 'active',
-        cinemaId: cinemaId,
-      },
-      {
-        roomId: 'd4e5f6a7-b8c9-0123-defa-234567890123',
-        roomName: 'Phòng VIP 1',
-        roomCapacity: 80,
-        roomStatus: 'active',
-        cinemaId: cinemaId,
-      },
-      {
-        roomId: 'e5f6a7b8-c9d0-1234-efab-345678901234',
-        roomName: 'Phòng 4',
-        roomCapacity: 200,
-        roomStatus: 'maintenance',
-        cinemaId: cinemaId,
-      },
-      {
-        roomId: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
-        roomName: 'Phòng 5',
-        roomCapacity: 130,
-        roomStatus: 'active',
-        cinemaId: cinemaId,
-      },
-      {
-        roomId: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
-        roomName: 'Phòng IMAX',
-        roomCapacity: 300,
-        roomStatus: 'active',
-        cinemaId: cinemaId,
-      },
-      {
-        roomId: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
-        roomName: 'Phòng 6',
-        roomCapacity: 110,
-        roomStatus: 'active',
-        cinemaId: cinemaId,
-      },
-    ];
-  };
-
-  const fetchCinemaRooms = async () => {
-    setRoomsLoading(true);
-    setRoomsError(null);
+  const fetchCinemaAuditoriums = async () => {
+    setAuditoriumsLoading(true);
+    setAuditoriumsError(null);
     try {
-      const res = await facilitiesApi.getCinemaRooms(cinemaId);
-      // Nếu API trả về dữ liệu rỗng hoặc lỗi, sử dụng seed data
-      if (res.data && res.data.length > 0) {
-        setRooms(res.data);
+      const res = await facilitiesApi.getAuditoriumsByCinema(cinemaId);
+      if (res.isSuccess && res.data) {
+        setAuditoriums(res.data);
       } else {
-        // Sử dụng seed data để test
-        setRooms(getSeedRooms());
+        setAuditoriumsError(res.message || 'Failed to load auditoriums.');
+        setAuditoriums([]);
       }
     } catch (err) {
-      // Nếu API lỗi, vẫn hiển thị seed data để test
-      console.warn('API error, using seed data:', err);
-      setRooms(getSeedRooms());
-      // Không set error để vẫn hiển thị seed data
-      // setRoomsError('Không thể kết nối đến server.');
+      console.error('Error fetching auditoriums:', err);
+      if (axios.isAxiosError(err) && err.response) {
+        const data = err.response.data as ApiErrorResponse;
+        setAuditoriumsError(data.message || 'Failed to load auditoriums.');
+      } else {
+        setAuditoriumsError('Unable to connect to server.');
+      }
+      setAuditoriums([]);
     } finally {
-      setRoomsLoading(false);
+      setAuditoriumsLoading(false);
     }
   };
 
@@ -322,7 +262,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                     <h3 className={`text-xl font-bold ${
                       theme === 'dark' ? 'text-white' : 'text-gray-900'
                     }`}>
-                      Auditorium List ({rooms.length})
+                      Auditorium List ({auditoriums.length})
                     </h3>
                     <button 
                       onClick={() => setIsCreateAuditoriumModalOpen(true)}
@@ -338,26 +278,26 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                   </div>
 
                   <div className="p-6">
-                    {roomsLoading && (
+                    {auditoriumsLoading && (
                       <div className="flex items-center justify-center py-8">
                         <Loader2 className="w-8 h-8 animate-spin text-red-600" />
                       </div>
                     )}
 
-                    {roomsError && (
+                    {auditoriumsError && (
                       <div className={`p-4 rounded-lg border flex items-center mb-4 ${
                         theme === 'dark'
                           ? 'bg-red-900/40 border-red-500/50 text-red-100'
                           : 'bg-red-50 border-red-200 text-red-800'
                       }`}>
                         <AlertCircle className="w-5 h-5 mr-3 shrink-0 text-red-500" />
-                        <span className="text-sm font-medium">{roomsError}</span>
+                        <span className="text-sm font-medium">{auditoriumsError}</span>
                       </div>
                     )}
 
-                    {!roomsLoading && !roomsError && (
+                    {!auditoriumsLoading && !auditoriumsError && (
                       <>
-                        {rooms.length === 0 ? (
+                        {auditoriums.length === 0 ? (
                           <div className="text-center py-12">
                             <Film className={`w-12 h-12 mx-auto mb-4 ${
                               theme === 'dark' ? 'text-gray-600' : 'text-gray-400'
@@ -368,9 +308,9 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                           </div>
                         ) : (
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {rooms.map((room) => (
+                            {auditoriums.map((auditorium) => (
                               <div
-                                key={room.roomId || Math.random()}
+                                key={auditorium.auditoriumId}
                                 className={`p-4 rounded-lg border transition-all ${
                                   theme === 'dark'
                                     ? 'bg-gray-900 border-gray-700 hover:border-red-600'
@@ -386,26 +326,37 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                                       <h4 className={`font-bold ${
                                         theme === 'dark' ? 'text-white' : 'text-gray-900'
                                       }`}>
-                                        {room.roomName}
+                                        {auditorium.auditoriumNumber}
                                       </h4>
                                       <p className={`text-xs ${
                                         theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                                       }`}>
-                                        {room.roomCapacity} ghế
+                                        {auditorium.totalSeats} ghế
                                       </p>
                                     </div>
                                   </div>
                                   <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${
-                                    room.roomStatus === 'active' || !room.roomStatus
-                                      ? theme === 'dark'
-                                        ? 'bg-green-900/40 text-green-400 border-green-700'
-                                        : 'bg-green-50 text-green-700 border-green-300'
-                                      : theme === 'dark'
-                                        ? 'bg-yellow-900/40 text-yellow-400 border-yellow-700'
-                                        : 'bg-yellow-50 text-yellow-700 border-yellow-300'
+                                    theme === 'dark'
+                                      ? 'bg-blue-900/40 text-blue-400 border-blue-700'
+                                      : 'bg-blue-50 text-blue-700 border-blue-300'
                                   }`}>
-                                    {room.roomStatus === 'active' || !room.roomStatus ? 'Hoạt động' : 'Bảo trì'}
+                                    {auditorium.movieFormatName}
                                   </span>
+                                </div>
+
+                                <div className={`mb-3 p-2 rounded ${
+                                  theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'
+                                }`}>
+                                  <p className={`text-xs mb-1 ${
+                                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                                  }`}>
+                                    Cinema
+                                  </p>
+                                  <p className={`text-sm font-medium ${
+                                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                                  }`}>
+                                    {auditorium.cinemaName}
+                                  </p>
                                 </div>
 
                                 {/* Actions */}
@@ -414,14 +365,14 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                                 }`}>
                                   <button
                                     onClick={() => {
-                                      if (room.roomId) {
-                                        setSelectedRoomId(room.roomId);
+                                      if (auditorium.auditoriumId) {
+                                        setSelectedRoomId(auditorium.auditoriumId);
                                         setIsRoomDetailModalOpen(true);
                                       }
                                     }}
-                                    disabled={!room.roomId}
+                                    disabled={!auditorium.auditoriumId}
                                     className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors ${
-                                      !room.roomId
+                                      !auditorium.auditoriumId
                                         ? 'opacity-50 cursor-not-allowed'
                                         : ''
                                     } ${
@@ -520,7 +471,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
           onClose={() => setIsCreateAuditoriumModalOpen(false)}
           onSuccess={async () => {
             // Refresh danh sách phòng sau khi tạo thành công
-            await fetchCinemaRooms();
+            await fetchCinemaAuditoriums();
             await fetchCinemaDetail();
           }}
         />

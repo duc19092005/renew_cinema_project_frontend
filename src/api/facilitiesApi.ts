@@ -49,6 +49,14 @@ export interface CreateAuditoriumRequest {
   add_req_seats_auditorium_dto: SeatPosition[];
 }
 
+export interface Auditorium {
+  auditoriumId: string;
+  auditoriumNumber: string;
+  movieFormatName: string;
+  cinemaName: string;
+  totalSeats: number;
+}
+
 // Tạo axios instance riêng cho API facilities (endpoint: http://localhost:5032/api/facilities/cinema)
 const facilitiesAxiosClient = axios.create({
   baseURL: 'http://localhost:5032/api',
@@ -101,6 +109,12 @@ export const facilitiesApi = {
     const response = await facilitiesAxiosClient.post<ApiSuccessResponse<Room | null>>(
       '/facilities/auditorium',
       data
+    );
+    return response.data;
+  },
+  getAuditoriumsByCinema: async (cinemaId: string): Promise<ApiSuccessResponse<Auditorium[]>> => {
+    const response = await facilitiesAxiosClient.get<ApiSuccessResponse<Auditorium[]>>(
+      `/facilities/auditorium/cinema/${cinemaId}`
     );
     return response.data;
   },

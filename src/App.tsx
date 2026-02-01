@@ -8,6 +8,7 @@ import FacilitiesManagerPage from './features/facilities/FacilitiesManagerPage';
 import NotFound from './features/misc/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import AuthRedirect from './components/AuthRedirect';
+import ScheduleManagerPage from './features/schedule/ScheduleManagerPage';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="/movie-manager" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
           <Route path="/theater-manager" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
           <Route path="/facilities-manager" element={<ProtectedRoute requiredRole="FacilitiesManager"><FacilitiesManagerPage /></ProtectedRoute>} />
+          <Route path="/schedule" element={<ScheduleManagerPage />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

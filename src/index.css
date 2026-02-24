@@ -1,5 +1,8 @@
 @import "tailwindcss"; 
 
+/* Tailwind v4: bật dark mode theo class `.dark` (ThemeContext đang set class trên <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Thêm đoạn này để đảm bảo full màn hình */
 html, body, #root {
   width: 100%;

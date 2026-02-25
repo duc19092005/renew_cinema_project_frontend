@@ -23,6 +23,7 @@ import CinemaManagement from './components/CinemaManagement';
 import SeatReport from './components/SeatReport';
 import LogoutModal from '../../components/LogoutModal';
 import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 const FacilitiesManagerPage: React.FC = () => {
   const navigate = useNavigate();
@@ -216,6 +217,7 @@ const FacilitiesManagerPage: React.FC = () => {
 
         {/* Theme Selector & User Menu */}
         <div className="flex items-center gap-3">
+          <LanguageSwitcher />
           {/* Theme Dropdown */}
           <div className="relative" ref={themeDropdownRef}>
             <button

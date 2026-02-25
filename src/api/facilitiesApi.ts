@@ -1,131 +1,125 @@
 // src/api/facilitiesApi.ts
-import axios from 'axios';
+import { facilitiesAxios } from './axiosClient';
 import type { ApiSuccessResponse } from '../types/auth.types';
+import type {
+  Cinema,
+  CreateCinemaRequest,
+  UpdateCinemaRequest,
+  Auditorium,
+  AuditoriumDetail,
+  CreateAuditoriumRequest,
+  UpdateAuditoriumRequest,
+  MovieFormat,
+} from '../types/facilities.types';
 
-export interface Cinema {
-  cinemaId?: string;
-  cinemaName: string;
-  cinemaDescription: string;
-  cinemaHotlineNumber: string;
-  cinemaLocation: string;
-  totalRooms: number;
-}
-
-export interface CreateCinemaRequest {
-  cinemaName: string;
-  cinemaDescription: string;
-  cinemaHotlineNumber: string;
-  cinemaLocation: string;
-  activeAt?: string | null; // ISO date string, optional - có thể null
-}
-
-export interface Room {
-  roomId?: string;
-  roomName: string;
-  roomCapacity: number;
-  roomStatus?: string; // 'active' | 'maintenance' | 'inactive'
-  cinemaId?: string;
-}
-
-export interface MovieFormat {
-  formatId: string;
-  formatName: string;
-  formatDescription: string;
-  movieFormatPrice: number;
-}
-
-export interface SeatPosition {
-  seatNumber: string;
-  coordX: number;
-  coordY: number;
-  colIndex: number;
-  rowIndex: number;
-}
-
-export interface CreateAuditoriumRequest {
-  auditoriumNumber: string;
-  movieFormatId: string;
-  cinemaId: string;
-  addReqSeatsAuditoriumDto: SeatPosition[];
-}
-
-export interface Auditorium {
-  auditoriumId: string;
-  auditoriumNumber: string;
-  movieFormatName: string;
-  cinemaName: string;
-  totalSeats: number;
-}
-
-// Tạo axios instance riêng cho API facilities (endpoint: http://localhost:5032/api/facilities/cinema)
-const facilitiesAxiosClient = axios.create({
-  baseURL: 'http://localhost:5032/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true, // Quan trọng: gửi cookie để authentication
-  timeout: 10000,
-});
-
-facilitiesAxiosClient.interceptors.request.use(
-  (config) => {
-    const currentLanguage = localStorage.getItem('language') || 'en';
-    config.headers['X-Language'] = currentLanguage;
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// Re-export types for backward compatibility
+export type {
+  Cinema,
+  CreateCinemaRequest,
+  UpdateCinemaRequest,
+  Auditorium,
+  AuditoriumDetail,
+  CreateAuditoriumRequest,
+  UpdateAuditoriumRequest,
+  MovieFormat,
+};
+import type { SeatInfo } from '../types/facilities.types';
+export type Room = AuditoriumDetail;
+export type SeatPosition = SeatInfo;
 
 export const facilitiesApi = {
+  // =============================================
+  // CINEMA APIs
+  // =============================================
+
+  /** GET /api/facilities/cinema */
   getCinemaList: async (): Promise<ApiSuccessResponse<Cinema[]>> => {
-    const response = await facilitiesAxiosClient.get<ApiSuccessResponse<Cinema[]>>(
+    const response = await facilitiesAxios.get<ApiSuccessResponse<Cinema[]>>(
       '/facilities/cinema'
     );
     return response.data;
   },
+
+  /** GET /api/facilities/cinema/{id} */
   getCinemaDetail: async (cinemaId: string): Promise<ApiSuccessResponse<Cinema>> => {
-    const response = await facilitiesAxiosClient.get<ApiSuccessResponse<Cinema>>(
+    const response = await facilitiesAxios.get<ApiSuccessResponse<Cinema>>(
       `/facilities/cinema/${cinemaId}`
     );
     return response.data;
   },
-  getCinemaRooms: async (cinemaId: string): Promise<ApiSuccessResponse<Room[]>> => {
-    const response = await facilitiesAxiosClient.get<ApiSuccessResponse<Room[]>>(
-      `/facilities/cinema/${cinemaId}/rooms`
-    );
-    return response.data;
-  },
-  getRoomDetail: async (roomId: string): Promise<ApiSuccessResponse<Room>> => {
-    const response = await facilitiesAxiosClient.get<ApiSuccessResponse<Room>>(
-      `/facilities/room/${roomId}`
-    );
-    return response.data;
-  },
-  getMovieFormats: async (): Promise<ApiSuccessResponse<MovieFormat[]>> => {
-    const response = await facilitiesAxiosClient.get<ApiSuccessResponse<MovieFormat[]>>(
-      '/facilities/movie-format'
-    );
-    return response.data;
-  },
-  createCinema: async (data: CreateCinemaRequest): Promise<ApiSuccessResponse<Cinema | null>> => {
-    const response = await facilitiesAxiosClient.post<ApiSuccessResponse<Cinema | null>>(
+
+  /** POST /api/facilities/cinema */
+  createCinema: async (data: CreateCinemaRequest): Promise<ApiSuccessResponse> => {
+    const response = await facilitiesAxios.post<ApiSuccessResponse>(
       '/facilities/cinema',
       data
     );
     return response.data;
   },
-  createAuditorium: async (data: CreateAuditoriumRequest): Promise<ApiSuccessResponse<Room | null>> => {
-    const response = await facilitiesAxiosClient.post<ApiSuccessResponse<Room | null>>(
+
+  /** PUT /api/facilities/cinema/{cinemaId} */
+  updateCinema: async (cinemaId: string, data: UpdateCinemaRequest): Promise<ApiSuccessResponse> => {
+    const response = await facilitiesAxios.put<ApiSuccessResponse>(
+      `/facilities/cinema/${cinemaId}`,
+      data
+    );
+    return response.data;
+  },
+
+  // =============================================
+  // AUDITORIUM APIs
+  // =============================================
+
+  /** GET /api/facilities/auditorium */
+  getAllAuditoriums: async (): Promise<ApiSuccessResponse<Auditorium[]>> => {
+    const response = await facilitiesAxios.get<ApiSuccessResponse<Auditorium[]>>(
+      '/facilities/auditorium'
+    );
+    return response.data;
+  },
+
+  /** GET /api/facilities/auditorium/{id} */
+  getAuditoriumDetail: async (auditoriumId: string): Promise<ApiSuccessResponse<AuditoriumDetail>> => {
+    const response = await facilitiesAxios.get<ApiSuccessResponse<AuditoriumDetail>>(
+      `/facilities/auditorium/${auditoriumId}`
+    );
+    return response.data;
+  },
+
+  /** GET /api/facilities/auditorium/cinema/{id} */
+  getAuditoriumsByCinema: async (cinemaId: string): Promise<ApiSuccessResponse<Auditorium[]>> => {
+    const response = await facilitiesAxios.get<ApiSuccessResponse<Auditorium[]>>(
+      `/facilities/auditorium/cinema/${cinemaId}`
+    );
+    return response.data;
+  },
+
+  /** POST /api/facilities/auditorium */
+  createAuditorium: async (data: CreateAuditoriumRequest): Promise<ApiSuccessResponse> => {
+    const response = await facilitiesAxios.post<ApiSuccessResponse>(
       '/facilities/auditorium',
       data
     );
     return response.data;
   },
-  getAuditoriumsByCinema: async (cinemaId: string): Promise<ApiSuccessResponse<Auditorium[]>> => {
-    const response = await facilitiesAxiosClient.get<ApiSuccessResponse<Auditorium[]>>(
-      `/facilities/auditorium/cinema/${cinemaId}`
+
+  /** PUT /api/facilities/auditorium/{id} */
+  updateAuditorium: async (auditoriumId: string, data: UpdateAuditoriumRequest): Promise<ApiSuccessResponse> => {
+    const response = await facilitiesAxios.put<ApiSuccessResponse>(
+      `/facilities/auditorium/${auditoriumId}`,
+      data
+    );
+    return response.data;
+  },
+
+  // =============================================
+  // MOVIE FORMAT APIs
+  // =============================================
+
+  /** GET /api/facilities/movie-format */
+  getMovieFormats: async (): Promise<ApiSuccessResponse<MovieFormat[]>> => {
+    const response = await facilitiesAxios.get<ApiSuccessResponse<MovieFormat[]>>(
+      '/facilities/movie-format'
     );
     return response.data;
   },

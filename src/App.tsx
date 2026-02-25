@@ -6,6 +6,7 @@ import LoginForm from './features/auth/LoginForm';
 import RoleSelectionPage from './features/auth/RoleSelectionPage';
 import HomePage from '../src/features/public/HomePage';
 import FacilitiesManagerPage from './features/facilities/FacilitiesManagerPage';
+import MovieManagerPage from './features/movie/MovieManagerPage';
 import NotFound from './features/misc/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import AuthRedirect from './components/AuthRedirect';
@@ -29,7 +30,7 @@ function App() {
           <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
           <Route path="/cashier" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
-          <Route path="/movie-manager" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+          <Route path="/movie-manager" element={<ProtectedRoute requiredRole="MovieManager"><MovieManagerPage /></ProtectedRoute>} />
           <Route path="/theater-manager" element={<ProtectedRoute requiredRole="TheaterManager"><TheaterManagerPage /></ProtectedRoute>} />
           <Route path="/facilities-manager" element={<ProtectedRoute requiredRole="FacilitiesManager"><FacilitiesManagerPage /></ProtectedRoute>} />
           <Route path="/schedule" element={<ScheduleManagerPage />} />

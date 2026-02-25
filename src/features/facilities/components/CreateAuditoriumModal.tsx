@@ -676,7 +676,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
     try {
       const requestData: CreateAuditoriumRequest = {
         auditoriumNumber: auditoriumNumber.trim(),
-        movieFormatId: selectedFormat.formatId,
+        movieFormatId: [selectedFormat.formatId],
         cinemaId,
         addReqSeatsAuditoriumDto: seats,
       };

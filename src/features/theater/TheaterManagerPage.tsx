@@ -19,6 +19,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import Sidebar from './components/Sidebar';
 import LogoutModal from '../../components/LogoutModal';
 import ScheduleManagerPage from '../schedule/ScheduleManagerPage';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 // Placeholder for Employee Management & Dashboard until fully implemented
 const DashboardPlaceholder = () => <div className="p-6">Dashboard functionality coming soon...</div>;
@@ -162,6 +163,7 @@ const TheaterManagerPage: React.FC = () => {
                 <div className="lg:hidden flex-1" />
 
                 <div className="flex items-center gap-3">
+                    <LanguageSwitcher />
                     <div className="relative" ref={themeDropdownRef}>
                         <button
                             onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}

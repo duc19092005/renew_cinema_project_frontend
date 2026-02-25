@@ -1,6 +1,10 @@
 // src/types/auth.types.ts
 
-// DTO gửi đi (Request Body)
+// =============================================
+// REQUEST TYPES
+// =============================================
+
+/** POST /api/v1/IdentityAccess/regular-register */
 export interface RegisterRequest {
   userEmail: string;
   userPassword: string;
@@ -11,37 +15,57 @@ export interface RegisterRequest {
   dateOfBirth: string; // ISO String format
 }
 
-// DTO lỗi trả về (Error Response)
-export interface ApiErrorResponse {
-  statusCode: number;
-  errorCode: string;
-  message: string;
-  timestamp: string;
+/** POST /api/v1/IdentityAccess/regular-login */
+export interface LoginRequest {
+  email: string;
+  password: string;
 }
 
-// DTO thành công (Success Response)
+/** POST /api/v1/IdentityAccess/change-password */
+export interface ChangePasswordRequest {
+  oldPassword: string;
+  newPassword: string;
+  renewPassword: string;
+}
+
+// =============================================
+// RESPONSE TYPES
+// =============================================
+
+/** Base success response wrapper - BaseResponse<T> */
 export interface ApiSuccessResponse<T = null> {
   isSuccess: boolean;
   message: string;
   data: T;
 }
 
-// Response cho Logout
+/** Error response format from server */
+export interface ApiErrorResponse {
+  statusCode: number;
+  errorCode: string;
+  message: string;
+  errors: string[];
+  timestamp: string;
+}
+
+/** Logout response */
 export interface LogoutResponse {
   message: string;
 }
 
-// ... Các type cũ giữ nguyên
-
-// Request Body cho Login
-export interface LoginRequest {
-  email: string; // Backend dùng email để login
-  password: string;
-}
-
-// Data trả về khi Login thành công
+/** Data returned on successful login */
 export interface UserLoginData {
   userId: string;
   username: string;
+  userName?: string; // Backend actually sends userName instead of username
+  roles: string[];
+}
+
+/** Data returned from get-profile */
+export interface UserProfileData {
+  userId: string;
+  username: string;
+  dateOfBirth: string;
+  phoneNumber: string;
   roles: string[];
 }

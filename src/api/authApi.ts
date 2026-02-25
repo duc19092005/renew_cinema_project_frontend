@@ -1,45 +1,53 @@
 // src/api/authApi.ts
-import axiosClient from './axiosClient';
+import { identityAxios } from './axiosClient';
 import type {
   RegisterRequest,
   LoginRequest,
+  ChangePasswordRequest,
   ApiSuccessResponse,
   UserLoginData,
+  UserProfileData,
   LogoutResponse,
 } from '../types/auth.types';
 
 export const authApi = {
+  /** POST /api/v1/IdentityAccess/regular-register */
   regularRegister: async (data: RegisterRequest): Promise<ApiSuccessResponse> => {
-    // URL cụ thể: /identity_access_/regular-register
-    const response = await axiosClient.post<ApiSuccessResponse>(
+    const response = await identityAxios.post<ApiSuccessResponse>(
       '/IdentityAccess/regular-register',
       data
     );
     return response.data;
   },
+
+  /** POST /api/v1/IdentityAccess/regular-login */
   regularLogin: async (data: LoginRequest): Promise<ApiSuccessResponse<UserLoginData>> => {
-    const response = await axiosClient.post<ApiSuccessResponse<UserLoginData>>(
+    const response = await identityAxios.post<ApiSuccessResponse<UserLoginData>>(
       '/IdentityAccess/regular-login',
       data
     );
-    
-    // Log response headers để debug cookie
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Login response headers:', response.headers);
-      console.log('Set-Cookie header:', response.headers['set-cookie']);
-    }
-    
     return response.data;
   },
+
+  /** POST /api/v1/IdentityAccess/Logout */
   logout: async (): Promise<LogoutResponse> => {
-    // URL: http://localhost:5032/api/v1/identity_access_/Logout
-    const response = await axiosClient.post<LogoutResponse>('/IdentityAccess/Logout');
+    const response = await identityAxios.post<LogoutResponse>('/IdentityAccess/Logout');
     return response.data;
   },
-  getProfile: async (): Promise<ApiSuccessResponse<UserLoginData>> => {
-    // URL: http://localhost:5032/api/v1/identity_access_/get-profile
-    const response = await axiosClient.get<ApiSuccessResponse<UserLoginData>>(
+
+  /** GET /api/v1/IdentityAccess/get-profile */
+  getProfile: async (): Promise<ApiSuccessResponse<UserProfileData>> => {
+    const response = await identityAxios.get<ApiSuccessResponse<UserProfileData>>(
       '/IdentityAccess/get-profile'
+    );
+    return response.data;
+  },
+
+  /** POST /api/v1/IdentityAccess/change-password */
+  changePassword: async (data: ChangePasswordRequest): Promise<ApiSuccessResponse> => {
+    const response = await identityAxios.post<ApiSuccessResponse>(
+      '/IdentityAccess/change-password',
+      data
     );
     return response.data;
   },

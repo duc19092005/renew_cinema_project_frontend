@@ -5,6 +5,7 @@ import { authApi } from '../../api/authApi';
 import axios from 'axios';
 import type { ApiErrorResponse } from '../../types/auth.types';
 import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 // Role mapping với icon và màu sắc
 const roleConfig: Record<string, { icon: React.ElementType; color: string; label: string; route: string }> = {
@@ -48,7 +49,7 @@ const roleConfig: Record<string, { icon: React.ElementType; color: string; label
 
 const RoleSelectionPage: React.FC = () => {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [user, setUser] = useState<{ username: string; roles: string[] } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -157,20 +158,7 @@ const RoleSelectionPage: React.FC = () => {
           CINEMA<span className="text-white">PRO</span>
         </div>
         <div className="flex items-center gap-6">
-          <div className="flex bg-gray-900 rounded-lg p-1 border border-gray-800">
-            <button
-              onClick={() => i18n.changeLanguage('vi')}
-              className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${i18n.language === 'vi' ? 'bg-red-600 text-white shadow-[0_0_10px_rgba(220,38,38,0.5)]' : 'text-gray-500 hover:text-white'}`}
-            >
-              VI
-            </button>
-            <button
-              onClick={() => i18n.changeLanguage('en')}
-              className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${i18n.language === 'en' ? 'bg-red-600 text-white shadow-[0_0_10px_rgba(220,38,38,0.5)]' : 'text-gray-500 hover:text-white'}`}
-            >
-              EN
-            </button>
-          </div>
+          <LanguageSwitcher />
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.3)]">
               <User className="w-5 h-5 text-white" />

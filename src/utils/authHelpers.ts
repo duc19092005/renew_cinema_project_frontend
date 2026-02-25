@@ -11,19 +11,16 @@ import type { ApiErrorResponse } from '../types/auth.types';
  */
 export const verifyAuth = async (): Promise<boolean> => {
   try {
-    // Gọi API get-profile để verify token
     await authApi.getProfile();
     return true;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       const data = error.response.data as ApiErrorResponse;
       if (data.statusCode === 401) {
-        // Token không hợp lệ hoặc hết hạn
         return false;
       }
     }
     // Nếu không phải 401, có thể là lỗi network hoặc server
-    // Trong trường hợp này, giả sử token vẫn hợp lệ
     return true;
   }
 };
@@ -32,32 +29,33 @@ export const verifyAuth = async (): Promise<boolean> => {
  * Verify authentication và lấy user info từ API get-profile
  * Nếu chưa đăng nhập (401), sẽ return null để redirect về login
  */
-export const verifyAuthAndGetUser = async (): Promise<{ userId: string; username: string; roles: string[] } | null> => {
+export const verifyAuthAndGetUser = async (): Promise<{ userId?: string; username: string; roles: string[] } | null> => {
   try {
-    // Gọi API get-profile để lấy thông tin user và verify authentication
     const response = await authApi.getProfile();
-    
+
     if (response.isSuccess && response.data) {
+      // Profile API trả về userId và username
+      const userData = {
+        userId: response.data.userId,
+        username: response.data.username,
+        roles: response.data.roles,
+      };
       // Cập nhật localStorage với thông tin mới nhất từ server
-      localStorage.setItem('user_info', JSON.stringify(response.data));
-      return response.data;
+      localStorage.setItem('user_info', JSON.stringify(userData));
+      return userData;
     }
-    
-    // Nếu không có data, xóa user info và return null
+
     localStorage.removeItem('user_info');
     return null;
   } catch (error) {
-    // Xử lý lỗi 401 (chưa đăng nhập) hoặc các lỗi khác
     if (axios.isAxiosError(error) && error.response) {
       const data = error.response.data as ApiErrorResponse;
       if (data.statusCode === 401) {
-        // Chưa đăng nhập hoặc token không hợp lệ
         localStorage.removeItem('user_info');
         return null;
       }
     }
-    
-    // Nếu là lỗi network hoặc lỗi khác, xóa user info để đảm bảo an toàn
+
     localStorage.removeItem('user_info');
     return null;
   }

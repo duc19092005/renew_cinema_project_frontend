@@ -7,6 +7,7 @@ import { Calendar, Copy, Repeat, Save, Menu, X, Film } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import TrashCan from './components/TrashCan';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface ScheduleManagerPageProps {
     embedded?: boolean;

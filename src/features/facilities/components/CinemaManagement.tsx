@@ -124,7 +124,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
           // Gọi refresh và đợi hoàn thành
           try {
             await onRefresh();
-            console.log('Danh sách rạp đã được cập nhật');
+            console.log('Cinemas List đã được cập nhật');
           } catch (refreshError) {
             console.error('Error refreshing cinema list:', refreshError);
             // Vẫn đóng modal dù có lỗi refresh

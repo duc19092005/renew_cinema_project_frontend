@@ -1,52 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Shield, Ticket, Film, Building2, Wrench, Loader2, AlertCircle } from 'lucide-react';
-import { facilitiesApi } from '../../api/facilitiesApi';
+import { authApi } from '../../api/authApi';
 import axios from 'axios';
 import type { ApiErrorResponse } from '../../types/auth.types';
+import { useTranslation } from 'react-i18next';
 
 // Role mapping với icon và màu sắc
 const roleConfig: Record<string, { icon: React.ElementType; color: string; label: string; route: string }> = {
   Customer: {
     icon: Ticket,
     color: 'from-blue-600 to-blue-800',
-    label: 'Customer',
+    label: 'roles.customer',
     route: '/home'
   },
   Cashier: {
     icon: Ticket,
     color: 'from-green-600 to-green-800',
-    label: 'Cashier',
+    label: 'roles.cashier',
     route: '/cashier'
   },
   Admin: {
     icon: Shield,
     color: 'from-purple-600 to-purple-800',
-    label: 'Admin',
+    label: 'roles.admin',
     route: '/admin'
   },
   MovieManager: {
     icon: Film,
     color: 'from-orange-600 to-orange-800',
-    label: 'Movie Manager',
+    label: 'roles.movieManager',
     route: '/movie-manager'
   },
   TheaterManager: {
     icon: Building2,
     color: 'from-cyan-600 to-cyan-800',
-    label: 'Theater Manager',
+    label: 'roles.theaterManager',
     route: '/theater-manager'
   },
   FacilitiesManager: {
     icon: Wrench,
     color: 'from-yellow-600 to-yellow-800',
-    label: 'Facilities Manager',
+    label: 'roles.facilitiesManager',
     route: '/facilities-manager'
   }
 };
 
 const RoleSelectionPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [user, setUser] = useState<{ username: string; roles: string[] } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -84,8 +86,8 @@ const RoleSelectionPage: React.FC = () => {
 
   const testAuthentication = async () => {
     try {
-      // Test authentication bằng cách gọi API facilities
-      await facilitiesApi.getCinemaList();
+      // Test authentication bằng cách gọi API profile
+      await authApi.getProfile();
       setLoading(false);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
@@ -111,7 +113,7 @@ const RoleSelectionPage: React.FC = () => {
       // Lưu role được chọn vào localStorage để sử dụng sau này
       const userData = { ...user, selectedRole: role };
       localStorage.setItem('user_info', JSON.stringify(userData));
-      
+
       // Navigate đến trang của role đó
       navigate(roleInfo.route);
     }
@@ -138,7 +140,7 @@ const RoleSelectionPage: React.FC = () => {
             onClick={() => navigate('/login')}
             className="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
           >
-            Back to Login
+            {t('roles.backToLogin')}
           </button>
         </div>
       </div>
@@ -154,11 +156,27 @@ const RoleSelectionPage: React.FC = () => {
         <div className="text-2xl font-black text-red-600 tracking-widest uppercase cursor-pointer">
           CINEMA<span className="text-white">PRO</span>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center">
-            <User className="w-5 h-5 text-white" />
+        <div className="flex items-center gap-6">
+          <div className="flex bg-gray-900 rounded-lg p-1 border border-gray-800">
+            <button
+              onClick={() => i18n.changeLanguage('vi')}
+              className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${i18n.language === 'vi' ? 'bg-red-600 text-white shadow-[0_0_10px_rgba(220,38,38,0.5)]' : 'text-gray-500 hover:text-white'}`}
+            >
+              VI
+            </button>
+            <button
+              onClick={() => i18n.changeLanguage('en')}
+              className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${i18n.language === 'en' ? 'bg-red-600 text-white shadow-[0_0_10px_rgba(220,38,38,0.5)]' : 'text-gray-500 hover:text-white'}`}
+            >
+              EN
+            </button>
           </div>
-          <span className="font-bold text-sm text-gray-200">{user?.username || 'Guest'}</span>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center shadow-[0_0_10px_rgba(220,38,38,0.3)]">
+              <User className="w-5 h-5 text-white" />
+            </div>
+            <span className="font-bold text-sm text-gray-200">{user?.username || t('roles.guest')}</span>
+          </div>
         </div>
       </header>
 
@@ -166,10 +184,10 @@ const RoleSelectionPage: React.FC = () => {
       <main className="pt-32 px-6 container mx-auto max-w-6xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-black text-white mb-4 uppercase tracking-wider">
-            Select Your Role
+            {t('roles.selectRole')}
           </h1>
           <p className="text-gray-400 text-lg">
-            Choose the role you want to access
+            {t('roles.chooseRole')}
           </p>
         </div>
 
@@ -187,11 +205,10 @@ const RoleSelectionPage: React.FC = () => {
                 key={role}
                 onClick={() => handleRoleSelect(role)}
                 disabled={isSelected}
-                className={`group relative overflow-hidden rounded-2xl p-8 bg-gray-900 border-2 transition-all duration-300 hover:scale-105 hover:-translate-y-2 ${
-                  isSelected
-                    ? 'border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.5)]'
-                    : 'border-gray-800 hover:border-red-600'
-                }`}
+                className={`group relative overflow-hidden rounded-2xl p-8 bg-gray-900 border-2 transition-all duration-300 hover:scale-105 hover:-translate-y-2 ${isSelected
+                  ? 'border-red-600 shadow-[0_0_30px_rgba(220,38,38,0.5)]'
+                  : 'border-gray-800 hover:border-red-600'
+                  }`}
               >
                 {/* Gradient Background */}
                 <div
@@ -209,18 +226,18 @@ const RoleSelectionPage: React.FC = () => {
 
                   {/* Role Name */}
                   <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-wide">
-                    {roleInfo.label}
+                    {t(roleInfo.label)}
                   </h3>
 
                   {/* Hover Effect Text */}
                   <p className="text-sm text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Click to continue
+                    {t('roles.clickToContinue')}
                   </p>
 
                   {/* Selected Indicator */}
                   {isSelected && (
                     <div className="mt-4 px-4 py-2 bg-red-600 rounded-full text-xs font-bold uppercase tracking-wider">
-                      Selected
+                      {t('roles.selected')}
                     </div>
                   )}
                 </div>

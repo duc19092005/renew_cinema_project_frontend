@@ -10,6 +10,7 @@ import {
   Sun,
   Moon,
   Sparkles,
+  ArrowLeftRight,
 } from 'lucide-react';
 import { facilitiesApi, type Cinema } from '../../api/facilitiesApi';
 import axios from 'axios';
@@ -21,9 +22,11 @@ import Dashboard from './components/Dashboard';
 import CinemaManagement from './components/CinemaManagement';
 import SeatReport from './components/SeatReport';
 import LogoutModal from '../../components/LogoutModal';
+import { useTranslation } from 'react-i18next';
 
 const FacilitiesManagerPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const themeDropdownRef = useRef<HTMLDivElement>(null);
@@ -114,12 +117,12 @@ const FacilitiesManagerPage: React.FC = () => {
           navigate('/login');
           return;
         }
-        setError(data.message || 'Không thể tải danh sách rạp.');
+        setError(data.message || 'Cannot load cinemas list.');
       } else if (axios.isAxiosError(err) && err.request) {
         console.error('No response received:', err.request);
-        setError('Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.');
+        setError('Cannot connect to server. Please check your network connection.');
       } else {
-        setError('Đã xảy ra lỗi không xác định.');
+        setError('An unknown error occurred.');
       }
     } finally {
       setLoading(false);
@@ -166,13 +169,12 @@ const FacilitiesManagerPage: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen font-sans transition-colors duration-300 ${
-      theme === 'dark' 
-        ? 'bg-black text-white' 
-        : theme === 'web3'
-          ? 'bg-gradient-to-br from-purple-950 via-indigo-950 to-cyan-950 text-white'
-          : 'bg-gray-50 text-gray-900'
-    }`}>
+    <div className={`min-h-screen font-sans transition-colors duration-300 ${theme === 'dark'
+      ? 'bg-black text-white'
+      : theme === 'web3'
+        ? 'bg-gradient-to-br from-purple-950 via-indigo-950 to-cyan-950 text-white'
+        : 'bg-gray-50 text-gray-900'
+      }`}>
       {/* Sidebar */}
       <Sidebar
         activeTab={activeTab}
@@ -182,32 +184,29 @@ const FacilitiesManagerPage: React.FC = () => {
       />
 
       {/* HEADER */}
-      <header className={`fixed top-0 left-0 right-0 lg:left-64 z-50 backdrop-blur-md border-b h-16 flex items-center justify-between px-6 shadow-lg transition-colors duration-300 ${
-        theme === 'dark'
-          ? 'bg-black/80 border-gray-800'
-          : theme === 'web3'
-            ? 'bg-gradient-to-r from-purple-900/90 via-indigo-900/90 to-cyan-900/90 border-purple-500/30'
-            : 'bg-white/80 border-gray-200'
-      }`}>
+      <header className={`fixed top-0 left-0 right-0 lg:left-64 z-50 backdrop-blur-md border-b h-16 flex items-center justify-between px-6 shadow-lg transition-colors duration-300 ${theme === 'dark'
+        ? 'bg-black/80 border-gray-800'
+        : theme === 'web3'
+          ? 'bg-gradient-to-r from-purple-900/90 via-indigo-900/90 to-cyan-900/90 border-purple-500/30'
+          : 'bg-white/80 border-gray-200'
+        }`}>
         {/* Logo bên trái - ẩn trên mobile vì có sidebar button */}
         <div
           className="hidden lg:flex items-center gap-3 cursor-pointer"
           onClick={() => navigate('/home')}
         >
-          <div className={`text-2xl font-black tracking-widest uppercase ${
-            theme === 'web3' 
-              ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400'
-              : 'text-red-600'
-          }`}>
+          <div className={`text-2xl font-black tracking-widest uppercase ${theme === 'web3'
+            ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400'
+            : 'text-red-600'
+            }`}>
             CINEMA<span className={theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}>PRO</span>
           </div>
-          <span className={`text-xs border-l pl-3 ${
-            theme === 'dark' 
-              ? 'text-gray-400 border-gray-700' 
-              : theme === 'web3'
-                ? 'text-purple-200 border-purple-500/30'
-                : 'text-gray-600 border-gray-300'
-          }`}>
+          <span className={`text-xs border-l pl-3 ${theme === 'dark'
+            ? 'text-gray-400 border-gray-700'
+            : theme === 'web3'
+              ? 'text-purple-200 border-purple-500/30'
+              : 'text-gray-600 border-gray-300'
+            }`}>
             Facilities Manager Dashboard
           </span>
         </div>
@@ -221,13 +220,12 @@ const FacilitiesManagerPage: React.FC = () => {
           <div className="relative" ref={themeDropdownRef}>
             <button
               onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                theme === 'dark'
-                  ? 'hover:bg-gray-800 text-gray-300'
-                  : theme === 'web3'
-                    ? 'hover:bg-purple-900/30 text-purple-300'
-                    : 'hover:bg-gray-100 text-gray-700'
-              }`}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${theme === 'dark'
+                ? 'hover:bg-gray-800 text-gray-300'
+                : theme === 'web3'
+                  ? 'hover:bg-purple-900/30 text-purple-300'
+                  : 'hover:bg-gray-100 text-gray-700'
+                }`}
               aria-label="Select theme"
             >
               {theme === 'dark' ? (
@@ -244,25 +242,21 @@ const FacilitiesManagerPage: React.FC = () => {
             </button>
 
             {isThemeDropdownOpen && (
-              <div className={`absolute right-0 mt-2 w-56 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ${
-                theme === 'dark'
-                  ? 'bg-gray-900 border border-gray-700'
-                  : theme === 'web3'
-                    ? 'bg-gradient-to-br from-purple-900/95 to-cyan-900/95 border border-purple-500/30 backdrop-blur-xl'
-                    : 'bg-white border border-gray-200'
-              }`}>
+              <div className={`absolute right-0 mt-2 w-56 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ${theme === 'dark'
+                ? 'bg-gray-900 border border-gray-700'
+                : theme === 'web3'
+                  ? 'bg-gradient-to-br from-purple-900/95 to-cyan-900/95 border border-purple-500/30 backdrop-blur-xl'
+                  : 'bg-white border border-gray-200'
+                }`}>
                 <div className="py-2">
-                  <div className={`px-4 py-2 border-b ${
-                    theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
-                  }`}>
-                    <p className={`text-xs uppercase font-bold ${
-                      theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-300' : 'text-gray-400'
+                  <div className={`px-4 py-2 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
                     }`}>
+                    <p className={`text-xs uppercase font-bold ${theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-300' : 'text-gray-400'
+                      }`}>
                       Select Theme
                     </p>
-                    <p className={`text-xs mt-1 ${
-                      theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200/70' : 'text-gray-500'
-                    }`}>
+                    <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200/70' : 'text-gray-500'
+                      }`}>
                       Demo - Choose your favorite color tone
                     </p>
                   </div>
@@ -273,22 +267,20 @@ const FacilitiesManagerPage: React.FC = () => {
                       setTheme('light');
                       setIsThemeDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${
-                      theme === 'light'
-                        ? 'bg-gray-100 text-gray-900'
-                        : theme === 'dark'
-                          ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                          : theme === 'web3'
-                            ? 'text-purple-200 hover:bg-purple-800/30 hover:text-white'
-                            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                    }`}
+                    className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === 'light'
+                      ? 'bg-gray-100 text-gray-900'
+                      : theme === 'dark'
+                        ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                        : theme === 'web3'
+                          ? 'text-purple-200 hover:bg-purple-800/30 hover:text-white'
+                          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                      }`}
                   >
                     <Sun className="w-4 h-4" />
                     <div className="flex-1">
                       <div className="font-semibold">Light Mode</div>
-                      <div className={`text-xs ${
-                        theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
-                      }`}>
+                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
+                        }`}>
                         Light Interface
                       </div>
                     </div>
@@ -303,20 +295,18 @@ const FacilitiesManagerPage: React.FC = () => {
                       setTheme('dark');
                       setIsThemeDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${
-                      theme === 'dark'
-                        ? 'bg-gray-800 text-white'
-                        : theme === 'web3'
-                          ? 'text-purple-200 hover:bg-purple-800/30 hover:text-white'
-                          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                    }`}
+                    className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === 'dark'
+                      ? 'bg-gray-800 text-white'
+                      : theme === 'web3'
+                        ? 'text-purple-200 hover:bg-purple-800/30 hover:text-white'
+                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                      }`}
                   >
                     <Moon className="w-4 h-4" />
                     <div className="flex-1">
                       <div className="font-semibold">Dark Mode</div>
-                      <div className={`text-xs ${
-                        theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
-                      }`}>
+                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
+                        }`}>
                         Dark Interface
                       </div>
                     </div>
@@ -331,20 +321,18 @@ const FacilitiesManagerPage: React.FC = () => {
                       setTheme('web3');
                       setIsThemeDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${
-                      theme === 'web3'
-                        ? 'bg-purple-800/50 text-white'
-                        : theme === 'dark'
-                          ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                    }`}
+                    className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === 'web3'
+                      ? 'bg-purple-800/50 text-white'
+                      : theme === 'dark'
+                        ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                      }`}
                   >
                     <Sparkles className="w-4 h-4" />
                     <div className="flex-1">
                       <div className="font-semibold">Web3 View</div>
-                      <div className={`text-xs ${
-                        theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
-                      }`}>
+                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
+                        }`}>
                         Web3 Color Tone
                       </div>
                     </div>
@@ -361,45 +349,38 @@ const FacilitiesManagerPage: React.FC = () => {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className={`flex items-center gap-3 p-2 rounded-lg transition-colors outline-none focus:ring-2 focus:ring-red-600/50 ${
-                theme === 'dark'
-                  ? 'hover:bg-gray-800'
-                  : 'hover:bg-gray-100'
-              }`}
+              className={`flex items-center gap-3 p-2 rounded-lg transition-colors outline-none focus:ring-2 focus:ring-red-600/50 ${theme === 'dark'
+                ? 'hover:bg-gray-800'
+                : 'hover:bg-gray-100'
+                }`}
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center shadow-red-glow">
                 <User className="w-5 h-5 text-white" />
               </div>
 
-              <span className={`hidden sm:block font-bold text-sm ${
-                theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-              }`}>
+              <span className={`hidden sm:block font-bold text-sm ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
+                }`}>
                 {user?.username || 'Guest'}
               </span>
 
               <ChevronDown
-                className={`w-4 h-4 transition-transform duration-200 ${
-                  theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                } ${isDropdownOpen ? 'rotate-180' : ''}`}
+                className={`w-4 h-4 transition-transform duration-200 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                  } ${isDropdownOpen ? 'rotate-180' : ''}`}
               />
             </button>
 
             {isDropdownOpen && (
-              <div className={`absolute right-0 mt-2 w-56 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ${
-                theme === 'dark'
-                  ? 'bg-gray-900 border border-gray-700'
-                  : 'bg-white border border-gray-200'
-              }`}>
+              <div className={`absolute right-0 mt-2 w-56 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ${theme === 'dark'
+                ? 'bg-gray-900 border border-gray-700'
+                : 'bg-white border border-gray-200'
+                }`}>
                 <div className="py-2">
-                  <div className={`px-4 py-3 border-b ${
-                    theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
-                  }`}>
-                    <p className={`text-xs uppercase font-bold ${
-                      theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                    }`}>Signed in as</p>
-                    <p className={`text-sm font-bold truncate ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
-                    }`}>{user?.username}</p>
+                  <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
+                    }`}>
+                    <p className={`text-xs uppercase font-bold ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
+                      }`}>SIGNED IN AS</p>
+                    <p className={`text-sm font-bold truncate ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>{user?.username}</p>
                     {user?.selectedRole && (
                       <p className="mt-1 text-[11px] text-red-400 uppercase tracking-wide">
                         Role: {user.selectedRole}
@@ -407,35 +388,44 @@ const FacilitiesManagerPage: React.FC = () => {
                     )}
                   </div>
 
-                  <button className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${
-                    theme === 'dark'
-                      ? 'text-gray-300 hover:bg-gray-800 hover:text-red-500'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-red-600'
-                  }`}>
+                  <button className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === 'dark'
+                    ? 'text-gray-300 hover:bg-gray-800 hover:text-red-500'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-red-600'
+                    }`}>
                     <UserCircle className="w-4 h-4" />
-                    Account Information
+                    {t('header.accountInfo')}
                   </button>
 
-                  <button className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${
-                    theme === 'dark'
-                      ? 'text-gray-300 hover:bg-gray-800 hover:text-red-500'
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-red-600'
-                  }`}>
+                  <button className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === 'dark'
+                    ? 'text-gray-300 hover:bg-gray-800 hover:text-red-500'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-red-600'
+                    }`}>
                     <Settings className="w-4 h-4" />
-                    Change Password
+                    {t('header.changePassword')}
                   </button>
 
-                  <div className={`border-t mt-1 ${
-                    theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
-                  }`} />
+                  {user?.roles && user.roles.length > 1 && (
+                    <button
+                      onClick={() => navigate('/role-selection')}
+                      className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === 'dark'
+                        ? 'text-gray-300 hover:bg-gray-800 hover:text-blue-500'
+                        : 'text-gray-700 hover:bg-gray-100 hover:text-blue-600'
+                        }`}
+                    >
+                      <ArrowLeftRight className="w-4 h-4" />
+                      Switch Role
+                    </button>
+                  )}
+
+                  <div className={`border-t mt-1 ${theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
+                    }`} />
 
                   <button
                     onClick={handleLogoutClick}
-                    className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors font-bold ${
-                      theme === 'dark'
-                        ? 'text-red-500 hover:bg-red-900/20 hover:text-red-400'
-                        : 'text-red-600 hover:bg-red-50 hover:text-red-700'
-                    }`}
+                    className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors font-bold ${theme === 'dark'
+                      ? 'text-red-500 hover:bg-red-900/20 hover:text-red-400'
+                      : 'text-red-600 hover:bg-red-50 hover:text-red-700'
+                      }`}
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Logout</span>
@@ -452,11 +442,10 @@ const FacilitiesManagerPage: React.FC = () => {
         <div className="p-4 lg:p-6 container mx-auto max-w-7xl">
           {/* Thông báo lỗi Logout */}
           {logoutError && (
-            <div className={`mb-4 p-4 rounded-lg border flex items-center ${
-              theme === 'dark'
-                ? 'bg-red-900/40 border-red-500/50 text-red-100'
-                : 'bg-red-50 border-red-200 text-red-800'
-            }`}>
+            <div className={`mb-4 p-4 rounded-lg border flex items-center ${theme === 'dark'
+              ? 'bg-red-900/40 border-red-500/50 text-red-100'
+              : 'bg-red-50 border-red-200 text-red-800'
+              }`}>
               <AlertCircle className="w-5 h-5 mr-3 shrink-0 text-red-500" />
               <span className="text-sm font-medium">{logoutError}</span>
             </div>
@@ -464,11 +453,10 @@ const FacilitiesManagerPage: React.FC = () => {
 
           {/* Error state - chỉ hiển thị ở dashboard vì cinemas tab đã có error handling riêng */}
           {error && activeTab === 'dashboard' && (
-            <div className={`mb-6 p-4 rounded-lg border flex items-center ${
-              theme === 'dark'
-                ? 'bg-red-900/40 border-red-500/50 text-red-100'
-                : 'bg-red-50 border-red-200 text-red-800'
-            }`}>
+            <div className={`mb-6 p-4 rounded-lg border flex items-center ${theme === 'dark'
+              ? 'bg-red-900/40 border-red-500/50 text-red-100'
+              : 'bg-red-50 border-red-200 text-red-800'
+              }`}>
               <AlertCircle className="w-5 h-5 mr-3 shrink-0 text-red-500" />
               <span className="text-sm font-medium">{error}</span>
             </div>

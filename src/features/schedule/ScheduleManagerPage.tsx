@@ -3,19 +3,26 @@ import { INITIAL_SCHEDULE, SEED_AUDITORIUMS, SEED_MOVIES } from './data/seed';
 import TimelineGrid from './components/TimelineGrid';
 import DraggableMovie from './components/DraggableMovie';
 import type { Movie, ScheduleData, ShowTimeSlot } from './types';
-import { Calendar, Copy, Repeat, Save } from 'lucide-react';
+import { Calendar, Copy, Repeat, Save, Menu, X, Film } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import TrashCan from './components/TrashCan';
 
-const ScheduleManagerPage: React.FC = () => {
+interface ScheduleManagerPageProps {
+    embedded?: boolean;
+}
+
+const ScheduleManagerPage: React.FC<ScheduleManagerPageProps> = ({ embedded = false }) => {
+    const { t } = useTranslation();
     const [scheduleData, setScheduleData] = useState<ScheduleData>(INITIAL_SCHEDULE);
     const [draggingMovie, setDraggingMovie] = useState<Movie | null>(null);
-    const [selectedFormat, setSelectedFormat] = useState<string>('All');
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+    const [selectedAuditoriumId, setSelectedAuditoriumId] = useState<string>(SEED_AUDITORIUMS[0]?.id || '');
+    const [selectedDate] = useState<Date>(new Date());
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // Derived state for filtering
-    const filteredAuditoriums = selectedFormat === 'All'
-        ? SEED_AUDITORIUMS
-        : SEED_AUDITORIUMS.filter(a => a.supportedFormats.includes(selectedFormat));
+    const activeAuditorium = SEED_AUDITORIUMS.find(a => a.id === selectedAuditoriumId);
+    const filteredAuditoriums = activeAuditorium ? [activeAuditorium] : [];
 
     // Handlers
     const handleAddSlot = (auditoriumId: string, slot: ShowTimeSlot) => {
@@ -95,69 +102,93 @@ const ScheduleManagerPage: React.FC = () => {
     };
 
     return (
-        <div className="h-screen flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 overflow-hidden">
+        <div className={`flex flex-col text-slate-900 dark:text-slate-100 overflow-hidden transition-colors duration-300 ${embedded ? 'flex-1 h-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 shadow-md' : 'h-screen bg-slate-50 dark:bg-slate-900'}`}>
             {/* Header */}
-            <header className="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 shadow-sm z-30">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-red-600 rounded-lg">
-                        <Calendar className="text-white w-6 h-6" />
+            <header className={`h-16 flex items-center justify-between px-4 sm:px-6 z-30 transition-colors duration-300 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm w-full shrink-0 overflow-x-auto scrollbar-hide`}>
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                    <button
+                        className="md:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    >
+                        {isSidebarOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
+                    </button>
+                    <div className="p-1.5 sm:p-2 bg-red-600 rounded-lg hidden sm:block">
+                        <Calendar className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    <h1 className="text-xl font-bold bg-gradient-to-r from-red-600 to-red-800 bg-clip-text text-transparent">
-                        Smart Cinema Scheduler
+                    <h1 className="text-base sm:text-xl font-bold bg-gradient-to-r from-red-600 to-red-800 bg-clip-text text-transparent hidden sm:block">
+                        {t('scheduleManager.title')}
                     </h1>
-                    <div className="ml-8 flex items-center bg-slate-100 dark:bg-slate-700 rounded-md px-3 py-1.5">
-                        <input
-                            type="date"
-                            className="bg-transparent border-none text-sm font-medium focus:ring-0 text-slate-700 dark:text-slate-200"
-                            value={selectedDate.toISOString().split('T')[0]}
-                            onChange={(e) => setSelectedDate(new Date(e.target.value))}
-                        />
-                    </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    {/* Format Filter */}
-                    <div className="flex items-center bg-slate-100 dark:bg-slate-700 rounded-lg p-1 mr-4">
-                        {['All', '2D', '3D', 'IMAX'].map(format => (
-                            <button
-                                key={format}
-                                onClick={() => setSelectedFormat(format)}
-                                className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${selectedFormat === format
-                                    ? 'bg-white dark:bg-slate-600 text-red-600 shadow-sm'
-                                    : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
-                                    }`}
-                            >
-                                {format}
-                            </button>
-                        ))}
+                <div className="flex items-center pl-2 gap-2 sm:gap-3 shrink-0">
+                    {/* Auditorium Selector */}
+                    <div className="flex items-center bg-slate-100 dark:bg-slate-700 rounded-lg p-1 sm:mr-2">
+                        <select
+                            className="bg-transparent border-none text-xs sm:text-sm font-bold focus:ring-0 text-slate-700 dark:text-slate-200 py-1 pl-2 pr-8 cursor-pointer"
+                            value={selectedAuditoriumId}
+                            onChange={(e) => setSelectedAuditoriumId(e.target.value)}
+                        >
+                            {SEED_AUDITORIUMS.map(aud => (
+                                <option key={aud.id} value={aud.id} className="text-slate-900 bg-white dark:text-slate-200 dark:bg-slate-700">{aud.name}</option>
+                            ))}
+                        </select>
                     </div>
 
-                    <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
-                        <Copy className="w-4 h-4" />
-                        Copy Day
-                    </button>
-                    <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
-                        <Repeat className="w-4 h-4" />
-                        Repeat Week
-                    </button>
-                    <div className="h-6 w-px bg-slate-300 dark:bg-slate-600 mx-2"></div>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg shadow-lg shadow-red-500/30 transition-all">
+                    <div className="hidden lg:block h-6 w-px bg-slate-300 dark:bg-slate-600 mx-1"></div>
+                    <button
+                        className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-bold rounded-lg shadow-lg shadow-red-500/30 transition-all shrink-0"
+                        onClick={() => {
+                            const slots = scheduleData.data.find(d => d.auditoriumId === selectedAuditoriumId)?.slots || [];
+                            const payload = {
+                                AuditoriumId: selectedAuditoriumId,
+                                Slots: slots.map(s => ({
+                                    MovieId: s.movieId,
+                                    FormatId: s.formatId,
+                                    StartedDate: s.start,
+                                    Duration: 120 // Should map movie length
+                                }))
+                            };
+                            console.log("TheaterManagerAddMovieSchedulesRequest:", payload);
+                            toast.success(t('scheduleManager.saveSuccess'), { duration: 3000 });
+                        }}
+                    >
                         <Save className="w-4 h-4" />
-                        Save Schedule
+                        <span className="hidden sm:inline">{t('scheduleManager.save')}</span>
                     </button>
                 </div>
             </header>
 
             {/* Main Content */}
-            <div className="flex flex-1 overflow-hidden">
+            <div
+                className="flex flex-1 overflow-hidden relative"
+                onDragEnd={() => setDraggingMovie(null)}
+            >
+                {/* Overlay for mobile */}
+                {isSidebarOpen && (
+                    <div
+                        className="absolute inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm"
+                        onClick={() => setIsSidebarOpen(false)}
+                    />
+                )}
+
                 {/* Sidebar - Movies */}
-                <aside className="w-80 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col z-20 shadow-xl">
-                    <div className="p-4 border-b border-slate-200 dark:border-slate-700">
-                        <h2 className="font-bold text-slate-700 dark:text-slate-200 mb-2">Available Movies</h2>
+                <aside className={`absolute inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 z-40 w-72 sm:w-80 flex flex-col transition-transform duration-300 ease-in-out bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 shadow-2xl md:shadow-xl`}>
+                    <div className={`p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between`}>
+                        <h2 className="font-bold text-slate-700 dark:text-slate-200 mb-2 flex items-center gap-2">
+                            <Film className="w-4 h-4 text-red-500" />
+                            {t('scheduleManager.dragMoviesTitle')}
+                        </h2>
+                        {isSidebarOpen && (
+                            <button className="md:hidden text-slate-400 hover:text-red-500" onClick={() => setIsSidebarOpen(false)}>
+                                <X className="w-5 h-5" />
+                            </button>
+                        )}
+                    </div>
+                    <div className="p-3">
                         <input
                             type="text"
-                            placeholder="Search movies..."
-                            className="w-full px-3 py-2 bg-slate-100 dark:bg-slate-900 border-none rounded-md text-sm ring-2 ring-transparent focus:ring-red-500 transition-all"
+                            placeholder={t('scheduleManager.search')}
+                            className="w-full px-3 py-2 bg-slate-100 dark:bg-slate-900 border-none rounded-md text-sm ring-2 ring-transparent focus:ring-red-500 transition-all text-slate-800 dark:text-slate-200"
                         />
                     </div>
 
@@ -167,19 +198,19 @@ const ScheduleManagerPage: React.FC = () => {
                                 key={movie.id}
                                 movie={movie}
                                 onDragStart={() => setDraggingMovie(movie)}
+                                onDragEnd={() => setDraggingMovie(null)}
                             />
                         ))}
                     </div>
 
-                    <div className="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500 text-center">
-                        Drag movies to the timeline to schedule.
+                    <div className={`p-4 border-t text-xs text-slate-500 text-center transition-colors duration-300 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700`}>
+                        {t('scheduleManager.dragMoviesDesc')}
                     </div>
                 </aside>
 
                 {/* Timeline Area */}
                 <main
-                    className="flex-1 overflow-hidden relative"
-                    onDragEnd={() => setDraggingMovie(null)}
+                    className="flex-1 overflow-hidden relative flex flex-col"
                 >
 
                     <TimelineGrid
@@ -190,7 +221,6 @@ const ScheduleManagerPage: React.FC = () => {
                         draggingMovie={draggingMovie}
                         onAddSlot={handleAddSlot}
                         onUpdateSlot={handleUpdateSlot}
-                        onDeleteSlot={handleDeleteSlot}
                         onMoveSlot={handleMoveSlot}
                     />
                     <TrashCan onDeleteSlot={handleDeleteSlot} />

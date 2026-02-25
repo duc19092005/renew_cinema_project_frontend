@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { Toaster } from 'react-hot-toast';
 import RegisterForm from './features/auth/RegisterForm';
 import LoginForm from './features/auth/LoginForm';
 import RoleSelectionPage from './features/auth/RoleSelectionPage';
@@ -9,10 +10,12 @@ import NotFound from './features/misc/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import AuthRedirect from './components/AuthRedirect';
 import ScheduleManagerPage from './features/schedule/ScheduleManagerPage';
+import TheaterManagerPage from './features/theater/TheaterManagerPage';
 
 function App() {
   return (
     <ThemeProvider>
+      <Toaster position="top-right" />
       <Router>
         <Routes>
           {/* Route root - check token và redirect */}
@@ -27,7 +30,7 @@ function App() {
           <Route path="/cashier" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
           <Route path="/movie-manager" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
-          <Route path="/theater-manager" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+          <Route path="/theater-manager" element={<ProtectedRoute requiredRole="TheaterManager"><TheaterManagerPage /></ProtectedRoute>} />
           <Route path="/facilities-manager" element={<ProtectedRoute requiredRole="FacilitiesManager"><FacilitiesManagerPage /></ProtectedRoute>} />
           <Route path="/schedule" element={<ScheduleManagerPage />} />
 

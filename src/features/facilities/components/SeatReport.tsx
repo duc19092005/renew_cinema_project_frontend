@@ -47,7 +47,7 @@ const SeatReport: React.FC = () => {
           <h1 className={`text-3xl font-black mb-2 border-l-4 border-red-600 pl-4 ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>
-            Báo cáo ghế
+            Seat Report
           </h1>
           <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
             Theo dõi và phân tích tình trạng sử dụng ghế
@@ -70,7 +70,7 @@ const SeatReport: React.FC = () => {
           </select>
           <button className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors">
             <Download className="w-5 h-5" />
-            Xuất báo cáo
+            Export Report
           </button>
         </div>
       </div>
@@ -170,7 +170,7 @@ const SeatReport: React.FC = () => {
         <h2 className={`text-xl font-bold mb-6 border-l-4 border-red-600 pl-4 ${
           theme === 'dark' ? 'text-white' : 'text-gray-900'
         }`}>
-          Lịch sử báo cáo
+          Report History
         </h2>
         <div className="space-y-4">
           {reports.map((report) => (

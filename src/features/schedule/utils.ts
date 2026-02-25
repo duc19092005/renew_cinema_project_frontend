@@ -1,18 +1,24 @@
-import type { AuditoriumSchedule, ShowTimeSlot } from './types';
+import type { ShowTimeSlot } from './types';
 
-export const START_HOUR = 8;
-export const END_HOUR = 24;
-export const TOTAL_HOURS = END_HOUR - START_HOUR;
-export const PIXELS_PER_HOUR = 60; // 1 min = 1px for high resolution, or 1 hour = 100px? Let's say 1 hour = 120px (2px per min) for better granularity
+// Cinema operating day: 7:00 AM → 2:00 AM next day (19 hours continuous)
+export const START_HOUR = 7;   // 7:00 AM
+export const END_HOUR = 26;    // 2:00 AM next day (24 + 2 = 26)
+export const TOTAL_HOURS = END_HOUR - START_HOUR; // 19 hours
+export const PIXELS_PER_HOUR = 60;
 export const PIXELS_PER_MIN = 2;
 
 export const getPixelsFromTime = (dateStr: string): number => {
     const date = new Date(dateStr);
-    const hours = date.getHours();
+    let hours = date.getHours();
     const minutes = date.getMinutes();
 
-    if (hours < START_HOUR) return 0; // Or handle previous day? For now assume single day view logic mostly
-    if (hours >= END_HOUR && minutes > 0) return TOTAL_HOURS * 60 * PIXELS_PER_MIN;
+    // Hours 0, 1, 2 (after midnight) are treated as 24, 25, 26 for continuity
+    if (hours < START_HOUR) {
+        hours += 24;
+    }
+
+    if (hours < START_HOUR) return 0;
+    if (hours >= END_HOUR) return TOTAL_HOURS * 60 * PIXELS_PER_MIN;
 
     const totalMinutesFromStart = (hours - START_HOUR) * 60 + minutes;
     return totalMinutesFromStart * PIXELS_PER_MIN;
@@ -26,6 +32,7 @@ export const getTimeFromPixels = (pixels: number, baseDate: Date): Date => {
     const minutes = totalMinutes % 60;
 
     const newDate = new Date(baseDate);
+    // setHours handles values >= 24 by rolling to next day automatically
     newDate.setHours(hours, minutes, 0, 0);
     return newDate;
 };
@@ -45,7 +52,6 @@ export const checkCollision = (
         const slotStart = new Date(slot.start).getTime();
         const slotEnd = new Date(slot.end).getTime();
 
-        // (StartA < EndB) && (EndA > StartB)
         return (newStartMs < slotEnd) && (newEndMs > slotStart);
     });
 };
@@ -54,7 +60,6 @@ export const calculateEndTime = (startDate: Date, durationMinutes: number, clean
     return new Date(startDate.getTime() + (durationMinutes + cleaningTimeMinutes) * 60000);
 };
 
-// Helper for formatting
 export const formatTime = (dateStr: string) => {
     const d = new Date(dateStr);
     return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });

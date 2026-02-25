@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, ChevronDown, LogOut, Settings, UserCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { User, ChevronDown, LogOut, Settings, UserCircle, AlertCircle, ArrowLeftRight } from 'lucide-react';
 import axios from 'axios';
 import { authApi } from '../../api/authApi';
 import type { ApiErrorResponse } from '../../types/auth.types';
@@ -8,7 +8,7 @@ import LogoutModal from '../../components/LogoutModal';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<{ username: string } | null>(null);
+  const [user, setUser] = useState<{ username: string; roles?: string[]; selectedRole?: string } | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [logoutError, setLogoutError] = useState<string | null>(null);
@@ -65,7 +65,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans">
-      
+
       {/* --- HEADER --- */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800 h-16 flex items-center justify-between px-6 shadow-lg">
         {/* Logo bên trái */}
@@ -83,12 +83,12 @@ const HomePage: React.FC = () => {
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center shadow-red-glow">
               <User className="w-5 h-5 text-white" />
             </div>
-            
+
             {/* Username */}
             <span className="hidden sm:block font-bold text-sm text-gray-200">
               {user?.username || 'Guest'}
             </span>
-            
+
             {/* Chevron Icon */}
             <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
@@ -106,15 +106,25 @@ const HomePage: React.FC = () => {
                   <UserCircle className="w-4 h-4" />
                   Account Information
                 </button>
-                
+
                 <button className="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-gray-800 hover:text-red-500 flex items-center gap-3 transition-colors">
                   <Settings className="w-4 h-4" />
                   Change Password
                 </button>
-                
+
+                {user?.roles && user.roles.length > 1 && (
+                  <button
+                    onClick={() => navigate('/role-selection')}
+                    className="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-gray-800 hover:text-blue-500 flex items-center gap-3 transition-colors"
+                  >
+                    <ArrowLeftRight className="w-4 h-4" />
+                    Switch Role
+                  </button>
+                )}
+
                 <div className="border-t border-gray-800 mt-1"></div>
-                
-                <button 
+
+                <button
                   onClick={handleLogoutClick}
                   className="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-900/20 hover:text-red-400 flex items-center gap-3 transition-colors font-bold"
                 >
@@ -143,19 +153,19 @@ const HomePage: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {/* Demo Cards */}
           {[1, 2, 3, 4, 5].map((i) => (
-             <div key={i} className="bg-gray-900 rounded-xl overflow-hidden shadow-lg border border-gray-800 hover:border-red-600 transition-all hover:-translate-y-1 cursor-pointer group">
-               <div className="aspect-[2/3] bg-gray-800 relative">
-                  <img 
-                    src={`https://images.unsplash.com/photo-${i === 1 ? '1536440136628-849c177e76a1' : '1489599849927-2ee91cede3ba'}?auto=format&fit=crop&w=500`} 
-                    className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" 
-                    alt="Movie Poster" 
-                  />
-               </div>
-               <div className="p-4">
-                 <h3 className="font-bold text-white truncate">Movie Title {i}</h3>
-                 <p className="text-gray-500 text-xs mt-1">Action • 2h 15m</p>
-               </div>
-             </div>
+            <div key={i} className="bg-gray-900 rounded-xl overflow-hidden shadow-lg border border-gray-800 hover:border-red-600 transition-all hover:-translate-y-1 cursor-pointer group">
+              <div className="aspect-[2/3] bg-gray-800 relative">
+                <img
+                  src={`https://images.unsplash.com/photo-${i === 1 ? '1536440136628-849c177e76a1' : '1489599849927-2ee91cede3ba'}?auto=format&fit=crop&w=500`}
+                  className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity"
+                  alt="Movie Poster"
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="font-bold text-white truncate">Movie Title {i}</h3>
+                <p className="text-gray-500 text-xs mt-1">Action • 2h 15m</p>
+              </div>
+            </div>
           ))}
         </div>
       </main>

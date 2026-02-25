@@ -1,12 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { Auditorium, ScheduleData, Movie, ShowTimeSlot } from '../types';
 import {
     getPixelsFromTime,
     getTimeFromPixels,
     checkCollision,
-    calculateEndTime,
     formatTime,
     START_HOUR,
+    END_HOUR,
     TOTAL_HOURS,
     PIXELS_PER_MIN
 } from '../utils';
@@ -14,14 +14,31 @@ import {
 interface TimelineGridProps {
     auditoriums: Auditorium[];
     scheduleData: ScheduleData;
-    movies: Movie[]; // Needed to lookup movie details for slots
-    draggingMovie: Movie | null; // The movie currently being dragged from sidebar
+    movies: Movie[];
+    draggingMovie: Movie | null;
     selectedDate: Date;
     onAddSlot: (auditoriumId: string, slot: ShowTimeSlot) => void;
     onUpdateSlot: (auditoriumId: string, slotId: string, updates: Partial<ShowTimeSlot>) => void;
-    onDeleteSlot: (auditoriumId: string, slotId: string) => void;
     onMoveSlot: (fromAuditoriumId: string, toAuditoriumId: string, slot: ShowTimeSlot) => void;
 }
+
+// Helper: format local date as YYYY-MM-DD without timezone issues
+const toLocalDateKey = (d: Date): string => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
+// Helper: get the "logical date" for a slot. 
+// Late-night slots (0:00-2:00 AM) visually belong to the PREVIOUS day's column.
+const getLogicalDateKey = (slotStart: string): string => {
+    const d = new Date(slotStart);
+    if (d.getHours() < START_HOUR) {
+        d.setDate(d.getDate() - 1);
+    }
+    return toLocalDateKey(d);
+};
 
 const TimelineGrid: React.FC<TimelineGridProps> = ({
     auditoriums,
@@ -31,20 +48,23 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
     selectedDate,
     onAddSlot,
     onUpdateSlot,
-    onDeleteSlot,
     onMoveSlot
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const lastMousePosRef = useRef<{ x: number; y: number } | null>(null);
+    const isDraggingRef = useRef(false);
+
     const [ghost, setGhost] = useState<{
+        columnId: string;
         auditoriumId: string;
         start: Date;
         end: Date;
         valid: boolean;
+        invalidReason: string;
         top: number;
         height: number;
     } | null>(null);
 
-    // For resizing
     const [resizingSlot, setResizingSlot] = useState<{
         auditoriumId: string;
         slotId: string;
@@ -53,38 +73,66 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
         start: Date;
     } | null>(null);
 
-    // For moving existing slots
     const [movingSlot, setMovingSlot] = useState<{
         originalAuditoriumId: string;
         slot: ShowTimeSlot;
         movie: Movie;
-        offsetX: number; // Offset from top of block
+        offsetX: number;
     } | null>(null);
 
-
     const TOTAL_HEIGHT = TOTAL_HOURS * 60 * PIXELS_PER_MIN;
+    const TOP_OFFSET = 20;
+    const BOTTOM_OFFSET = 20;
 
-    const handleDragOver = (e: React.DragEvent, auditoriumId: string) => {
+    const activeAuditorium = auditoriums[0];
+
+    // Calculate days to show: from today through end of next week
+    const today = new Date(selectedDate);
+    today.setHours(0, 0, 0, 0);
+    const currentDayOfWeek = today.getDay();
+    const daysToSunday = currentDayOfWeek === 0 ? 0 : 7 - currentDayOfWeek;
+    const totalDaysToShow = daysToSunday + 7 + 1;
+
+    const weekDays = Array.from({ length: totalDaysToShow }).map((_, i) => {
+        const d = new Date(today);
+        d.setDate(d.getDate() + i);
+        return d;
+    });
+
+    // Track drag state
+    useEffect(() => {
+        isDraggingRef.current = !!(draggingMovie || movingSlot);
+    }, [draggingMovie, movingSlot]);
+
+    // Throttled handleDragOver
+    const lastDragOverTime = useRef(0);
+
+    const handleDragOver = useCallback((e: React.DragEvent, auditoriumId: string, targetDate: Date) => {
         e.preventDefault();
         if (!draggingMovie && !movingSlot) return;
 
-        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-        let offsetY = e.clientY - rect.top + (e.currentTarget as HTMLElement).scrollTop;
+        lastMousePosRef.current = { x: e.clientX, y: e.clientY };
 
-        // Adjust for internal offset if moving an existing slot
+        // Throttle: 50ms
+        const now = Date.now();
+        if (now - lastDragOverTime.current < 50) return;
+        lastDragOverTime.current = now;
+
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        let offsetY = e.clientY - rect.top;
+
         if (movingSlot) {
             offsetY -= movingSlot.offsetX;
         }
 
-        // Snap to 5 minutes?
+        offsetY -= (40 + TOP_OFFSET);
+
         const rawMinutes = offsetY / PIXELS_PER_MIN;
         const snappedMinutes = Math.round(rawMinutes / 10) * 10;
-        const snappedPixel = snappedMinutes * PIXELS_PER_MIN;
+        const snappedPixel = Math.max(0, Math.min(snappedMinutes * PIXELS_PER_MIN, TOTAL_HEIGHT));
 
-        // Calculate times
-        // Base date is just a reference, e.g., Today
-        const baseDate = new Date(selectedDate);
-        baseDate.setHours(START_HOUR, 0, 0, 0); // Base 08:00
+        const baseDate = new Date(targetDate);
+        baseDate.setHours(START_HOUR, 0, 0, 0);
 
         const startTimeLocal = getTimeFromPixels(snappedPixel, baseDate);
 
@@ -93,55 +141,60 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
 
         if (draggingMovie) {
             duration = draggingMovie.durationMinutes;
-            // Default to first format of movie or check auditorium compatibility??
-            // For simplicity let's pick the first compatible format or just the first format
             format = draggingMovie.formats[0];
         } else if (movingSlot) {
-            // Calculate duration based on existing slot
             const s = new Date(movingSlot.slot.start);
-            const e = new Date(movingSlot.slot.end);
-            duration = (e.getTime() - s.getTime()) / 60000;
+            const en = new Date(movingSlot.slot.end);
+            duration = (en.getTime() - s.getTime()) / 60000;
             format = movingSlot.slot.formatId;
-
-            // Adjust start time based on grab offset if we want precise dragging, 
-            // but for now let's just snap the top to the cursor for simplicity or center it? 
-            // Actually, usually we want the top to snap.
         }
 
-        // Cleaning time is handled in calculateEndTime if it's a new slot. 
-        // If moving, we might want to preserve exact duration including cleaning time?
-        // Let's re-calculate end based on duration (cleaning included in 'duration' calculation logic?)
-        // The user requirement says: "Auto set (Duration + Cleaning)".
-        // So if draggingMovie, we add cleaning. If movingSlot, we keep its duration (which presumably includes cleaning).
-
         const cleaning = draggingMovie ? 20 : 0;
-        // If moving, we assume the slot duration stays same.
         const effectiveDuration = draggingMovie ? (duration + cleaning) : duration;
-
         const endTimeLocal = new Date(startTimeLocal.getTime() + effectiveDuration * 60000);
 
-        // Check collision
+        // End pixel check
+        const endPixel = snappedPixel + effectiveDuration * PIXELS_PER_MIN;
+        const isOutOfBounds = endPixel > TOTAL_HEIGHT;
+
+        // Collision check
         const relevantSchedule = scheduleData.data.find(d => d.auditoriumId === auditoriumId);
         const existingSlots = relevantSchedule ? relevantSchedule.slots : [];
-
-        // If moving, exclude itself
         const excludeId = movingSlot ? movingSlot.slot.id : undefined;
-
         const isColliding = checkCollision(startTimeLocal, endTimeLocal, existingSlots, excludeId);
 
-        // Format compatibility check
+        // Format compatibility
         const aud = auditoriums.find(a => a.id === auditoriumId);
         const isFormatCompatible = aud?.supportedFormats.includes(format);
 
+        // Validity
+        let invalidReason = '';
+        let isValid = true;
+
+        if (isOutOfBounds) {
+            isValid = false;
+            invalidReason = '⚠ Exceeds 02:00 AM';
+        } else if (isColliding) {
+            isValid = false;
+            invalidReason = '❌ Collides!';
+        } else if (!isFormatCompatible) {
+            isValid = false;
+            invalidReason = '⚠ Format mismatch';
+        }
+
+        const columnId = `${auditoriumId}-${toLocalDateKey(targetDate)}`;
+
         setGhost({
+            columnId,
             auditoriumId,
             start: startTimeLocal,
             end: endTimeLocal,
-            valid: !isColliding && !!isFormatCompatible,
+            valid: isValid,
+            invalidReason,
             top: snappedPixel,
-            height: effectiveDuration * PIXELS_PER_MIN
+            height: Math.min(effectiveDuration * PIXELS_PER_MIN, TOTAL_HEIGHT - snappedPixel)
         });
-    };
+    }, [draggingMovie, movingSlot, auditoriums, scheduleData, TOP_OFFSET, TOTAL_HEIGHT]);
 
     const handleDrop = (e: React.DragEvent, auditoriumId: string) => {
         e.preventDefault();
@@ -157,11 +210,10 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
                 formatId: draggingMovie.formats.find(f => auditoriums.find(a => a.id === auditoriumId)?.supportedFormats.includes(f)) || draggingMovie.formats[0],
                 start: ghost.start.toISOString(),
                 end: ghost.end.toISOString(),
-                price: 100 // default
+                price: 100
             };
             onAddSlot(auditoriumId, newSlot);
         } else if (movingSlot) {
-            // Luôn dùng onMoveSlot (một lần cập nhật) để tránh duplicate khi chuyển phòng/ngày
             const updatedSlot: ShowTimeSlot = {
                 ...movingSlot.slot,
                 start: ghost.start.toISOString(),
@@ -172,44 +224,79 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
 
         setGhost(null);
         setMovingSlot(null);
+        lastMousePosRef.current = null;
     };
 
     const handleDragLeave = () => {
         setGhost(null);
     };
 
+    // Auto-Scroll via requestAnimationFrame
+    useEffect(() => {
+        if (!draggingMovie && !movingSlot) return;
+
+        let animationFrame: number | null = null;
+
+        const checkScroll = () => {
+            if (lastMousePosRef.current) {
+                const container = containerRef.current;
+                if (container) {
+                    const containerRect = container.getBoundingClientRect();
+                    const threshold = 120;
+                    const pos = lastMousePosRef.current;
+
+                    if (pos.y > containerRect.bottom - threshold) {
+                        const distance = Math.min(threshold, pos.y - (containerRect.bottom - threshold));
+                        container.scrollTop += 5 + (distance / threshold) * 25;
+                    } else if (pos.y < containerRect.top + threshold) {
+                        const distance = Math.min(threshold, (containerRect.top + threshold) - pos.y);
+                        container.scrollTop -= 5 + (distance / threshold) * 25;
+                    }
+
+                    if (pos.x > containerRect.right - threshold) {
+                        const distance = Math.min(threshold, pos.x - (containerRect.right - threshold));
+                        container.scrollLeft += 5 + (distance / threshold) * 25;
+                    } else if (pos.x < containerRect.left + threshold) {
+                        const distance = Math.min(threshold, (containerRect.left + threshold) - pos.x);
+                        container.scrollLeft -= 5 + (distance / threshold) * 25;
+                    }
+                }
+            }
+            animationFrame = requestAnimationFrame(checkScroll);
+        };
+
+        animationFrame = requestAnimationFrame(checkScroll);
+        return () => { if (animationFrame) cancelAnimationFrame(animationFrame); };
+    }, [draggingMovie, movingSlot]);
+
+    // Mouse wheel scroll during drag
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const handleWheel = (e: WheelEvent) => {
+            if (isDraggingRef.current) {
+                e.preventDefault();
+                container.scrollTop += e.deltaY;
+                container.scrollLeft += e.deltaX;
+            }
+        };
+
+        container.addEventListener('wheel', handleWheel, { passive: false });
+        return () => container.removeEventListener('wheel', handleWheel);
+    }, []);
+
     // Resize Logic
     useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            if (!resizingSlot) return;
-
-            const deltaY = e.clientY - resizingSlot.initialY;
-            const newHeight = Math.max(30, resizingSlot.initialHeight + deltaY); // Min height 30px
-
-            // Calculate new end time
-            const durationMinutes = newHeight / PIXELS_PER_MIN;
-            const newEnd = new Date(resizingSlot.start.getTime() + durationMinutes * 60000);
-
-            // TODO: Collision check during resize?
-            // Ideally yes.
-
-            // For now just update visual? 
-            // We can't update visual easily without updating state or a local ghost for resizer.
-            // We will just commit on MouseUp for simplicity in this MVP turn.
-        };
+        const handleMouseMove = () => { if (!resizingSlot) return; };
 
         const handleMouseUp = (e: MouseEvent) => {
             if (!resizingSlot) return;
-
             const deltaY = e.clientY - resizingSlot.initialY;
             const newHeight = Math.max(30, resizingSlot.initialHeight + deltaY);
             const durationMinutes = newHeight / PIXELS_PER_MIN;
             const newEnd = new Date(resizingSlot.start.getTime() + durationMinutes * 60000);
-
-            onUpdateSlot(resizingSlot.auditoriumId, resizingSlot.slotId, {
-                end: newEnd.toISOString()
-            });
-
+            onUpdateSlot(resizingSlot.auditoriumId, resizingSlot.slotId, { end: newEnd.toISOString() });
             setResizingSlot(null);
             document.body.style.cursor = 'default';
         };
@@ -227,103 +314,138 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
         };
     }, [resizingSlot, onUpdateSlot]);
 
-
     return (
-        <div className="flex h-full select-none" ref={containerRef}>
-            {/* Time Ruler */}
-            <div className="w-16 flex-shrink-0 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 relative" style={{ height: TOTAL_HEIGHT + 40 }}>
-                {/* +40 for header space */}
-                <div className="h-10 border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 sticky top-0 z-20"></div>
-                {Array.from({ length: TOTAL_HOURS }).map((_, i) => (
-                    <div key={i} className="absolute w-full text-right pr-2 text-xs text-slate-400 border-t border-slate-200 dark:border-slate-800" style={{ top: i * 60 * PIXELS_PER_MIN + 40, height: 60 * PIXELS_PER_MIN }}>
-                        <span className="-translate-y-1/2 block">{START_HOUR + i}:00</span>
-                    </div>
-                ))}
-            </div>
+        <div
+            className="flex-1 overflow-auto custom-scrollbar relative select-none bg-slate-50 dark:bg-slate-900"
+            ref={containerRef}
+            onDragOver={(e) => {
+                e.preventDefault();
+                lastMousePosRef.current = { x: e.clientX, y: e.clientY };
+            }}
+            onDrop={() => { lastMousePosRef.current = null; }}
+        >
+            <div className="flex min-w-max relative min-h-full" style={{ height: TOTAL_HEIGHT + 40 + TOP_OFFSET + BOTTOM_OFFSET }}>
+                {/* Time Ruler */}
+                <div className="w-16 flex-shrink-0 sticky left-0 z-30 transition-colors duration-300 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
+                    <div className="h-10 sticky top-0 z-40 transition-colors duration-300 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800"></div>
+                    {Array.from({ length: TOTAL_HOURS + 1 }).map((_, i) => {
+                        const rawHour = START_HOUR + i;
+                        const displayHour = rawHour % 24;
+                        const label = `${String(displayHour).padStart(2, '0')}:00`;
+                        const isPastMidnight = rawHour >= 24;
+                        return (
+                            <div
+                                key={i}
+                                className={`absolute w-full text-right pr-2 text-xs transition-colors duration-300 border-t border-slate-200 dark:border-slate-800 ${isPastMidnight ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`}
+                                style={{ top: i * 60 * PIXELS_PER_MIN + 40 + TOP_OFFSET, height: 60 * PIXELS_PER_MIN }}
+                            >
+                                <span className="-translate-y-2 block bg-slate-50 dark:bg-slate-900 px-1 inline-block">{label}</span>
+                            </div>
+                        );
+                    })}
+                </div>
 
-            {/* Auditorium Columns */}
-            <div className="flex flex-1 overflow-x-auto">
-                {auditoriums.map(aud => {
+                {/* Days Columns */}
+                {activeAuditorium && weekDays.map((dateObj) => {
+                    const aud = activeAuditorium;
+                    const dateString = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' });
+                    const dateKey = toLocalDateKey(dateObj);
+                    const columnId = `${aud.id}-${dateKey}`;
+
                     const schedule = scheduleData.data.find(d => d.auditoriumId === aud.id);
                     const allSlots = schedule ? schedule.slots : [];
-                    const slots = allSlots.filter(s => {
-                        const d = new Date(s.start);
-                        return d.getFullYear() === selectedDate.getFullYear() &&
-                            d.getMonth() === selectedDate.getMonth() &&
-                            d.getDate() === selectedDate.getDate();
-                    });
+                    // Slots whose "logical day" matches this column's day
+                    const slots = allSlots.filter(s => getLogicalDateKey(s.start) === dateKey);
 
                     return (
                         <div
-                            key={aud.id}
-                            className="min-w-[200px] flex-1 border-r border-slate-200 dark:border-slate-800 relative bg-white dark:bg-slate-950/50 group"
-                            onDragOver={(e) => handleDragOver(e, aud.id)}
+                            key={columnId}
+                            className="min-w-[200px] flex-1 relative group transition-colors duration-300 bg-white dark:bg-slate-950/50 border-r border-slate-200 dark:border-slate-800"
+                            onDragOver={(e) => handleDragOver(e, aud.id, dateObj)}
                             onDrop={(e) => handleDrop(e, aud.id)}
                             onDragLeave={handleDragLeave}
                         >
                             {/* Header */}
-                            <div className="h-10 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex items-center justify-center font-bold text-sm text-slate-700 dark:text-slate-200 sticky top-0 z-10 px-2 text-center">
-                                {aud.name}
+                            <div className="h-10 flex items-center justify-center font-bold text-sm sticky top-0 z-10 px-2 text-center transition-colors duration-300 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200">
+                                {dateString}
                             </div>
 
-                            {/* Grid Lines */}
-                            <div className="relative" style={{ height: TOTAL_HEIGHT }}>
-                                {Array.from({ length: TOTAL_HOURS }).map((_, i) => (
-                                    <div key={i} className="absolute w-full border-t border-dashed border-slate-100 dark:border-slate-800/50 pointer-events-none" style={{ top: i * 60 * PIXELS_PER_MIN, height: 60 * PIXELS_PER_MIN }}></div>
-                                ))}
+                            {/* Grid Content */}
+                            <div className="relative min-h-full" style={{ height: TOTAL_HEIGHT + TOP_OFFSET + BOTTOM_OFFSET }}>
+                                {/* Grid hour lines */}
+                                {Array.from({ length: TOTAL_HOURS }).map((_, i) => {
+                                    const rawHour = START_HOUR + i;
+                                    const isPastMidnight = rawHour >= 24;
+                                    return (
+                                        <div
+                                            key={i}
+                                            className={`absolute w-full border-t border-dashed pointer-events-none ${isPastMidnight ? 'border-indigo-200/50 dark:border-indigo-900/30' : 'border-slate-100 dark:border-slate-800/50'}`}
+                                            style={{ top: i * 60 * PIXELS_PER_MIN + TOP_OFFSET, height: 60 * PIXELS_PER_MIN }}
+                                        >
+                                        </div>
+                                    );
+                                })}
+
+                                {/* Midnight divider line */}
+                                {(() => {
+                                    const midnightPixel = (24 - START_HOUR) * 60 * PIXELS_PER_MIN + TOP_OFFSET;
+                                    return (
+                                        <div
+                                            className="absolute left-0 right-0 border-t-2 border-dashed border-indigo-400/40 dark:border-indigo-500/30 pointer-events-none z-[2]"
+                                            style={{ top: midnightPixel }}
+                                        >
+                                            <span className="absolute right-1 -top-3 text-[10px] font-semibold text-indigo-400 dark:text-indigo-500 bg-white dark:bg-slate-950 px-1 rounded">
+                                                midnight
+                                            </span>
+                                        </div>
+                                    );
+                                })()}
 
                                 {/* Slots */}
                                 {slots.map(slot => {
                                     const movie = movies.find(m => m.id === slot.movieId);
-                                    const top = getPixelsFromTime(slot.start);
-                                    const bottom = getPixelsFromTime(slot.end);
+                                    const top = getPixelsFromTime(slot.start) + TOP_OFFSET;
+                                    const bottom = getPixelsFromTime(slot.end) + TOP_OFFSET;
                                     const height = bottom - top;
 
                                     return (
                                         <div
                                             key={slot.id}
                                             className="absolute left-1 right-1 rounded-md shadow-sm border border-black/10 overflow-hidden text-xs p-1 text-white hover:z-20 transition-all cursor-move"
-                                            style={{
-                                                top,
-                                                height,
-                                                backgroundColor: movie?.color || '#64748b'
-                                            }}
+                                            style={{ top, height, backgroundColor: movie?.color || '#64748b' }}
                                             draggable
                                             onDragStart={(e) => {
-                                                // Calculate offset from the top of the element to the mouse position
                                                 const rect = e.currentTarget.getBoundingClientRect();
                                                 const offsetY = e.clientY - rect.top;
-
                                                 setMovingSlot({
                                                     originalAuditoriumId: aud.id,
                                                     slot,
                                                     movie: movie!,
                                                     offsetX: offsetY
                                                 });
-
-                                                // Create a transparent drag image
                                                 const img = new Image();
                                                 img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
                                                 e.dataTransfer.setDragImage(img, 0, 0);
-
-                                                // Set data for TrashCan or inter-window drag
                                                 e.dataTransfer.setData('application/json', JSON.stringify({
                                                     type: 'SLOT',
                                                     auditoriumId: aud.id,
                                                     slotId: slot.id
                                                 }));
                                             }}
+                                            onDragEnd={() => {
+                                                setMovingSlot(null);
+                                                lastMousePosRef.current = null;
+                                                setGhost(null);
+                                            }}
                                         >
                                             <div className="font-bold truncate">{movie?.title || 'Unknown Movie'}</div>
                                             <div className="opacity-90">{formatTime(slot.start)} - {formatTime(slot.end)}</div>
                                             <div className="mt-1 opacity-75">{slot.formatId}</div>
-
-                                            {/* Resize Handle */}
                                             <div
                                                 className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-black/20"
                                                 onMouseDown={(e) => {
                                                     e.stopPropagation();
-                                                    e.preventDefault(); // Stop drag start
+                                                    e.preventDefault();
                                                     setResizingSlot({
                                                         auditoriumId: aud.id,
                                                         slotId: slot.id,
@@ -338,16 +460,16 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
                                 })}
 
                                 {/* Ghost Block */}
-                                {ghost && ghost.auditoriumId === aud.id && (
+                                {ghost && ghost.columnId === columnId && (
                                     <div
                                         className={`absolute left-1 right-1 rounded-md border-2 border-dashed flex items-center justify-center text-sm font-bold z-30 pointer-events-none
-                            ${ghost.valid
+                                            ${ghost.valid
                                                 ? 'bg-green-500/20 border-green-500 text-green-700 dark:text-green-300'
                                                 : 'bg-red-500/20 border-red-500 text-red-700 dark:text-red-300'
                                             }`}
-                                        style={{ top: ghost.top, height: ghost.height }}
+                                        style={{ top: ghost.top + TOP_OFFSET, height: ghost.height }}
                                     >
-                                        {ghost.valid ? formatTime(ghost.start.toISOString()) : 'Collides!'}
+                                        {ghost.valid ? formatTime(ghost.start.toISOString()) : ghost.invalidReason}
                                     </div>
                                 )}
                             </div>

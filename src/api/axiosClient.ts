@@ -10,6 +10,18 @@ const axiosClient = axios.create({
   timeout: 10000, // 10 giây
 });
 
+// Interceptor để tự động gắn X-Language vào Header
+axiosClient.interceptors.request.use(
+  (config) => {
+    const currentLanguage = localStorage.getItem('language') || 'en';
+    config.headers['X-Language'] = currentLanguage;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Interceptor để log response headers (đặc biệt là Set-Cookie)
 axiosClient.interceptors.response.use(
   (response) => {

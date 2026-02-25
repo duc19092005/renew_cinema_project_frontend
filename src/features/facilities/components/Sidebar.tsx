@@ -1,6 +1,7 @@
 import React from 'react';
-import { LayoutDashboard, Building2, BarChart3, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Building2, BarChart3, Menu, X, Languages } from 'lucide-react';
 import { useTheme } from '../../../contexts/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 interface SidebarProps {
   activeTab: string;
@@ -11,78 +12,88 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onToggle }) => {
   const { theme } = useTheme();
+  const { t, i18n } = useTranslation();
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'cinemas', label: 'Cinema Management', icon: Building2 },
-    { id: 'seat-reports', label: 'Seat Reports', icon: BarChart3 },
+    { id: 'dashboard', label: t('sidebar.dashboard'), icon: LayoutDashboard },
+    { id: 'cinemas', label: t('sidebar.cinemas'), icon: Building2 },
+    { id: 'seat-reports', label: t('sidebar.rooms', 'Seat Reports'), icon: BarChart3 },
   ];
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      <button
-        onClick={onToggle}
-        className={`lg:hidden fixed top-4 left-4 z-50 p-2 border rounded-lg transition-colors ${
-          theme === 'dark'
+      {/* Mobile Menu Button - Chỉ hiện khi Sidebar đóng */}
+      {!isOpen && (
+        <button
+          onClick={onToggle}
+          className={`lg:hidden fixed top-3 left-4 z-[60] p-2 border rounded-lg transition-colors ${theme === 'dark'
             ? 'bg-gray-900 border-gray-700 text-white hover:bg-gray-800'
             : theme === 'web3'
               ? 'bg-purple-900/90 border-purple-500/30 text-white hover:bg-purple-800/90 backdrop-blur-xl'
               : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-        }`}
-        aria-label="Toggle menu"
-      >
-        {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
+            }`}
+          aria-label="Open menu"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+      )}
 
       {/* Overlay cho mobile */}
       {isOpen && (
         <div
-          className={`lg:hidden fixed inset-0 z-40 ${
-            theme === 'dark' 
-              ? 'bg-black/50' 
-              : theme === 'web3'
-                ? 'bg-purple-950/60'
-                : 'bg-black/30'
-          }`}
+          className={`lg:hidden fixed inset-0 z-50 ${theme === 'dark'
+            ? 'bg-black/50'
+            : theme === 'web3'
+              ? 'bg-purple-950/60'
+              : 'bg-black/30'
+            }`}
           onClick={onToggle}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full border-r z-40 transition-all duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 w-64 ${
-          theme === 'dark'
+        className={`fixed top-0 left-0 h-full border-r z-[60] transition-all duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
+          } lg:translate-x-0 w-64 ${theme === 'dark'
             ? 'bg-gray-900 border-gray-800'
             : theme === 'web3'
               ? 'bg-gradient-to-b from-purple-900/95 via-indigo-900/95 to-cyan-900/95 border-purple-500/30 backdrop-blur-xl'
               : 'bg-white border-gray-200'
-        }`}
+          }`}
       >
         <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className={`p-6 border-b ${
-            theme === 'dark' 
-              ? 'border-gray-800' 
-              : theme === 'web3'
-                ? 'border-purple-500/30'
-                : 'border-gray-200'
-          }`}>
-            <div className={`text-xl font-black tracking-widest uppercase ${
-              theme === 'web3'
+          {/* Logo & Close */}
+          <div className={`p-6 border-b flex items-center justify-between ${theme === 'dark'
+            ? 'border-gray-800'
+            : theme === 'web3'
+              ? 'border-purple-500/30'
+              : 'border-gray-200'
+            }`}>
+            <div>
+              <div className={`text-xl font-black tracking-widest uppercase ${theme === 'web3'
                 ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400'
                 : 'text-red-600'
-            }`}>
-              CINEMA<span className={theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}>PRO</span>
-            </div>
-            <p className={`text-xs mt-1 ${
-              theme === 'dark' 
-                ? 'text-gray-400' 
+                }`}>
+                CINEMA<span className={theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}>PRO</span>
+              </div>
+              <p className={`text-xs mt-1 ${theme === 'dark'
+                ? 'text-gray-400'
                 : theme === 'web3'
                   ? 'text-purple-200'
                   : 'text-gray-600'
-            }`}>Facilities Manager</p>
+                }`}>{t('sidebar.facilitiesManager')}</p>
+            </div>
+            <button
+              onClick={onToggle}
+              className={`lg:hidden p-2 -mr-2 rounded-lg transition-colors ${theme === 'dark'
+                ? 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                : theme === 'web3'
+                  ? 'text-purple-300 hover:bg-purple-800/50 hover:text-white'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                }`}
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Navigation */}
@@ -101,40 +112,57 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
                       onToggle();
                     }
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                    isActive
-                      ? theme === 'web3'
-                        ? 'bg-gradient-to-r from-purple-600 to-cyan-600 text-white shadow-lg shadow-purple-600/30'
-                        : 'bg-red-600 text-white shadow-lg shadow-red-600/20'
-                      : theme === 'dark'
-                        ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                        : theme === 'web3'
-                          ? 'text-purple-200 hover:bg-purple-800/30 hover:text-white'
-                          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                  }`}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive
+                    ? theme === 'web3'
+                      ? 'bg-gradient-to-r from-purple-600 to-cyan-600 text-white shadow-lg shadow-purple-600/30'
+                      : 'bg-red-600 text-white shadow-lg shadow-red-600/20'
+                    : theme === 'dark'
+                      ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                      : theme === 'web3'
+                        ? 'text-purple-200 hover:bg-purple-800/30 hover:text-white'
+                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className="font-medium">{item.label}</span>
+                  <Icon className="w-5 h-5 shrink-0" />
+                  <span className="font-medium whitespace-nowrap truncate">{item.label}</span>
                 </button>
               );
             })}
           </nav>
 
           {/* Footer */}
-          <div className={`p-4 border-t ${
-            theme === 'dark' 
-              ? 'border-gray-800' 
-              : theme === 'web3'
-                ? 'border-purple-500/30'
-                : 'border-gray-200'
-          }`}>
-            <p className={`text-xs text-center ${
-              theme === 'dark' 
-                ? 'text-gray-500' 
-                : theme === 'web3'
-                  ? 'text-purple-300/70'
-                  : 'text-gray-400'
+          <div className={`p-4 border-t ${theme === 'dark'
+            ? 'border-gray-800'
+            : theme === 'web3'
+              ? 'border-purple-500/30'
+              : 'border-gray-200'
             }`}>
+            <div className="flex items-center justify-between mb-4">
+              <span className={`text-sm flex items-center gap-2 font-medium ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}`}>
+                <Languages className="w-4 h-4" />
+                {t('sidebar.language')}
+              </span>
+              <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                <button
+                  onClick={() => i18n.changeLanguage('vi')}
+                  className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${i18n.language === 'vi' ? 'bg-white dark:bg-gray-700 shadow-sm text-red-600' : 'text-gray-500'}`}
+                >
+                  VI
+                </button>
+                <button
+                  onClick={() => i18n.changeLanguage('en')}
+                  className={`px-2 py-1 text-xs font-bold rounded-md transition-colors ${i18n.language === 'en' ? 'bg-white dark:bg-gray-700 shadow-sm text-red-600' : 'text-gray-500'}`}
+                >
+                  EN
+                </button>
+              </div>
+            </div>
+            <p className={`text-xs text-center ${theme === 'dark'
+              ? 'text-gray-500'
+              : theme === 'web3'
+                ? 'text-purple-300/70'
+                : 'text-gray-400'
+              }`}>
               © 2024 CinemaPro
             </p>
           </div>

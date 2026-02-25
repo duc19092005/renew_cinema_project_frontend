@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { X, Building2, MapPin, Phone, Film, Loader2, AlertCircle, Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { useTheme } from '../../../contexts/ThemeContext';
-import { facilitiesApi, type Cinema, type Room, type Auditorium } from '../../../api/facilitiesApi';
+import { facilitiesApi, type Cinema, type Auditorium } from '../../../api/facilitiesApi';
 import axios from 'axios';
 import type { ApiErrorResponse } from '../../../types/auth.types';
 import RoomDetailModal from './RoomDetailModal';
@@ -21,11 +21,11 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
   const [auditoriumsLoading, setAuditoriumsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [auditoriumsError, setAuditoriumsError] = useState<string | null>(null);
-  
+
   // Room detail modal state
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
   const [isRoomDetailModalOpen, setIsRoomDetailModalOpen] = useState(false);
-  
+
   // Create auditorium modal state
   const [isCreateAuditoriumModalOpen, setIsCreateAuditoriumModalOpen] = useState(false);
 
@@ -98,28 +98,24 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
 
         {/* Modal */}
         <div
-          className={`relative w-full max-w-4xl max-h-[90vh] rounded-xl border shadow-2xl transition-all flex flex-col ${
-            theme === 'dark'
+          className={`relative w-full max-w-4xl max-h-[90vh] rounded-xl border shadow-2xl transition-all flex flex-col ${theme === 'dark'
               ? 'bg-gray-900 border-gray-800'
               : 'bg-white border-gray-200'
-          }`}
+            }`}
         >
           {/* Header */}
-          <div className={`flex items-center justify-between p-6 border-b ${
-            theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
-          }`}>
-            <h2 className={`text-2xl font-black ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+          <div className={`flex items-center justify-between p-6 border-b ${theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
             }`}>
+            <h2 className={`text-2xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}>
               Cinema Details
             </h2>
             <button
               onClick={onClose}
-              className={`p-2 rounded-lg transition-colors ${
-                theme === 'dark'
+              className={`p-2 rounded-lg transition-colors ${theme === 'dark'
                   ? 'hover:bg-gray-800 text-gray-400'
                   : 'hover:bg-gray-100 text-gray-600'
-              }`}
+                }`}
             >
               <X className="w-5 h-5" />
             </button>
@@ -139,11 +135,10 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
             )}
 
             {error && (
-              <div className={`p-4 rounded-lg border flex items-center mb-6 ${
-                theme === 'dark'
+              <div className={`p-4 rounded-lg border flex items-center mb-6 ${theme === 'dark'
                   ? 'bg-red-900/40 border-red-500/50 text-red-100'
                   : 'bg-red-50 border-red-200 text-red-800'
-              }`}>
+                }`}>
                 <AlertCircle className="w-5 h-5 mr-3 shrink-0 text-red-500" />
                 <span className="text-sm font-medium">{error}</span>
               </div>
@@ -152,26 +147,23 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
             {!loading && !error && cinema && (
               <div className="space-y-6">
                 {/* Cinema Info Card */}
-                <div className={`p-6 rounded-lg border ${
-                  theme === 'dark'
+                <div className={`p-6 rounded-lg border ${theme === 'dark'
                     ? 'bg-gray-800 border-gray-700'
                     : 'bg-gray-50 border-gray-200'
-                }`}>
+                  }`}>
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center">
                       <Building2 className="w-8 h-8 text-white" />
                     </div>
                     <div>
-                      <h3 className={`text-2xl font-black mb-1 ${
-                        theme === 'dark' ? 'text-white' : 'text-gray-900'
-                      }`}>
+                      <h3 className={`text-2xl font-black mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                        }`}>
                         {cinema.cinemaName}
                       </h3>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-                        theme === 'dark'
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${theme === 'dark'
                           ? 'bg-green-900/40 text-green-400 border-green-700'
                           : 'bg-green-50 text-green-700 border-green-300'
-                      }`}>
+                        }`}>
                         Active
                       </span>
                     </div>
@@ -181,9 +173,8 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                   <div className="space-y-4">
                     {cinema.cinemaDescription && (
                       <div>
-                        <p className={`text-sm mb-2 ${
-                          theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                        }`}>
+                        <p className={`text-sm mb-2 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                          }`}>
                           Description
                         </p>
                         <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
@@ -194,13 +185,11 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="flex items-start gap-3">
-                        <MapPin className={`w-5 h-5 mt-0.5 ${
-                          theme === 'dark' ? 'text-red-500' : 'text-red-600'
-                        }`} />
+                        <MapPin className={`w-5 h-5 mt-0.5 ${theme === 'dark' ? 'text-red-500' : 'text-red-600'
+                          }`} />
                         <div>
-                          <p className={`text-xs mb-1 ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                          }`}>
+                          <p className={`text-xs mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                            }`}>
                             Location
                           </p>
                           <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
@@ -210,13 +199,11 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                       </div>
 
                       <div className="flex items-start gap-3">
-                        <Phone className={`w-5 h-5 mt-0.5 ${
-                          theme === 'dark' ? 'text-red-500' : 'text-red-600'
-                        }`} />
+                        <Phone className={`w-5 h-5 mt-0.5 ${theme === 'dark' ? 'text-red-500' : 'text-red-600'
+                          }`} />
                         <div>
-                          <p className={`text-xs mb-1 ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                          }`}>
+                          <p className={`text-xs mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                            }`}>
                             Hotline
                           </p>
                           <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
@@ -226,22 +213,18 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                       </div>
                     </div>
 
-                    <div className={`p-4 rounded-lg ${
-                      theme === 'dark' ? 'bg-gray-900' : 'bg-white'
-                    }`}>
+                    <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'
+                      }`}>
                       <div className="flex items-center gap-3">
-                        <Film className={`w-5 h-5 ${
-                          theme === 'dark' ? 'text-red-500' : 'text-red-600'
-                        }`} />
+                        <Film className={`w-5 h-5 ${theme === 'dark' ? 'text-red-500' : 'text-red-600'
+                          }`} />
                         <div>
-                          <p className={`text-xs mb-1 ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                          }`}>
+                          <p className={`text-xs mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                            }`}>
                             Total Auditoriums
                           </p>
-                          <p className={`text-2xl font-black ${
-                            theme === 'dark' ? 'text-white' : 'text-gray-900'
-                          }`}>
+                          <p className={`text-2xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                            }`}>
                             {cinema.totalRooms} rooms
                           </p>
                         </div>
@@ -251,26 +234,22 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                 </div>
 
                 {/* Rooms List Section */}
-                <div className={`rounded-lg border ${
-                  theme === 'dark'
+                <div className={`rounded-lg border ${theme === 'dark'
                     ? 'bg-gray-800 border-gray-700'
                     : 'bg-gray-50 border-gray-200'
-                }`}>
-                  <div className={`flex items-center justify-between p-6 border-b ${
-                    theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
                   }`}>
-                    <h3 className={`text-xl font-bold ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  <div className={`flex items-center justify-between p-6 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
                     }`}>
+                    <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      }`}>
                       Auditorium List ({auditoriums.length})
                     </h3>
-                    <button 
+                    <button
                       onClick={() => setIsCreateAuditoriumModalOpen(true)}
-                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
-                        theme === 'dark'
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${theme === 'dark'
                           ? 'bg-red-600 hover:bg-red-700 text-white'
                           : 'bg-red-600 hover:bg-red-700 text-white'
-                      }`}
+                        }`}
                     >
                       <Plus className="w-4 h-4" />
                       Add Auditorium
@@ -285,11 +264,10 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                     )}
 
                     {auditoriumsError && (
-                      <div className={`p-4 rounded-lg border flex items-center mb-4 ${
-                        theme === 'dark'
+                      <div className={`p-4 rounded-lg border flex items-center mb-4 ${theme === 'dark'
                           ? 'bg-red-900/40 border-red-500/50 text-red-100'
                           : 'bg-red-50 border-red-200 text-red-800'
-                      }`}>
+                        }`}>
                         <AlertCircle className="w-5 h-5 mr-3 shrink-0 text-red-500" />
                         <span className="text-sm font-medium">{auditoriumsError}</span>
                       </div>
@@ -299,9 +277,8 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                       <>
                         {auditoriums.length === 0 ? (
                           <div className="text-center py-12">
-                            <Film className={`w-12 h-12 mx-auto mb-4 ${
-                              theme === 'dark' ? 'text-gray-600' : 'text-gray-400'
-                            }`} />
+                            <Film className={`w-12 h-12 mx-auto mb-4 ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'
+                              }`} />
                             <p className={theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}>
                               No auditoriums available
                             </p>
@@ -311,11 +288,10 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                             {auditoriums.map((auditorium) => (
                               <div
                                 key={auditorium.auditoriumId}
-                                className={`p-4 rounded-lg border transition-all ${
-                                  theme === 'dark'
+                                className={`p-4 rounded-lg border transition-all ${theme === 'dark'
                                     ? 'bg-gray-900 border-gray-700 hover:border-red-600'
                                     : 'bg-white border-gray-200 hover:border-red-600'
-                                }`}
+                                  }`}
                               >
                                 <div className="flex items-center justify-between mb-3">
                                   <div className="flex items-center gap-3">
@@ -323,46 +299,39 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                                       <Film className="w-5 h-5 text-white" />
                                     </div>
                                     <div>
-                                      <h4 className={`font-bold ${
-                                        theme === 'dark' ? 'text-white' : 'text-gray-900'
-                                      }`}>
+                                      <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                                        }`}>
                                         {auditorium.auditoriumNumber}
                                       </h4>
-                                      <p className={`text-xs ${
-                                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                                      }`}>
+                                      <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                                        }`}>
                                         {auditorium.totalSeats} ghế
                                       </p>
                                     </div>
                                   </div>
-                                  <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${
-                                    theme === 'dark'
+                                  <span className={`px-2 py-1 rounded-full text-xs font-semibold border ${theme === 'dark'
                                       ? 'bg-blue-900/40 text-blue-400 border-blue-700'
                                       : 'bg-blue-50 text-blue-700 border-blue-300'
-                                  }`}>
+                                    }`}>
                                     {auditorium.movieFormatName}
                                   </span>
                                 </div>
 
-                                <div className={`mb-3 p-2 rounded ${
-                                  theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'
-                                }`}>
-                                  <p className={`text-xs mb-1 ${
-                                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                                <div className={`mb-3 p-2 rounded ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'
                                   }`}>
+                                  <p className={`text-xs mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                                    }`}>
                                     Cinema
                                   </p>
-                                  <p className={`text-sm font-medium ${
-                                    theme === 'dark' ? 'text-white' : 'text-gray-900'
-                                  }`}>
+                                  <p className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                                    }`}>
                                     {auditorium.cinemaName}
                                   </p>
                                 </div>
 
                                 {/* Actions */}
-                                <div className={`flex gap-2 pt-3 border-t ${
-                                  theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
-                                }`}>
+                                <div className={`flex gap-2 pt-3 border-t ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+                                  }`}>
                                   <button
                                     onClick={() => {
                                       if (auditorium.auditoriumId) {
@@ -371,32 +340,28 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                                       }
                                     }}
                                     disabled={!auditorium.auditoriumId}
-                                    className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors ${
-                                      !auditorium.auditoriumId
+                                    className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors ${!auditorium.auditoriumId
                                         ? 'opacity-50 cursor-not-allowed'
                                         : ''
-                                    } ${
-                                      theme === 'dark'
+                                      } ${theme === 'dark'
                                         ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
                                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                    }`}
+                                      }`}
                                   >
                                     <Eye className="w-3 h-3" />
                                     View
                                   </button>
-                                  <button className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors ${
-                                    theme === 'dark'
+                                  <button className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors ${theme === 'dark'
                                       ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
                                       : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                                  }`}>
+                                    }`}>
                                     <Edit className="w-3 h-3" />
                                     Edit
                                   </button>
-                                  <button className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors border ${
-                                    theme === 'dark'
+                                  <button className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors border ${theme === 'dark'
                                       ? 'bg-red-900/40 hover:bg-red-900/60 text-red-400 border-red-800'
                                       : 'bg-red-50 hover:bg-red-100 text-red-600 border-red-300'
-                                  }`}>
+                                    }`}>
                                     <Trash2 className="w-3 h-3" />
                                     Delete
                                   </button>
@@ -412,19 +377,16 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
 
                 {/* Cinema ID (for reference) */}
                 {cinema.cinemaId && (
-                  <div className={`p-3 rounded-lg border ${
-                    theme === 'dark'
+                  <div className={`p-3 rounded-lg border ${theme === 'dark'
                       ? 'bg-gray-800 border-gray-700'
                       : 'bg-gray-50 border-gray-200'
-                  }`}>
-                    <p className={`text-xs mb-1 ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                     }`}>
+                    <p className={`text-xs mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                      }`}>
                       Cinema ID
                     </p>
-                    <p className={`text-xs font-mono ${
-                      theme === 'dark' ? 'text-gray-500' : 'text-gray-500'
-                    }`}>
+                    <p className={`text-xs font-mono ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'
+                      }`}>
                       {cinema.cinemaId}
                     </p>
                   </div>
@@ -434,16 +396,14 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
           </div>
 
           {/* Footer */}
-          <div className={`flex justify-end gap-3 p-6 border-t ${
-            theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
-          }`}>
+          <div className={`flex justify-end gap-3 p-6 border-t ${theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
+            }`}>
             <button
               onClick={onClose}
-              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                theme === 'dark'
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${theme === 'dark'
                   ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
                   : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-              }`}
+                }`}
             >
               Close
             </button>

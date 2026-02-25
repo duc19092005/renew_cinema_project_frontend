@@ -103,9 +103,9 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
       } else {
         if (axios.isAxiosError(err) && err.response) {
           const data = err.response.data as ApiErrorResponse;
-          setError(data.message || 'Không thể tải thông tin phòng.');
+          setError(data.message || 'Cannot load room information.');
         } else {
-          setError('Không thể kết nối đến server.');
+          setError('Cannot connect to server.');
         }
       }
     } finally {
@@ -128,9 +128,9 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
     } catch (err) {
       if (axios.isAxiosError(err) && err.response) {
         const data = err.response.data as ApiErrorResponse;
-        setFormatsError(data.message || 'Không thể tải danh sách định dạng phim.');
+        setFormatsError(data.message || 'Cannot load movie formats list.');
       } else {
-        setFormatsError('Không thể kết nối đến server.');
+        setFormatsError('Cannot connect to server.');
       }
     } finally {
       setFormatsLoading(false);
@@ -184,7 +184,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
           <h2 className={`text-2xl font-black ${
             theme === 'dark' ? 'text-white' : 'text-gray-900'
           }`}>
-            Chi tiết phòng chiếu
+            Details phòng chiếu
           </h2>
           <button
             onClick={onClose}
@@ -205,7 +205,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
               <div className="text-center">
                 <Loader2 className="w-12 h-12 animate-spin text-red-600 mx-auto mb-4" />
                 <p className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>
-                  Đang tải thông tin...
+                  Loading thông tin...
                 </p>
               </div>
             </div>
@@ -249,7 +249,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                           ? 'bg-yellow-900/40 text-yellow-400 border-yellow-700'
                           : 'bg-yellow-50 text-yellow-700 border-yellow-300'
                     }`}>
-                      {room.roomStatus === 'active' || !room.roomStatus ? 'Hoạt động' : 'Bảo trì'}
+                      {room.roomStatus === 'active' || !room.roomStatus ? 'Hoạt động' : 'Maintenance'}
                     </span>
                   </div>
                 </div>
@@ -267,7 +267,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                         <p className={`text-xs mb-1 ${
                           theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                         }`}>
-                          Sức chứa
+                          Capacity
                         </p>
                         <p className={`text-2xl font-black ${
                           theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -290,11 +290,11 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                           <p className={`text-xs mb-1 ${
                             theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                           }`}>
-                            Trạng thái
+                            Status
                           </p>
                           <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
                             {room.roomStatus === 'active' ? 'Hoạt động' : 
-                             room.roomStatus === 'maintenance' ? 'Bảo trì' : 'Ngừng hoạt động'}
+                             room.roomStatus === 'maintenance' ? 'Maintenance' : 'Ngừng hoạt động'}
                           </p>
                         </div>
                       </div>
@@ -339,7 +339,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
             }`}
           >
             <Plus className="w-4 h-4" />
-            Tạo phòng chiếu
+            Create Auditorium
           </button>
           <button
             onClick={onClose}
@@ -384,7 +384,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
               <h2 className={`text-2xl font-black ${
                 theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
               }`}>
-                Chọn định dạng phim
+                Select Movie Format
               </h2>
               <button
                 onClick={() => {
@@ -412,7 +412,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                       theme === 'web3' ? 'text-purple-400' : 'text-red-600'
                     }`} />
                     <p className={theme === 'dark' || theme === 'web3' ? 'text-gray-400' : 'text-gray-600'}>
-                      Đang tải danh sách định dạng...
+                      Loading list định dạng...
                     </p>
                   </div>
                 </div>
@@ -492,7 +492,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                     theme === 'dark' ? 'text-gray-600' : theme === 'web3' ? 'text-purple-600' : 'text-gray-400'
                   }`} />
                   <p className={theme === 'dark' || theme === 'web3' ? 'text-gray-400' : 'text-gray-500'}>
-                    Không có định dạng phim nào
+                    No movie formats
                   </p>
                 </div>
               )}
@@ -515,7 +515,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                       : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                 }`}
               >
-                Hủy
+                Cancel
               </button>
               <button
                 onClick={handleConfirmFormat}

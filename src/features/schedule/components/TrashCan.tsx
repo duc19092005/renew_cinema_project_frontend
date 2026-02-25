@@ -35,7 +35,9 @@ const TrashCan: React.FC<TrashCanProps> = ({ onDeleteSlot }) => {
             try {
                 const parsed = JSON.parse(data);
                 if (parsed.type === 'SLOT' && parsed.auditoriumId && parsed.slotId) {
-                    onDeleteSlot(parsed.auditoriumId, parsed.slotId);
+                    setTimeout(() => {
+                        onDeleteSlot(parsed.auditoriumId, parsed.slotId);
+                    }, 0);
                 }
             } catch (err) {
                 console.error('Failed to parse drag data', err);
@@ -56,7 +58,7 @@ const TrashCan: React.FC<TrashCanProps> = ({ onDeleteSlot }) => {
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            title="Kéo lịch chiếu vào đây để xóa"
+            title="Drag schedule here to delete"
         >
             <Trash2 className="w-8 h-8 flex-shrink-0" />
             {isOver && <span className="font-bold px-2">Xóa</span>}

@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 
 export type Theme = 'light' | 'dark' | 'web3';
 
@@ -22,6 +23,9 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     // Áp dụng theme vào document root
     document.documentElement.classList.remove('light', 'dark', 'web3');
     document.documentElement.classList.add(theme);
+    if (theme === 'web3') {
+      document.documentElement.classList.add('dark');
+    }
   }, [theme]);
 
   return (

@@ -46,7 +46,7 @@ export interface CreateAuditoriumRequest {
   auditoriumNumber: string;
   movieFormatId: string;
   cinemaId: string;
-  add_req_seats_auditorium_dto: SeatPosition[];
+  addReqSeatsAuditoriumDto: SeatPosition[];
 }
 
 export interface Auditorium {
@@ -66,6 +66,17 @@ const facilitiesAxiosClient = axios.create({
   withCredentials: true, // Quan trọng: gửi cookie để authentication
   timeout: 10000,
 });
+
+facilitiesAxiosClient.interceptors.request.use(
+  (config) => {
+    const currentLanguage = localStorage.getItem('language') || 'en';
+    config.headers['X-Language'] = currentLanguage;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export const facilitiesApi = {
   getCinemaList: async (): Promise<ApiSuccessResponse<Cinema[]>> => {

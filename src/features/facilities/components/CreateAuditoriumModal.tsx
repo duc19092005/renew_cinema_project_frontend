@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Plus, Loader2, AlertCircle, CheckCircle, ArrowRight, ArrowLeft, Grid3x3, Move, Pencil, DoorOpen, Square } from 'lucide-react';
+import { X, Plus, Loader2, AlertCircle, CheckCircle, ArrowRight, ArrowLeft, Grid3x3, Move, DoorOpen, Square } from 'lucide-react';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { facilitiesApi, type MovieFormat, type CreateAuditoriumRequest, type SeatPosition } from '../../../api/facilitiesApi';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import type { ApiErrorResponse } from '../../../types/auth.types';
 
@@ -16,6 +17,7 @@ type Step = 'format' | 'seats';
 
 const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId, isOpen, onClose, onSuccess }) => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState<Step>('format');
   const [movieFormats, setMovieFormats] = useState<MovieFormat[]>([]);
   const [selectedFormat, setSelectedFormat] = useState<MovieFormat | null>(null);
@@ -30,12 +32,11 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
   // Step 3: Seats
   const [seats, setSeats] = useState<SeatPosition[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const [gridSize, setGridSize] = useState({ cols: 10, rows: 8 });
   const [cellSize, setCellSize] = useState({ width: 40, height: 40 });
   const [isMobile, setIsMobile] = useState(false);
-  
+
   // Drawing mode
   type DrawingMode = 'seat' | 'exit' | 'aisle';
   const [drawingMode, setDrawingMode] = useState<DrawingMode>('seat');
@@ -185,7 +186,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
 
   // Handle removing items
   const handleRemoveAisle = (colIndex: number, rowIndex: number) => {
-    setAisles(aisles.filter(a => 
+    setAisles(aisles.filter(a =>
       !(colIndex >= a.colIndex && colIndex < a.colIndex + a.width &&
         rowIndex >= a.rowIndex && rowIndex < a.rowIndex + a.height)
     ));
@@ -199,13 +200,22 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
     );
   };
 
+  // Helper function to detect edge side
+  const detectEdgeSide = (colIndex: number, rowIndex: number): 'top' | 'bottom' | 'left' | 'right' | null => {
+    if (rowIndex === 0) return 'top';
+    if (rowIndex === gridSize.rows - 1) return 'bottom';
+    if (colIndex === 0) return 'left';
+    if (colIndex === gridSize.cols - 1) return 'right';
+    return null;
+  };
+
   // Seat drag and drop
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!canvasRef.current) return;
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     // Calculate grid position
     const colIndex = Math.floor(x / cellSize.width);
     const rowIndex = Math.floor(y / cellSize.height);
@@ -220,7 +230,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
       // Check if clicking on existing exit (anywhere in grid)
       const clickedExit = exits.find(exit => {
         return colIndex >= exit.colIndex && colIndex < exit.colIndex + exit.width &&
-               rowIndex >= exit.rowIndex && rowIndex < exit.rowIndex + exit.height;
+          rowIndex >= exit.rowIndex && rowIndex < exit.rowIndex + exit.height;
       });
       if (clickedExit) {
         setExits(exits.filter(e => e.id !== clickedExit.id));
@@ -229,9 +239,9 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
       // Start drawing exit - allow drawing anywhere in grid
       // Determine side based on position (prefer edges but allow anywhere)
       const edgeSide = detectEdgeSide(colIndex, rowIndex);
-      setExitDragStart({ 
-        col: colIndex, 
-        row: rowIndex, 
+      setExitDragStart({
+        col: colIndex,
+        row: rowIndex,
         side: edgeSide || 'bottom' // Default to bottom if not near edge
       });
       return;
@@ -262,8 +272,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
       }
       // Start dragging to add seats
       setIsDragging(true);
-      setDragStart({ x, y });
-      
+
       // Add first seat immediately
       const seatNumber = `${String.fromCharCode(65 + rowIndex)}${colIndex + 1}`;
       const newSeat: SeatPosition = {
@@ -284,7 +293,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
     }
 
     if (!isDragging || !canvasRef.current || drawingMode !== 'seat') return;
-    
+
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -324,7 +333,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
       const rect = canvasRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      
+
       const endCol = Math.floor(x / cellSize.width);
       const endRow = Math.floor(y / cellSize.height);
 
@@ -376,9 +385,9 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
       const hasOverlap = exits.some(existing => {
         // Check if exits overlap in the same area
         return !(exitArea.colIndex + exitArea.width <= existing.colIndex ||
-                 exitArea.colIndex >= existing.colIndex + existing.width ||
-                 exitArea.rowIndex + exitArea.height <= existing.rowIndex ||
-                 exitArea.rowIndex >= existing.rowIndex + existing.height);
+          exitArea.colIndex >= existing.colIndex + existing.width ||
+          exitArea.rowIndex + exitArea.height <= existing.rowIndex ||
+          exitArea.rowIndex >= existing.rowIndex + existing.height);
       });
 
       if (!hasOverlap && exitArea.width > 0 && exitArea.height > 0) {
@@ -393,7 +402,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
       const rect = canvasRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      
+
       const endCol = Math.floor(x / cellSize.width);
       const endRow = Math.floor(y / cellSize.height);
 
@@ -413,9 +422,9 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
       // Check for overlap with existing aisles
       const hasOverlap = aisles.some(existing => {
         return !(aisleArea.colIndex + aisleArea.width <= existing.colIndex ||
-                 aisleArea.colIndex >= existing.colIndex + existing.width ||
-                 aisleArea.rowIndex + aisleArea.height <= existing.rowIndex ||
-                 aisleArea.rowIndex >= existing.rowIndex + existing.height);
+          aisleArea.colIndex >= existing.colIndex + existing.width ||
+          aisleArea.rowIndex + aisleArea.height <= existing.rowIndex ||
+          aisleArea.rowIndex >= existing.rowIndex + existing.height);
       });
 
       if (!hasOverlap && aisleArea.width > 0 && aisleArea.height > 0) {
@@ -427,7 +436,6 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
     }
 
     setIsDragging(false);
-    setDragStart(null);
     setExitDragStart(null);
     setAisleDragStart(null);
   };
@@ -443,7 +451,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
     const touch = e.touches[0];
     const x = touch.clientX - rect.left;
     const y = touch.clientY - rect.top;
-    
+
     const colIndex = Math.floor(x / cellSize.width);
     const rowIndex = Math.floor(y / cellSize.height);
 
@@ -457,7 +465,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
       // Check if clicking on existing exit (anywhere in grid)
       const clickedExit = exits.find(exit => {
         return colIndex >= exit.colIndex && colIndex < exit.colIndex + exit.width &&
-               rowIndex >= exit.rowIndex && rowIndex < exit.rowIndex + exit.height;
+          rowIndex >= exit.rowIndex && rowIndex < exit.rowIndex + exit.height;
       });
       if (clickedExit) {
         setExits(exits.filter(e => e.id !== clickedExit.id));
@@ -465,9 +473,9 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
       }
       // Allow drawing exit anywhere in grid
       const edgeSide = detectEdgeSide(colIndex, rowIndex);
-      setExitDragStart({ 
-        col: colIndex, 
-        row: rowIndex, 
+      setExitDragStart({
+        col: colIndex,
+        row: rowIndex,
         side: edgeSide || 'bottom' // Default to bottom if not near edge
       });
       return;
@@ -514,7 +522,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
 
     if (!isDragging || !canvasRef.current || drawingMode !== 'seat') return;
     e.preventDefault();
-    
+
     const rect = canvasRef.current.getBoundingClientRect();
     const touch = e.touches[0];
     const x = touch.clientX - rect.left;
@@ -552,7 +560,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
       const touch = e.changedTouches[0];
       const x = touch.clientX - rect.left;
       const y = touch.clientY - rect.top;
-      
+
       const endCol = Math.floor(x / cellSize.width);
       const endRow = Math.floor(y / cellSize.height);
 
@@ -601,9 +609,9 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
       // Check for overlap with existing exits
       const hasOverlap = exits.some(existing => {
         return !(exitArea.colIndex + exitArea.width <= existing.colIndex ||
-                 exitArea.colIndex >= existing.colIndex + existing.width ||
-                 exitArea.rowIndex + exitArea.height <= existing.rowIndex ||
-                 exitArea.rowIndex >= existing.rowIndex + existing.height);
+          exitArea.colIndex >= existing.colIndex + existing.width ||
+          exitArea.rowIndex + exitArea.height <= existing.rowIndex ||
+          exitArea.rowIndex >= existing.rowIndex + existing.height);
       });
 
       if (!hasOverlap && exitArea.width > 0 && exitArea.height > 0) {
@@ -619,7 +627,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
       const touch = e.changedTouches[0];
       const x = touch.clientX - rect.left;
       const y = touch.clientY - rect.top;
-      
+
       const endCol = Math.floor(x / cellSize.width);
       const endRow = Math.floor(y / cellSize.height);
 
@@ -638,9 +646,9 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
 
       const hasOverlap = aisles.some(existing => {
         return !(aisleArea.colIndex + aisleArea.width <= existing.colIndex ||
-                 aisleArea.colIndex >= existing.colIndex + existing.width ||
-                 aisleArea.rowIndex + aisleArea.height <= existing.rowIndex ||
-                 aisleArea.rowIndex >= existing.rowIndex + existing.height);
+          aisleArea.colIndex >= existing.colIndex + existing.width ||
+          aisleArea.rowIndex + aisleArea.height <= existing.rowIndex ||
+          aisleArea.rowIndex >= existing.rowIndex + existing.height);
       });
 
       if (!hasOverlap && aisleArea.width > 0 && aisleArea.height > 0) {
@@ -658,7 +666,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
 
   const handleSubmit = async () => {
     if (!selectedFormat || !auditoriumNumber.trim() || seats.length === 0) {
-      setCreateError('Vui lòng điền đầy đủ thông tin: chọn định dạng phim, nhập tên phòng và thêm ít nhất một ghế.');
+      setCreateError('Please fill in all information: select movie format, enter room name and add at least one seat.');
       return;
     }
 
@@ -670,7 +678,7 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
         auditoriumNumber: auditoriumNumber.trim(),
         movieFormatId: selectedFormat.formatId,
         cinemaId,
-        add_req_seats_auditorium_dto: seats,
+        addReqSeatsAuditoriumDto: seats,
       };
 
       console.log('Creating auditorium:', requestData);
@@ -720,56 +728,49 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
 
       {/* Modal */}
       <div
-        className={`relative w-full max-w-4xl max-h-[90vh] rounded-xl border shadow-2xl transition-all flex flex-col ${
-          theme === 'dark'
-            ? 'bg-gray-900 border-gray-800'
-            : theme === 'web3'
-              ? 'bg-gradient-to-br from-purple-900/95 to-cyan-900/95 border-purple-500/30 backdrop-blur-xl'
-              : 'bg-white border-gray-200'
-        }`}
+        className={`relative w-full max-w-4xl max-h-[90vh] rounded-xl border shadow-2xl transition-all flex flex-col ${theme === 'dark'
+          ? 'bg-gray-900 border-gray-800'
+          : theme === 'web3'
+            ? 'bg-gradient-to-br from-purple-900/95 to-cyan-900/95 border-purple-500/30 backdrop-blur-xl'
+            : 'bg-white border-gray-200'
+          }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className={`flex items-center justify-between p-6 border-b ${
-          theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
-        }`}>
+        <div className={`flex items-center justify-between p-6 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
+          }`}>
           <div>
-            <h2 className={`text-2xl font-black ${
-              theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-            }`}>
-              Add Auditorium
+            <h2 className={`text-2xl font-black ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+              }`}>
+              {t('createAuditorium.title')}
             </h2>
             <div className="flex items-center gap-2 mt-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                currentStep === 'format'
-                  ? theme === 'web3' ? 'bg-purple-500 text-white' : 'bg-red-600 text-white'
-                  : theme === 'dark' ? 'bg-gray-700 text-gray-400' : 'bg-gray-300 text-gray-600'
-              }`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${currentStep === 'format'
+                ? theme === 'web3' ? 'bg-purple-500 text-white' : 'bg-red-600 text-white'
+                : theme === 'dark' ? 'bg-gray-700 text-gray-400' : 'bg-gray-300 text-gray-600'
+                }`}>
                 1
               </div>
-              <div className={`h-1 w-8 ${
-                currentStep === 'seats' 
-                  ? theme === 'web3' ? 'bg-purple-500' : 'bg-red-600'
-                  : theme === 'dark' ? 'bg-gray-700' : 'bg-gray-300'
-              }`} />
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                currentStep === 'seats'
-                  ? theme === 'web3' ? 'bg-purple-500 text-white' : 'bg-red-600 text-white'
-                  : theme === 'dark' ? 'bg-gray-700 text-gray-400' : 'bg-gray-300 text-gray-600'
-              }`}>
+              <div className={`h-1 w-8 ${currentStep === 'seats'
+                ? theme === 'web3' ? 'bg-purple-500' : 'bg-red-600'
+                : theme === 'dark' ? 'bg-gray-700' : 'bg-gray-300'
+                }`} />
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${currentStep === 'seats'
+                ? theme === 'web3' ? 'bg-purple-500 text-white' : 'bg-red-600 text-white'
+                : theme === 'dark' ? 'bg-gray-700 text-gray-400' : 'bg-gray-300 text-gray-600'
+                }`}>
                 2
               </div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className={`p-2 rounded-lg transition-colors ${
-              theme === 'dark'
-                ? 'hover:bg-gray-800 text-gray-400'
-                : theme === 'web3'
-                  ? 'hover:bg-purple-800/30 text-purple-300'
-                  : 'hover:bg-gray-100 text-gray-600'
-            }`}
+            className={`p-2 rounded-lg transition-colors ${theme === 'dark'
+              ? 'hover:bg-gray-800 text-gray-400'
+              : theme === 'web3'
+                ? 'hover:bg-purple-800/30 text-purple-300'
+                : 'hover:bg-gray-100 text-gray-600'
+              }`}
           >
             <X className="w-5 h-5" />
           </button>
@@ -779,13 +780,12 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
         <div className="flex-1 overflow-y-auto p-6">
           {/* Success Message */}
           {createSuccess && (
-            <div className={`mb-4 p-4 rounded-lg border flex items-center ${
-              theme === 'dark'
+            <div className={`mb-4 p-4 rounded-lg border flex items-center ${theme === 'dark'
+              ? 'bg-green-900/40 border-green-500/50 text-green-100'
+              : theme === 'web3'
                 ? 'bg-green-900/40 border-green-500/50 text-green-100'
-                : theme === 'web3'
-                  ? 'bg-green-900/40 border-green-500/50 text-green-100'
-                  : 'bg-green-50 border-green-200 text-green-800'
-            }`}>
+                : 'bg-green-50 border-green-200 text-green-800'
+              }`}>
               <CheckCircle className="w-5 h-5 mr-3 shrink-0 text-green-500" />
               <span className="text-sm font-medium">Auditorium added successfully! Updating...</span>
             </div>
@@ -793,13 +793,12 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
 
           {/* Error Message */}
           {createError && (
-            <div className={`mb-4 p-4 rounded-lg border flex items-center ${
-              theme === 'dark'
+            <div className={`mb-4 p-4 rounded-lg border flex items-center ${theme === 'dark'
+              ? 'bg-red-900/40 border-red-500/50 text-red-100'
+              : theme === 'web3'
                 ? 'bg-red-900/40 border-red-500/50 text-red-100'
-                : theme === 'web3'
-                  ? 'bg-red-900/40 border-red-500/50 text-red-100'
-                  : 'bg-red-50 border-red-200 text-red-800'
-            }`}>
+                : 'bg-red-50 border-red-200 text-red-800'
+              }`}>
               <AlertCircle className="w-5 h-5 mr-3 shrink-0 text-red-500" />
               <span className="text-sm font-medium">{createError}</span>
             </div>
@@ -808,26 +807,23 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
           {/* Step 1: Select Movie Format */}
           {currentStep === 'format' && (
             <div className="space-y-4">
-              <h3 className={`text-xl font-bold mb-4 ${
-                theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-              }`}>
-                Select Movie Format
+              <h3 className={`text-xl font-bold mb-4 ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                }`}>
+                {t('createAuditorium.step1')}
               </h3>
 
               {formatsLoading && (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className={`w-12 h-12 animate-spin ${
-                    theme === 'web3' ? 'text-purple-400' : 'text-red-600'
-                  }`} />
+                  <Loader2 className={`w-12 h-12 animate-spin ${theme === 'web3' ? 'text-purple-400' : 'text-red-600'
+                    }`} />
                 </div>
               )}
 
               {formatsError && (
-                <div className={`p-4 rounded-lg border ${
-                  theme === 'dark'
-                    ? 'bg-red-900/40 border-red-500/50 text-red-100'
-                    : 'bg-red-50 border-red-200 text-red-800'
-                }`}>
+                <div className={`p-4 rounded-lg border ${theme === 'dark'
+                  ? 'bg-red-900/40 border-red-500/50 text-red-100'
+                  : 'bg-red-50 border-red-200 text-red-800'
+                  }`}>
                   {formatsError}
                 </div>
               )}
@@ -838,42 +834,39 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
                     <button
                       key={format.formatId}
                       onClick={() => handleFormatSelect(format)}
-                      className={`p-4 rounded-lg border text-left transition-all ${
-                        selectedFormat?.formatId === format.formatId
-                          ? theme === 'web3'
-                            ? 'border-purple-400 bg-purple-800/30 shadow-lg'
-                            : 'border-red-600 bg-red-50 shadow-lg'
+                      className={`p-4 rounded-lg border text-left transition-all ${selectedFormat?.formatId === format.formatId
+                        ? theme === 'web3'
+                          ? 'border-purple-400 bg-purple-800/30 shadow-lg'
                           : theme === 'dark'
-                            ? 'bg-gray-800 border-gray-700 hover:border-gray-600'
-                            : theme === 'web3'
-                              ? 'bg-purple-800/20 border-purple-500/30 hover:border-purple-400/50'
-                              : 'bg-white border-gray-200 hover:border-red-300'
-                      }`}
+                            ? 'border-red-500 bg-red-900/30 shadow-lg'
+                            : 'border-red-600 bg-red-50 shadow-lg'
+                        : theme === 'dark'
+                          ? 'bg-gray-800 border-gray-700 hover:border-gray-600'
+                          : theme === 'web3'
+                            ? 'bg-purple-800/20 border-purple-500/30 hover:border-purple-400/50'
+                            : 'bg-white border-gray-200 hover:border-red-300'
+                        }`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h4 className={`font-bold text-lg ${
-                              theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-                            }`}>
+                            <h4 className={`font-bold text-lg ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                              }`}>
                               {format.formatName}
                             </h4>
                             {selectedFormat?.formatId === format.formatId && (
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                                theme === 'web3' ? 'bg-purple-500' : 'bg-red-600'
-                              }`}>
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${theme === 'web3' ? 'bg-purple-500' : 'bg-red-600'
+                                }`}>
                                 <CheckCircle className="w-4 h-4 text-white" />
                               </div>
                             )}
                           </div>
-                          <p className={`text-sm mb-3 ${
-                            theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
-                          }`}>
+                          <p className={`text-sm mb-3 ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                            }`}>
                             {format.formatDescription}
                           </p>
-                          <p className={`text-lg font-black ${
-                            theme === 'web3' ? 'text-purple-300' : 'text-red-600'
-                          }`}>
+                          <p className={`text-lg font-black ${theme === 'web3' ? 'text-purple-300' : 'text-red-600'
+                            }`}>
                             {formatPrice(format.movieFormatPrice)}
                           </p>
                         </div>
@@ -889,74 +882,62 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
           {currentStep === 'seats' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className={`text-xl font-bold ${
-                  theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-                }`}>
-                  Vẽ Sơ Đồ Ghế & Lối Ra
+                <h3 className={`text-xl font-bold ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                  }`}>
+                  {t('createAuditorium.step2')}
                 </h3>
                 {selectedFormat && (
-                  <div className={`px-3 py-1 rounded-lg border ${
-                    theme === 'dark' ? 'bg-gray-800 border-gray-700' : theme === 'web3' ? 'bg-purple-800/20 border-purple-500/30' : 'bg-gray-50 border-gray-200'
-                  }`}>
-                    <p className={`text-sm ${
-                      theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                  <div className={`px-3 py-1 rounded-lg border ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : theme === 'web3' ? 'bg-purple-800/20 border-purple-500/30' : 'bg-gray-50 border-gray-200'
                     }`}>
-                      Format: <span className={`font-bold ${
-                        theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-                      }`}>{selectedFormat.formatName}</span>
+                    <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                      }`}>
+                      Format: <span className={`font-bold ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                        }`}>{selectedFormat.formatName}</span>
                     </p>
                   </div>
                 )}
               </div>
 
               {/* Auditorium Number */}
-              <div className={`p-4 rounded-lg border ${
-                theme === 'dark' ? 'bg-gray-800 border-gray-700' : theme === 'web3' ? 'bg-purple-800/20 border-purple-500/30' : 'bg-gray-50 border-gray-200'
-              }`}>
-                <h4 className={`text-sm font-semibold mb-3 ${
-                  theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+              <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : theme === 'web3' ? 'bg-purple-800/20 border-purple-500/30' : 'bg-gray-50 border-gray-200'
                 }`}>
+                <h4 className={`text-sm font-semibold mb-3 ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                  }`}>
                   Thông Tin Phòng Chiếu
                 </h4>
                 <div>
-                  <label className={`block text-sm font-semibold mb-2 ${
-                    theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    Tên Phòng <span className="text-red-500">*</span>
+                  <label className={`block text-sm font-semibold mb-2 ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                    }`}>
+                    Room Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={auditoriumNumber}
                     onChange={(e) => setAuditoriumNumber(e.target.value)}
                     required
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                      theme === 'web3' ? 'focus:border-purple-400' : 'focus:border-red-600'
-                    } ${
-                      theme === 'dark'
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${theme === 'web3' ? 'focus:border-purple-400' : 'focus:border-red-600'
+                      } ${theme === 'dark'
                         ? 'bg-gray-900 border-gray-700 text-white placeholder-gray-500'
                         : theme === 'web3'
                           ? 'bg-purple-800/30 border-purple-500/30 text-white placeholder-purple-300/70'
                           : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
-                    }`}
+                      }`}
                     placeholder="e.g., Room 1, Room A, VIP Room 1..."
                   />
                 </div>
               </div>
 
               {/* Room Size Configuration */}
-              <div className={`p-4 rounded-lg border ${
-                theme === 'dark' ? 'bg-gray-800 border-gray-700' : theme === 'web3' ? 'bg-purple-800/20 border-purple-500/30' : 'bg-gray-50 border-gray-200'
-              }`}>
-                <h4 className={`text-sm font-semibold mb-3 ${
-                  theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+              <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : theme === 'web3' ? 'bg-purple-800/20 border-purple-500/30' : 'bg-gray-50 border-gray-200'
                 }`}>
+                <h4 className={`text-sm font-semibold mb-3 ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                  }`}>
                   Kích Thước Phòng
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className={`block text-xs font-semibold mb-2 ${
-                      theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-                    }`}>
+                    <label className={`block text-xs font-semibold mb-2 ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                      }`}>
                       Columns <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -969,28 +950,24 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
                         setRoomCols(Math.max(5, Math.min(20, value)));
                       }}
                       required
-                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none transition-colors text-sm ${
-                        theme === 'web3' ? 'focus:border-purple-400' : 'focus:border-red-600'
-                      } ${
-                        theme === 'dark'
+                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none transition-colors text-sm ${theme === 'web3' ? 'focus:border-purple-400' : 'focus:border-red-600'
+                        } ${theme === 'dark'
                           ? 'bg-gray-900 border-gray-700 text-white placeholder-gray-500'
                           : theme === 'web3'
                             ? 'bg-purple-800/30 border-purple-500/30 text-white placeholder-purple-300/70'
                             : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
-                      }`}
+                        }`}
                       placeholder="5-20"
                     />
-                    <p className={`text-xs mt-1 ${
-                      theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
-                    }`}>
+                    <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
+                      }`}>
                       Min: 5, Max: 20
                     </p>
                   </div>
 
                   <div>
-                    <label className={`block text-xs font-semibold mb-2 ${
-                      theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-                    }`}>
+                    <label className={`block text-xs font-semibold mb-2 ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                      }`}>
                       Rows <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -1003,20 +980,17 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
                         setRoomRows(Math.max(5, Math.min(15, value)));
                       }}
                       required
-                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none transition-colors text-sm ${
-                        theme === 'web3' ? 'focus:border-purple-400' : 'focus:border-red-600'
-                      } ${
-                        theme === 'dark'
+                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none transition-colors text-sm ${theme === 'web3' ? 'focus:border-purple-400' : 'focus:border-red-600'
+                        } ${theme === 'dark'
                           ? 'bg-gray-900 border-gray-700 text-white placeholder-gray-500'
                           : theme === 'web3'
                             ? 'bg-purple-800/30 border-purple-500/30 text-white placeholder-purple-300/70'
                             : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
-                      }`}
+                        }`}
                       placeholder="5-15"
                     />
-                    <p className={`text-xs mt-1 ${
-                      theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
-                    }`}>
+                    <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
+                      }`}>
                       Min: 5, Max: 15
                     </p>
                   </div>
@@ -1024,47 +998,43 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
               </div>
 
               {/* Drawing Mode Selection */}
-              <div className={`p-4 rounded-lg border ${
-                theme === 'dark' ? 'bg-gray-800 border-gray-700' : theme === 'web3' ? 'bg-purple-800/20 border-purple-500/30' : 'bg-gray-50 border-gray-200'
-              }`}>
-                <h4 className={`text-sm font-semibold mb-3 ${
-                  theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+              <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : theme === 'web3' ? 'bg-purple-800/20 border-purple-500/30' : 'bg-gray-50 border-gray-200'
                 }`}>
-                  Chế Độ Vẽ
+                <h4 className={`text-sm font-semibold mb-3 ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                  }`}>
+                  Draw Mode
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                   <button
                     onClick={() => setDrawingMode('seat')}
-                    className={`p-4 rounded-lg border transition-all ${
-                      drawingMode === 'seat'
-                        ? theme === 'web3'
-                          ? 'border-purple-400 bg-purple-800/30 shadow-lg'
-                          : 'border-red-600 bg-red-50 shadow-lg'
+                    className={`p-4 rounded-lg border transition-all ${drawingMode === 'seat'
+                      ? theme === 'web3'
+                        ? 'border-purple-400 bg-purple-800/30 shadow-lg'
                         : theme === 'dark'
-                          ? 'bg-gray-700 border-gray-600 hover:border-gray-500'
-                          : theme === 'web3'
-                            ? 'bg-purple-800/20 border-purple-500/30 hover:border-purple-400/50'
-                            : 'bg-white border-gray-200 hover:border-red-300'
-                    }`}
+                          ? 'border-red-500 bg-red-900/30 shadow-lg'
+                          : 'border-red-600 bg-red-50 shadow-lg'
+                      : theme === 'dark'
+                        ? 'bg-gray-700 border-gray-600 hover:border-gray-500'
+                        : theme === 'web3'
+                          ? 'bg-purple-800/20 border-purple-500/30 hover:border-purple-400/50'
+                          : 'bg-white border-gray-200 hover:border-red-300'
+                      }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        drawingMode === 'seat'
-                          ? theme === 'web3' ? 'bg-purple-500' : 'bg-red-600'
-                          : theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'
-                      }`}>
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${drawingMode === 'seat'
+                        ? theme === 'web3' ? 'bg-purple-500' : 'bg-red-600'
+                        : theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'
+                        }`}>
                         <Grid3x3 className="w-5 h-5 text-white" />
                       </div>
                       <div className="text-left">
-                        <p className={`font-semibold ${
-                          theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          Vẽ Ghế
+                        <p className={`font-semibold ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                          }`}>
+                          {t('createAuditorium.drawSeat')}
                         </p>
-                        <p className={`text-xs ${
-                          theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
-                        }`}>
-                          {seats.length} ghế
+                        <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                          }`}>
+                          {t('createAuditorium.seatsCount', { count: seats.length })}
                         </p>
                       </div>
                     </div>
@@ -1072,36 +1042,34 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
 
                   <button
                     onClick={() => setDrawingMode('exit')}
-                    className={`p-4 rounded-lg border transition-all ${
-                      drawingMode === 'exit'
-                        ? theme === 'web3'
-                          ? 'border-green-400 bg-green-800/30 shadow-lg'
-                          : 'border-green-600 bg-green-50 shadow-lg'
+                    className={`p-4 rounded-lg border transition-all ${drawingMode === 'exit'
+                      ? theme === 'web3'
+                        ? 'border-green-400 bg-green-800/30 shadow-lg'
                         : theme === 'dark'
-                          ? 'bg-gray-700 border-gray-600 hover:border-gray-500'
-                          : theme === 'web3'
-                            ? 'bg-purple-800/20 border-purple-500/30 hover:border-green-400/50'
-                            : 'bg-white border-gray-200 hover:border-green-300'
-                    }`}
+                          ? 'border-green-500 bg-green-900/30 shadow-lg'
+                          : 'border-green-600 bg-green-50 shadow-lg'
+                      : theme === 'dark'
+                        ? 'bg-gray-700 border-gray-600 hover:border-gray-500'
+                        : theme === 'web3'
+                          ? 'bg-purple-800/20 border-purple-500/30 hover:border-green-400/50'
+                          : 'bg-white border-gray-200 hover:border-green-300'
+                      }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        drawingMode === 'exit'
-                          ? theme === 'web3' ? 'bg-green-500' : 'bg-green-600'
-                          : theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'
-                      }`}>
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${drawingMode === 'exit'
+                        ? theme === 'web3' ? 'bg-green-500' : 'bg-green-600'
+                        : theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'
+                        }`}>
                         <DoorOpen className="w-5 h-5 text-white" />
                       </div>
                       <div className="text-left">
-                        <p className={`font-semibold ${
-                          theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          Vẽ Lối Ra
+                        <p className={`font-semibold ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                          }`}>
+                          {t('createAuditorium.drawExit')}
                         </p>
-                        <p className={`text-xs ${
-                          theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
-                        }`}>
-                          {exits.length} lối ra
+                        <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                          }`}>
+                          {t('createAuditorium.exitsCount', { count: exits.length })}
                         </p>
                       </div>
                     </div>
@@ -1109,36 +1077,34 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
 
                   <button
                     onClick={() => setDrawingMode('aisle')}
-                    className={`p-4 rounded-lg border transition-all ${
-                      drawingMode === 'aisle'
-                        ? theme === 'web3'
-                          ? 'border-blue-400 bg-blue-800/30 shadow-lg'
-                          : 'border-blue-600 bg-blue-50 shadow-lg'
+                    className={`p-4 rounded-lg border transition-all ${drawingMode === 'aisle'
+                      ? theme === 'web3'
+                        ? 'border-blue-400 bg-blue-800/30 shadow-lg'
                         : theme === 'dark'
-                          ? 'bg-gray-700 border-gray-600 hover:border-gray-500'
-                          : theme === 'web3'
-                            ? 'bg-purple-800/20 border-purple-500/30 hover:border-blue-400/50'
-                            : 'bg-white border-gray-200 hover:border-blue-300'
-                    }`}
+                          ? 'border-blue-500 bg-blue-900/30 shadow-lg'
+                          : 'border-blue-600 bg-blue-50 shadow-lg'
+                      : theme === 'dark'
+                        ? 'bg-gray-700 border-gray-600 hover:border-gray-500'
+                        : theme === 'web3'
+                          ? 'bg-purple-800/20 border-purple-500/30 hover:border-blue-400/50'
+                          : 'bg-white border-gray-200 hover:border-blue-300'
+                      }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        drawingMode === 'aisle'
-                          ? theme === 'web3' ? 'bg-blue-500' : 'bg-blue-600'
-                          : theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'
-                      }`}>
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${drawingMode === 'aisle'
+                        ? theme === 'web3' ? 'bg-blue-500' : 'bg-blue-600'
+                        : theme === 'dark' ? 'bg-gray-600' : 'bg-gray-300'
+                        }`}>
                         <Square className="w-5 h-5 text-white" />
                       </div>
                       <div className="text-left">
-                        <p className={`font-semibold ${
-                          theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          Vẽ Lối Đi
+                        <p className={`font-semibold ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                          }`}>
+                          {t('createAuditorium.drawAisle')}
                         </p>
-                        <p className={`text-xs ${
-                          theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
-                        }`}>
-                          {aisles.length} lối đi
+                        <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                          }`}>
+                          {t('createAuditorium.aislesCount', { count: aisles.length })}
                         </p>
                       </div>
                     </div>
@@ -1150,11 +1116,10 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
                   <div className="flex flex-wrap gap-3 mt-3">
                     <button
                       onClick={handleAutoFillSeats}
-                      className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 ${
-                        theme === 'web3'
-                          ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white'
-                          : 'bg-blue-600 hover:bg-blue-700 text-white'
-                      }`}
+                      className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 ${theme === 'web3'
+                        ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                        }`}
                     >
                       <Plus className="w-4 h-4" />
                       Auto Fill Seats
@@ -1162,15 +1127,13 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
                     <button
                       onClick={handleClearAllSeats}
                       disabled={seats.length === 0}
-                      className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 ${
-                        seats.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
-                      } ${
-                        theme === 'dark'
+                      className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 ${seats.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                        } ${theme === 'dark'
                           ? 'bg-gray-700 hover:bg-gray-600 text-gray-300'
                           : theme === 'web3'
                             ? 'bg-purple-800/50 hover:bg-purple-700/50 text-purple-200'
                             : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                      }`}
+                        }`}
                     >
                       <X className="w-4 h-4" />
                       Clear All Seats
@@ -1179,59 +1142,51 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
                 )}
 
                 {/* Instructions */}
-                <div className={`mt-3 p-3 rounded ${
-                  theme === 'dark' ? 'bg-gray-900/50' : theme === 'web3' ? 'bg-purple-900/30' : 'bg-blue-50'
-                }`}>
+                <div className={`mt-3 p-3 rounded ${theme === 'dark' ? 'bg-gray-900/50' : theme === 'web3' ? 'bg-purple-900/30' : 'bg-blue-50'
+                  }`}>
                   {drawingMode === 'seat' && (
-                    <p className={`text-xs ${
-                      theme === 'dark' ? 'text-gray-300' : theme === 'web3' ? 'text-purple-200' : 'text-blue-700'
-                    }`}>
-                      💡 Click và kéo chuột trên lưới để vẽ ghế. Click vào ghế để xóa.
+                    <p className={`text-xs ${theme === 'dark' ? 'text-gray-300' : theme === 'web3' ? 'text-purple-200' : 'text-blue-700'
+                      }`}>
+                      💡 Click and drag on grid to draw seats. Click on a seat to remove.
                     </p>
                   )}
                   {drawingMode === 'exit' && (
-                    <p className={`text-xs ${
-                      theme === 'dark' ? 'text-green-300' : theme === 'web3' ? 'text-green-200' : 'text-green-700'
-                    }`}>
-                      💡 Click và kéo chuột trên lưới để vẽ lối ra (có thể vẽ ngang hoặc dọc). Click vào lối ra để xóa.
+                    <p className={`text-xs ${theme === 'dark' ? 'text-green-300' : theme === 'web3' ? 'text-green-200' : 'text-green-700'
+                      }`}>
+                      💡 Click and drag on grid to draw exit. Click on an exit to remove.
                     </p>
                   )}
                   {drawingMode === 'aisle' && (
-                    <p className={`text-xs ${
-                      theme === 'dark' ? 'text-blue-300' : theme === 'web3' ? 'text-blue-200' : 'text-blue-700'
-                    }`}>
-                      💡 Click và kéo chuột trên lưới để vẽ lối đi. Click vào lối đi để xóa.
+                    <p className={`text-xs ${theme === 'dark' ? 'text-blue-300' : theme === 'web3' ? 'text-blue-200' : 'text-blue-700'
+                      }`}>
+                      💡 Click and drag on grid to draw walkway. Click on an walkway to remove.
                     </p>
                   )}
                 </div>
               </div>
 
-              <div className={`p-4 rounded-lg border ${
-                theme === 'dark' ? 'bg-gray-800 border-gray-700' : theme === 'web3' ? 'bg-purple-800/20 border-purple-500/30' : 'bg-gray-50 border-gray-200'
-              }`}>
-                <p className={`text-sm mb-2 flex items-center gap-2 ${
-                  theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+              <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : theme === 'web3' ? 'bg-purple-800/20 border-purple-500/30' : 'bg-gray-50 border-gray-200'
                 }`}>
+                <p className={`text-sm mb-2 flex items-center gap-2 ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                  }`}>
                   <Move className="w-4 h-4" />
-                  {drawingMode === 'seat' && (isMobile 
-                    ? 'Touch and drag để thêm ghế, click vào ghế để xóa' 
-                    : 'Click and drag để thêm ghế, click vào ghế để xóa')}
-                  {drawingMode === 'exit' && (isMobile 
-                    ? 'Touch and drag để vẽ lối ra (ngang hoặc dọc), click vào lối ra để xóa' 
-                    : 'Click and drag để vẽ lối ra (ngang hoặc dọc), click vào lối ra để xóa')}
-                  {drawingMode === 'aisle' && (isMobile 
-                    ? 'Touch and drag để vẽ lối đi, click vào lối đi để xóa' 
-                    : 'Click and drag để vẽ lối đi, click vào lối đi để xóa')}
+                  {drawingMode === 'seat' && (isMobile
+                    ? 'Touch and drag to add seat, click on seat to remove'
+                    : 'Click and drag to add seat, click on seat to remove')}
+                  {drawingMode === 'exit' && (isMobile
+                    ? 'Touch and drag to draw exit, click on exit to remove'
+                    : 'Click and drag to draw exit, click on exit to remove')}
+                  {drawingMode === 'aisle' && (isMobile
+                    ? 'Touch and drag to draw walkway, click on walkway to remove'
+                    : 'Click and drag to draw walkway, click on walkway to remove')}
                 </p>
               </div>
 
               {/* Screen */}
-              <div className={`text-center py-2 mb-4 rounded ${
-                theme === 'dark' ? 'bg-gray-800' : theme === 'web3' ? 'bg-purple-800/30' : 'bg-gray-200'
-              }`}>
-                <p className={`text-sm font-semibold ${
-                  theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+              <div className={`text-center py-2 mb-4 rounded ${theme === 'dark' ? 'bg-gray-800' : theme === 'web3' ? 'bg-purple-800/30' : 'bg-gray-200'
                 }`}>
+                <p className={`text-sm font-semibold ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                  }`}>
                   SCREEN
                 </p>
               </div>
@@ -1242,9 +1197,8 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
                 <div className="relative inline-block">
                   <div
                     ref={canvasRef}
-                    className={`relative border-2 ${
-                      theme === 'dark' ? 'border-gray-700' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-300'
-                    }`}
+                    className={`relative border-2 ${theme === 'dark' ? 'border-gray-700' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-300'
+                      }`}
                     style={{
                       width: gridSize.cols * cellSize.width,
                       height: gridSize.rows * cellSize.height,
@@ -1266,9 +1220,8 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
                     {exits.map((exit) => (
                       <div
                         key={exit.id}
-                        className={`absolute border-2 cursor-pointer ${
-                          theme === 'dark' ? 'border-green-500 bg-green-800/40' : theme === 'web3' ? 'border-green-400 bg-green-800/40' : 'border-green-500 bg-green-200/50'
-                        }`}
+                        className={`absolute border-2 cursor-pointer ${theme === 'dark' ? 'border-green-500 bg-green-800/40' : theme === 'web3' ? 'border-green-400 bg-green-800/40' : 'border-green-500 bg-green-200/50'
+                          }`}
                         style={{
                           left: exit.colIndex * cellSize.width,
                           top: exit.rowIndex * cellSize.height,
@@ -1283,9 +1236,8 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
                     {aisles.map((aisle) => (
                       <div
                         key={aisle.id}
-                        className={`absolute border-2 cursor-pointer ${
-                          theme === 'dark' ? 'border-blue-500 bg-blue-800/40' : theme === 'web3' ? 'border-blue-400 bg-blue-800/40' : 'border-blue-500 bg-blue-200/50'
-                        }`}
+                        className={`absolute border-2 cursor-pointer ${theme === 'dark' ? 'border-blue-500 bg-blue-800/40' : theme === 'web3' ? 'border-blue-400 bg-blue-800/40' : 'border-blue-500 bg-blue-200/50'
+                          }`}
                         style={{
                           left: aisle.colIndex * cellSize.width,
                           top: aisle.rowIndex * cellSize.height,
@@ -1301,11 +1253,10 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
                       <div
                         key={index}
                         onClick={() => handleRemoveSeat(seat.colIndex, seat.rowIndex)}
-                        className={`absolute cursor-pointer rounded transition-all hover:scale-110 flex items-center justify-center text-xs font-bold ${
-                          theme === 'web3'
-                            ? 'bg-gradient-to-br from-purple-600 to-cyan-600 text-white'
-                            : 'bg-gradient-to-br from-red-600 to-red-800 text-white'
-                        }`}
+                        className={`absolute cursor-pointer rounded transition-all hover:scale-110 flex items-center justify-center text-xs font-bold ${theme === 'web3'
+                          ? 'bg-gradient-to-br from-purple-600 to-cyan-600 text-white'
+                          : 'bg-gradient-to-br from-red-600 to-red-800 text-white'
+                          }`}
                         style={{
                           left: seat.coordX,
                           top: seat.coordY,
@@ -1323,9 +1274,8 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
               </div>
 
               {/* Grid Info */}
-              <div className={`p-3 rounded-lg text-sm ${
-                theme === 'dark' ? 'bg-gray-800 text-gray-400' : theme === 'web3' ? 'bg-purple-800/20 text-purple-200' : 'bg-gray-50 text-gray-600'
-              }`}>
+              <div className={`p-3 rounded-lg text-sm ${theme === 'dark' ? 'bg-gray-800 text-gray-400' : theme === 'web3' ? 'bg-purple-800/20 text-purple-200' : 'bg-gray-50 text-gray-600'
+                }`}>
                 <p>Size: {gridSize.cols} columns × {gridSize.rows} rows</p>
                 <p>Cell size: {cellSize.width}px × {cellSize.height}px</p>
                 {exits.length > 0 && (
@@ -1339,19 +1289,17 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
         </div>
 
         {/* Footer */}
-        <div className={`flex justify-between gap-3 p-6 border-t ${
-          theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
-        }`}>
+        <div className={`flex justify-between gap-3 p-6 border-t ${theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
+          }`}>
           <button
             onClick={currentStep === 'format' ? onClose : handlePrevStep}
             disabled={createLoading}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 ${
-              theme === 'dark'
-                ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                : theme === 'web3'
-                  ? 'bg-purple-800/50 hover:bg-purple-700/50 text-purple-200'
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-            } ${createLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 ${theme === 'dark'
+              ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+              : theme === 'web3'
+                ? 'bg-purple-800/50 hover:bg-purple-700/50 text-purple-200'
+                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+              } ${createLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {currentStep !== 'format' && <ArrowLeft className="w-4 h-4" />}
             {currentStep === 'format' ? 'Cancel' : 'Back'}
@@ -1361,13 +1309,11 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
             <button
               onClick={handleSubmit}
               disabled={createLoading || seats.length === 0}
-              className={`px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 ${
-                createLoading || seats.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
-              } ${
-                theme === 'web3'
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 ${createLoading || seats.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                } ${theme === 'web3'
                   ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white'
                   : 'bg-red-600 hover:bg-red-700 text-white'
-              }`}
+                }`}
             >
               {createLoading ? (
                 <>
@@ -1385,15 +1331,13 @@ const CreateAuditoriumModal: React.FC<CreateAuditoriumModalProps> = ({ cinemaId,
             <button
               onClick={handleNextStep}
               disabled={currentStep === 'format' && !selectedFormat}
-              className={`px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 ${
-                currentStep === 'format' && !selectedFormat
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
-              } ${
-                theme === 'web3'
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 ${currentStep === 'format' && !selectedFormat
+                ? 'opacity-50 cursor-not-allowed'
+                : ''
+                } ${theme === 'web3'
                   ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white'
                   : 'bg-red-600 hover:bg-red-700 text-white'
-              }`}
+                }`}
             >
               Next
               <ArrowRight className="w-4 h-4" />

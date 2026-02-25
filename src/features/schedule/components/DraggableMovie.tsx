@@ -4,9 +4,10 @@ import type { Movie } from '../types';
 interface DraggableMovieProps {
     movie: Movie;
     onDragStart: (movie: Movie) => void;
+    onDragEnd?: () => void;
 }
 
-const DraggableMovie: React.FC<DraggableMovieProps> = ({ movie, onDragStart }) => {
+const DraggableMovie: React.FC<DraggableMovieProps> = ({ movie, onDragStart, onDragEnd }) => {
     return (
         <div
             draggable
@@ -15,6 +16,9 @@ const DraggableMovie: React.FC<DraggableMovieProps> = ({ movie, onDragStart }) =
                 e.dataTransfer.setData('application/json', JSON.stringify({ type: 'movie_source', movieId: movie.id }));
                 e.dataTransfer.effectAllowed = 'copy';
                 onDragStart(movie);
+            }}
+            onDragEnd={() => {
+                if (onDragEnd) onDragEnd();
             }}
             className="p-3 mb-2 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 cursor-grab active:cursor-grabbing hover:shadow-md transition-all duration-200 group"
             style={{ borderLeft: `4px solid ${movie.color || '#cbd5e1'}` }}

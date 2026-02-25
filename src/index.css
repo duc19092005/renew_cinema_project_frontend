@@ -1,4 +1,7 @@
-@import "tailwindcss"; 
+@import "tailwindcss";
+
+/* Tailwind v4: khai báo dark mode dựa trên class .dark trên thẻ html */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Thêm đoạn này để đảm bảo full màn hình */
 html, body, #root {

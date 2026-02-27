@@ -106,7 +106,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
           {/* Header */}
           <div className={`flex items-center justify-between p-6 border-b ${theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
             }`}>
-            <h2 className={`text-2xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+            <h2 className={`text-2xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
               }`}>
               Cinema Details
             </h2>
@@ -156,7 +156,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                       <Building2 className="w-8 h-8 text-white" />
                     </div>
                     <div>
-                      <h3 className={`text-2xl font-black mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                      <h3 className={`text-2xl font-black mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
                         }`}>
                         {cinema.cinemaName}
                       </h3>
@@ -177,7 +177,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                           }`}>
                           Description
                         </p>
-                        <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}>
+                        <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700 dark:text-gray-300 modern:text-gray-200'}>
                           {cinema.cinemaDescription}
                         </p>
                       </div>
@@ -192,7 +192,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                             }`}>
                             Location
                           </p>
-                          <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
+                          <p className={theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'}>
                             {cinema.cinemaLocation}
                           </p>
                         </div>
@@ -206,7 +206,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                             }`}>
                             Hotline
                           </p>
-                          <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
+                          <p className={theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'}>
                             {cinema.cinemaHotlineNumber}
                           </p>
                         </div>
@@ -223,7 +223,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                             }`}>
                             Total Auditoriums
                           </p>
-                          <p className={`text-2xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                          <p className={`text-2xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
                             }`}>
                             {cinema.totalRooms} rooms
                           </p>
@@ -240,7 +240,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                   }`}>
                   <div className={`flex items-center justify-between p-6 border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
                     }`}>
-                    <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
                       }`}>
                       Auditorium List ({auditoriums.length})
                     </h3>
@@ -299,7 +299,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                                       <Film className="w-5 h-5 text-white" />
                                     </div>
                                     <div>
-                                      <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                                      <h4 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
                                         }`}>
                                         {auditorium.auditoriumNumber}
                                       </h4>
@@ -323,7 +323,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                                     }`}>
                                     Cinema
                                   </p>
-                                  <p className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                                  <p className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
                                     }`}>
                                     {auditorium.cinemaName}
                                   </p>
@@ -345,7 +345,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                                       : ''
                                       } ${theme === 'dark'
                                         ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:text-gray-300 modern:text-gray-200'
                                       }`}
                                   >
                                     <Eye className="w-3 h-3" />
@@ -353,7 +353,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
                                   </button>
                                   <button className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded text-xs transition-colors ${theme === 'dark'
                                     ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:text-gray-300 modern:text-gray-200'
                                     }`}>
                                     <Edit className="w-3 h-3" />
                                     Edit
@@ -402,7 +402,7 @@ const CinemaDetailModal: React.FC<CinemaDetailModalProps> = ({ cinemaId, isOpen,
               onClick={onClose}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors ${theme === 'dark'
                 ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:text-gray-300 modern:text-gray-200'
                 }`}
             >
               Close

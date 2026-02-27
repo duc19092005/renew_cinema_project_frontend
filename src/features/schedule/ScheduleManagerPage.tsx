@@ -161,7 +161,7 @@ const ScheduleManagerPage: React.FC<ScheduleManagerPageProps> = ({ embedded = fa
 
     if (loading) {
         return (
-            <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-indigo-900/50">
+            <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800/60">
                 <div className="flex flex-col items-center">
                     <Loader2 className="w-8 h-8 animate-spin text-red-600 mb-4" />
                     <p className="text-slate-500 font-medium">Loading Schedules Data...</p>
@@ -191,12 +191,12 @@ const ScheduleManagerPage: React.FC<ScheduleManagerPageProps> = ({ embedded = fa
                 <div className="flex items-center pl-2 gap-2 sm:gap-3 shrink-0">
                     <div className="flex items-center bg-slate-100 dark:bg-slate-700 rounded-lg p-1 sm:mr-2">
                         <select
-                            className="bg-transparent border-none text-xs sm:text-sm font-bold focus:ring-0 text-slate-700 dark:text-indigo-100  py-1 pl-2 pr-8 cursor-pointer"
+                            className="bg-transparent border-none text-xs sm:text-sm font-bold focus:ring-0 text-slate-700 dark:text-white/90  py-1 pl-2 pr-8 cursor-pointer"
                             value={selectedAuditoriumId}
                             onChange={(e) => setSelectedAuditoriumId(e.target.value)}
                         >
                             {auditoriumsList.map(aud => (
-                                <option key={aud.id} value={aud.id} className="text-slate-900 bg-white dark:text-indigo-100  dark:bg-slate-700">Auditorium {aud.name}</option>
+                                <option key={aud.id} value={aud.id} className="text-slate-900 bg-white dark:text-white/90  dark:bg-slate-700">Auditorium {aud.name}</option>
                             ))}
                         </select>
                     </div>
@@ -226,12 +226,12 @@ const ScheduleManagerPage: React.FC<ScheduleManagerPageProps> = ({ embedded = fa
 
                 <aside className={`absolute inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 z-40 w-72 sm:w-80 flex flex-col transition-transform duration-300 ease-in-out bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 shadow-2xl md:shadow-xl`}>
                     <div className={`p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between`}>
-                        <h2 className="font-bold text-slate-700 dark:text-indigo-100  mb-2 flex items-center gap-2">
+                        <h2 className="font-bold text-slate-700 dark:text-white/90  mb-2 flex items-center gap-2">
                             <Film className="w-4 h-4 text-red-500" />
                             {t('scheduleManager.dragMoviesTitle')}
                         </h2>
                         {isSidebarOpen && (
-                            <button className="md:hidden text-indigo-300 hover:text-red-500" onClick={() => setIsSidebarOpen(false)}>
+                            <button className="md:hidden text-white/60 hover:text-red-500 hover:drop-shadow-[0_0_4px_rgba(239,68,68,0.4)]" onClick={() => setIsSidebarOpen(false)}>
                                 <X className="w-5 h-5" />
                             </button>
                         )}
@@ -240,7 +240,7 @@ const ScheduleManagerPage: React.FC<ScheduleManagerPageProps> = ({ embedded = fa
                         <input
                             type="text"
                             placeholder={t('scheduleManager.search')}
-                            className="w-full px-3 py-2 bg-slate-100 dark:bg-slate-900 border-none rounded-md text-sm ring-2 ring-transparent focus:ring-red-500 transition-all text-slate-800 dark:text-indigo-100 "
+                            className="w-full px-3 py-2 bg-slate-100 dark:bg-slate-900 border-none rounded-md text-sm ring-2 ring-transparent focus:ring-red-500 transition-all text-slate-800 dark:text-white/90 "
                         />
                     </div>
 

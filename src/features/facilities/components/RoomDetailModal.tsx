@@ -16,7 +16,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
   const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Movie format selection modal state
   const [isMovieFormatModalOpen, setIsMovieFormatModalOpen] = useState(false);
   const [movieFormats, setMovieFormats] = useState<MovieFormat[]>([]);
@@ -35,54 +35,46 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
 
   // Seed data cho chi tiết phòng (mock data để test)
   const getSeedRoomDetail = (id: string): Room | null => {
-    const seedRooms: Record<string, Room> = {
+    const seedRooms: Record<string, any> = {
       'a1b2c3d4-e5f6-7890-abcd-ef1234567890': {
-        roomId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-        roomName: 'Phòng 1',
-        roomCapacity: 120,
-        roomStatus: 'active',
+        auditoriumId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        auditoriumNumber: 'Phòng 1',
+        totalSeats: 120,
       },
       'b2c3d4e5-f6a7-8901-bcde-f12345678901': {
-        roomId: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
-        roomName: 'Phòng 2',
-        roomCapacity: 150,
-        roomStatus: 'active',
+        auditoriumId: 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
+        auditoriumNumber: 'Phòng 2',
+        totalSeats: 150,
       },
       'c3d4e5f6-a7b8-9012-cdef-123456789012': {
-        roomId: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
-        roomName: 'Phòng 3',
-        roomCapacity: 100,
-        roomStatus: 'active',
+        auditoriumId: 'c3d4e5f6-a7b8-9012-cdef-123456789012',
+        auditoriumNumber: 'Phòng 3',
+        totalSeats: 100,
       },
       'd4e5f6a7-b8c9-0123-defa-234567890123': {
-        roomId: 'd4e5f6a7-b8c9-0123-defa-234567890123',
-        roomName: 'Phòng VIP 1',
-        roomCapacity: 80,
-        roomStatus: 'active',
+        auditoriumId: 'd4e5f6a7-b8c9-0123-defa-234567890123',
+        auditoriumNumber: 'Phòng VIP 1',
+        totalSeats: 80,
       },
       'e5f6a7b8-c9d0-1234-efab-345678901234': {
-        roomId: 'e5f6a7b8-c9d0-1234-efab-345678901234',
-        roomName: 'Phòng 4',
-        roomCapacity: 200,
-        roomStatus: 'maintenance',
+        auditoriumId: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+        auditoriumNumber: 'Phòng 4',
+        totalSeats: 200,
       },
       'f6a7b8c9-d0e1-2345-fabc-456789012345': {
-        roomId: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
-        roomName: 'Phòng 5',
-        roomCapacity: 130,
-        roomStatus: 'active',
+        auditoriumId: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+        auditoriumNumber: 'Phòng 5',
+        totalSeats: 130,
       },
       'a7b8c9d0-e1f2-3456-abcd-567890123456': {
-        roomId: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
-        roomName: 'Phòng IMAX',
-        roomCapacity: 300,
-        roomStatus: 'active',
+        auditoriumId: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+        auditoriumNumber: 'Phòng IMAX',
+        totalSeats: 300,
       },
       'b8c9d0e1-f2a3-4567-bcde-678901234567': {
-        roomId: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
-        roomName: 'Phòng 6',
-        roomCapacity: 110,
-        roomStatus: 'active',
+        auditoriumId: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+        auditoriumNumber: 'Phòng 6',
+        totalSeats: 110,
       },
     };
     return seedRooms[id] || null;
@@ -92,8 +84,8 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
     setLoading(true);
     setError(null);
     try {
-      const res = await facilitiesApi.getRoomDetail(roomId);
-      setRoom(res.data);
+      const res = await facilitiesApi.getAuditoriumDetail(roomId);
+      setRoom(res.data as any);
     } catch (err) {
       // Nếu API lỗi, thử dùng seed data
       const seedRoom = getSeedRoomDetail(roomId);
@@ -171,28 +163,24 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
 
       {/* Modal */}
       <div
-        className={`relative w-full max-w-lg rounded-xl border shadow-2xl transition-all ${
-          theme === 'dark'
-            ? 'bg-gray-900 border-gray-800'
-            : 'bg-white border-gray-200'
-        }`}
+        className={`relative w-full max-w-lg rounded-xl border shadow-2xl transition-all ${theme === 'dark'
+          ? 'bg-gray-900 border-gray-800'
+          : 'bg-white border-gray-200'
+          }`}
       >
         {/* Header */}
-        <div className={`flex items-center justify-between p-6 border-b ${
-          theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
-        }`}>
-          <h2 className={`text-2xl font-black ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
+        <div className={`flex items-center justify-between p-6 border-b ${theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
           }`}>
+          <h2 className={`text-2xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
+            }`}>
             Details phòng chiếu
           </h2>
           <button
             onClick={onClose}
-            className={`p-2 rounded-lg transition-colors ${
-              theme === 'dark'
-                ? 'hover:bg-gray-800 text-gray-400'
-                : 'hover:bg-gray-100 text-gray-600'
-            }`}
+            className={`p-2 rounded-lg transition-colors ${theme === 'dark'
+              ? 'hover:bg-gray-800 text-gray-400'
+              : 'hover:bg-gray-100 text-gray-600'
+              }`}
           >
             <X className="w-5 h-5" />
           </button>
@@ -212,11 +200,10 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
           )}
 
           {error && (
-            <div className={`p-4 rounded-lg border flex items-center ${
-              theme === 'dark'
-                ? 'bg-red-900/40 border-red-500/50 text-red-100'
-                : 'bg-red-50 border-red-200 text-red-800'
-            }`}>
+            <div className={`p-4 rounded-lg border flex items-center ${theme === 'dark'
+              ? 'bg-red-900/40 border-red-500/50 text-red-100'
+              : 'bg-red-50 border-red-200 text-red-800'
+              }`}>
               <AlertCircle className="w-5 h-5 mr-3 shrink-0 text-red-500" />
               <span className="text-sm font-medium">{error}</span>
             </div>
@@ -225,76 +212,65 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
           {!loading && !error && room && (
             <div className="space-y-6">
               {/* Room Info Card */}
-              <div className={`p-6 rounded-lg border ${
-                theme === 'dark'
-                  ? 'bg-gray-800 border-gray-700'
-                  : 'bg-gray-50 border-gray-200'
-              }`}>
+              <div className={`p-6 rounded-lg border ${theme === 'dark'
+                ? 'bg-gray-800 border-gray-700'
+                : 'bg-gray-50 border-gray-200'
+                }`}>
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
                     <Film className="w-8 h-8 text-white" />
                   </div>
                   <div>
-                    <h3 className={`text-2xl font-black mb-1 ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
-                    }`}>
-                      {room.auditoriumName}
+                    <h3 className={`text-2xl font-black mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
+                      }`}>
+                      {room.auditoriumNumber}
                     </h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-                      room.auditoriumStatus === 'active' || !room.auditoriumStatus
-                        ? theme === 'dark'
-                          ? 'bg-green-900/40 text-green-400 border-green-700'
-                          : 'bg-green-50 text-green-700 border-green-300'
-                        : theme === 'dark'
-                          ? 'bg-yellow-900/40 text-yellow-400 border-yellow-700'
-                          : 'bg-yellow-50 text-yellow-700 border-yellow-300'
-                    }`}>
-                      {room.auditoriumStatus === 'active' || !room.auditoriumStatus ? 'Hoạt động' : 'Maintenance'}
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${true
+                      ? theme === 'dark'
+                        ? 'bg-green-900/40 text-green-400 border-green-700'
+                        : 'bg-green-50 text-green-700 border-green-300'
+                      : theme === 'dark'
+                        ? 'bg-yellow-900/40 text-yellow-400 border-yellow-700'
+                        : 'bg-yellow-50 text-yellow-700 border-yellow-300'
+                      }`}>
+                      Hoạt động
                     </span>
                   </div>
                 </div>
 
                 {/* Details */}
                 <div className="space-y-4">
-                  <div className={`p-4 rounded-lg ${
-                    theme === 'dark' ? 'bg-gray-900' : 'bg-white'
-                  }`}>
+                  <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'
+                    }`}>
                     <div className="flex items-center gap-3">
-                      <Users className={`w-5 h-5 ${
-                        theme === 'dark' ? 'text-blue-500' : 'text-blue-600'
-                      }`} />
+                      <Users className={`w-5 h-5 ${theme === 'dark' ? 'text-blue-500' : 'text-blue-600'
+                        }`} />
                       <div>
-                        <p className={`text-xs mb-1 ${
-                          theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                        }`}>
+                        <p className={`text-xs mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                          }`}>
                           Capacity
                         </p>
-                        <p className={`text-2xl font-black ${
-                          theme === 'dark' ? 'text-white' : 'text-gray-900'
-                        }`}>
+                        <p className={`text-2xl font-black ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
+                          }`}>
                           {room.totalSeats} ghế
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  {room.auditoriumStatus && (
-                    <div className={`p-4 rounded-lg ${
-                      theme === 'dark' ? 'bg-gray-900' : 'bg-white'
-                    }`}>
+                  {true && (
+                    <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'
+                      }`}>
                       <div className="flex items-center gap-3">
-                        <Activity className={`w-5 h-5 ${
-                          theme === 'dark' ? 'text-pink-500' : 'text-pink-400'
-                        }`} />
+                        <Activity className={`w-5 h-5 ${theme === 'dark' ? 'text-white0' : 'text-white/90'
+                          }`} />
                         <div>
-                          <p className={`text-xs mb-1 ${
-                            theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                          }`}>
+                          <p className={`text-xs mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                            }`}>
                             Status
                           </p>
-                          <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
-                            {room.auditoriumStatus === 'active' ? 'Hoạt động' : 
-                             room.auditoriumStatus === 'maintenance' ? 'Maintenance' : 'Ngừng hoạt động'}
+                          <p className={theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'}>
+                            Hoạt động
                           </p>
                         </div>
                       </div>
@@ -305,19 +281,16 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
 
               {/* Room ID (for reference) */}
               {room.auditoriumId && (
-                <div className={`p-3 rounded-lg border ${
-                  theme === 'dark'
-                    ? 'bg-gray-800 border-gray-700'
-                    : 'bg-gray-50 border-gray-200'
-                }`}>
-                  <p className={`text-xs mb-1 ${
-                    theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                <div className={`p-3 rounded-lg border ${theme === 'dark'
+                  ? 'bg-gray-800 border-gray-700'
+                  : 'bg-gray-50 border-gray-200'
                   }`}>
+                  <p className={`text-xs mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                    }`}>
                     Room ID
                   </p>
-                  <p className={`text-xs font-mono ${
-                    theme === 'dark' ? 'text-gray-500' : 'text-gray-500'
-                  }`}>
+                  <p className={`text-xs font-mono ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'
+                    }`}>
                     {room.auditoriumId}
                   </p>
                 </div>
@@ -327,27 +300,24 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
         </div>
 
         {/* Footer */}
-        <div className={`flex justify-between gap-3 p-6 border-t ${
-          theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
-        }`}>
+        <div className={`flex justify-between gap-3 p-6 border-t ${theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
+          }`}>
           <button
             onClick={handleCreateShowtime}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
-              theme === 'modern'
-                ? 'bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 border border-pink-400/50 shadow-md shadow-pink-500/20 text-white'
-                : 'bg-red-600 hover:bg-red-700 text-white'
-            }`}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${theme === 'modern'
+              ? 'bg-gradient-to-r from-indigo-600 to-purple-700 opacity-90 hover:from-indigo-500 hover:to-purple-500 hover:opacity-100 hover:shadow-[0_0_10px_rgba(129,140,248,0.3)] hover:-translate-y-0.5 shadow-lg shadow-indigo-500/10 border-none text-white transition-all border border-indigo-500/30 shadow-md text-white'
+              : 'bg-red-600 hover:bg-red-700 text-white'
+              }`}
           >
             <Plus className="w-4 h-4" />
             Create Auditorium
           </button>
           <button
             onClick={onClose}
-            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-              theme === 'dark'
-                ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-            }`}
+            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${theme === 'dark'
+              ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+              : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:text-gray-300 modern:text-gray-200'
+              }`}
           >
             Đóng
           </button>
@@ -368,22 +338,19 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
 
           {/* Modal */}
           <div
-            className={`relative w-full max-w-3xl max-h-[90vh] rounded-xl border shadow-2xl transition-all flex flex-col ${
-              theme === 'dark'
-                ? 'bg-gray-900 border-gray-800'
-                : theme === 'modern'
-                  ? 'bg-gradient-to-br from-[#15102B]/95 to-[#0b061c]/95 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
-                  : 'bg-white border-gray-200'
-            }`}
+            className={`relative w-full max-w-3xl max-h-[90vh] rounded-xl border shadow-2xl transition-all flex flex-col ${theme === 'dark'
+              ? 'bg-gray-900 border-gray-800'
+              : theme === 'modern'
+                ? 'bg-[#0f172a]/40 backdrop-blur-2xl border-indigo-500/20 shadow-sm'
+                : 'bg-white border-gray-200'
+              }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className={`flex items-center justify-between p-6 border-b ${
-              theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'border-gray-200'
-            }`}>
-              <h2 className={`text-2xl font-black ${
-                theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
+            <div className={`flex items-center justify-between p-6 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/20 shadow-sm' : 'border-gray-200'
               }`}>
+              <h2 className={`text-2xl font-black ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
+                }`}>
                 Select Movie Format
               </h2>
               <button
@@ -391,13 +358,12 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                   setIsMovieFormatModalOpen(false);
                   setSelectedFormat(null);
                 }}
-                className={`p-2 rounded-lg transition-colors ${
-                  theme === 'dark'
-                    ? 'hover:bg-gray-800 text-gray-400'
-                    : theme === 'modern'
-                      ? 'hover:bg-indigo-800/40 text-white font-medium'
-                      : 'hover:bg-gray-100 text-gray-600'
-                }`}
+                className={`p-2 rounded-lg transition-colors ${theme === 'dark'
+                  ? 'hover:bg-gray-800 text-gray-400'
+                  : theme === 'modern'
+                    ? 'hover:bg-indigo-500/10 text-white font-medium'
+                    : 'hover:bg-gray-100 text-gray-600'
+                  }`}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -408,9 +374,8 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
               {formatsLoading && (
                 <div className="flex items-center justify-center py-12">
                   <div className="text-center">
-                    <Loader2 className={`w-12 h-12 animate-spin mx-auto mb-4 ${
-                      theme === 'modern' ? 'text-indigo-300' : 'text-red-600'
-                    }`} />
+                    <Loader2 className={`w-12 h-12 animate-spin mx-auto mb-4 ${theme === 'modern' ? 'text-white/60' : 'text-red-600'
+                      }`} />
                     <p className={theme === 'dark' || theme === 'modern' ? 'text-gray-400' : 'text-gray-600'}>
                       Loading list định dạng...
                     </p>
@@ -419,13 +384,12 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
               )}
 
               {formatsError && (
-                <div className={`p-4 rounded-lg border flex items-center ${
-                  theme === 'dark'
+                <div className={`p-4 rounded-lg border flex items-center ${theme === 'dark'
+                  ? 'bg-red-900/40 border-red-500/50 text-red-100'
+                  : theme === 'modern'
                     ? 'bg-red-900/40 border-red-500/50 text-red-100'
-                    : theme === 'modern'
-                      ? 'bg-red-900/40 border-red-500/50 text-red-100'
-                      : 'bg-red-50 border-red-200 text-red-800'
-                }`}>
+                    : 'bg-red-50 border-red-200 text-red-800'
+                  }`}>
                   <AlertCircle className="w-5 h-5 mr-3 shrink-0 text-red-500" />
                   <span className="text-sm font-medium">{formatsError}</span>
                 </div>
@@ -437,46 +401,41 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                     <button
                       key={format.formatId}
                       onClick={() => handleFormatSelect(format)}
-                      className={`p-4 rounded-lg border text-left transition-all ${
-                        selectedFormat?.formatId === format.formatId
-                          ? theme === 'modern'
-                            ? 'border-pink-400 text-white shadow-md shadow-pink-500/20 bg-indigo-800/40 shadow-lg shadow-pink-500/20'
-                            : 'border-red-600 bg-red-50 shadow-lg'
-                          : theme === 'dark'
-                            ? 'bg-gray-800 border-gray-700 hover:border-gray-600'
-                            : theme === 'modern'
-                              ? 'bg-slate-800/20 border-indigo-500/30 shadow-sm shadow-indigo-500/10 hover:border-pink-400 text-white shadow-md shadow-pink-500/20/50'
-                              : 'bg-white border-gray-200 hover:border-red-300'
-                      }`}
+                      className={`p-4 rounded-lg border text-left transition-all ${selectedFormat?.formatId === format.formatId
+                        ? theme === 'modern'
+                          ? 'border-indigo-500/30 text-white shadow-md bg-white/[0.08] backdrop-blur-md shadow-lg'
+                          : 'border-red-600 bg-red-50 shadow-lg'
+                        : theme === 'dark'
+                          ? 'bg-gray-800 border-gray-700 hover:border-gray-600'
+                          : theme === 'modern'
+                            ? 'bg-slate-800/20 border-indigo-500/20 shadow-sm hover:border-indigo-500/30 text-white shadow-md/50'
+                            : 'bg-white border-gray-200 hover:border-red-300'
+                        }`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h3 className={`font-bold text-lg ${
-                              theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
-                            }`}>
+                            <h3 className={`font-bold text-lg ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
+                              }`}>
                               {format.formatName}
                             </h3>
                             {selectedFormat?.formatId === format.formatId && (
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                                theme === 'modern'
-                                  ? 'bg-pink-500 shadow-md shadow-pink-500/20 text-white'
-                                  : 'bg-red-600'
-                              }`}>
+                              <div className={`w-6 h-6 rounded-full flex items-center justify-center ${theme === 'modern'
+                                ? 'bg-white/20 hover:bg-white/30 backdrop-blur-md border border-indigo-500/20 text-white shadow-md text-white'
+                                : 'bg-red-600'
+                                }`}>
                                 <Check className="w-4 h-4 text-white" />
                               </div>
                             )}
                           </div>
-                          <p className={`text-sm mb-3 ${
-                            theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'
-                          }`}>
+                          <p className={`text-sm mb-3 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'
+                            }`}>
                             {format.formatDescription}
                           </p>
-                          <p className={`text-lg font-black ${
-                            theme === 'modern'
-                              ? 'text-white font-medium'
-                              : 'text-red-600'
-                          }`}>
+                          <p className={`text-lg font-black ${theme === 'modern'
+                            ? 'text-white font-medium'
+                            : 'text-red-600'
+                            }`}>
                             {formatPrice(format.movieFormatPrice)}
                           </p>
                         </div>
@@ -488,9 +447,8 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
 
               {!formatsLoading && !formatsError && movieFormats.length === 0 && (
                 <div className="text-center py-12">
-                  <Film className={`w-12 h-12 mx-auto mb-4 ${
-                    theme === 'dark' ? 'text-gray-600' : theme === 'modern' ? 'text-pink-400' : 'text-gray-400'
-                  }`} />
+                  <Film className={`w-12 h-12 mx-auto mb-4 ${theme === 'dark' ? 'text-gray-600' : theme === 'modern' ? 'text-white/90' : 'text-gray-400'
+                    }`} />
                   <p className={theme === 'dark' || theme === 'modern' ? 'text-gray-400' : 'text-gray-500'}>
                     No movie formats
                   </p>
@@ -499,36 +457,32 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
             </div>
 
             {/* Footer */}
-            <div className={`flex justify-end gap-3 p-6 border-t ${
-              theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'border-gray-200'
-            }`}>
+            <div className={`flex justify-end gap-3 p-6 border-t ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/20 shadow-sm' : 'border-gray-200'
+              }`}>
               <button
                 onClick={() => {
                   setIsMovieFormatModalOpen(false);
                   setSelectedFormat(null);
                 }}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                  theme === 'dark'
-                    ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                    : theme === 'modern'
-                      ? 'bg-[#15102B] hover:bg-slate-600/50 text-white font-medium'
-                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                }`}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${theme === 'dark'
+                  ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
+                  : theme === 'modern'
+                    ? 'bg-[#1e293b]/30 backdrop-blur-xl hover:bg-slate-600/50 text-white font-medium'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:text-gray-300 modern:text-gray-200'
+                  }`}
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmFormat}
                 disabled={!selectedFormat}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                  !selectedFormat
-                    ? 'opacity-50 cursor-not-allowed'
-                    : ''
-                } ${
-                  theme === 'modern'
-                    ? 'bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 border border-pink-400/50 shadow-md shadow-pink-500/20 text-white'
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors ${!selectedFormat
+                  ? 'opacity-50 cursor-not-allowed'
+                  : ''
+                  } ${theme === 'modern'
+                    ? 'bg-gradient-to-r from-indigo-600 to-purple-700 opacity-90 hover:from-indigo-500 hover:to-purple-500 hover:opacity-100 hover:shadow-[0_0_10px_rgba(129,140,248,0.3)] hover:-translate-y-0.5 shadow-lg shadow-indigo-500/10 border-none text-white transition-all border border-indigo-500/30 shadow-md text-white'
                     : 'bg-red-600 hover:bg-red-700 text-white'
-                }`}
+                  }`}
               >
                 Xác nhận
               </button>

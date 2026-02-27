@@ -6,7 +6,6 @@ import {
     checkCollision,
     formatTime,
     START_HOUR,
-    END_HOUR,
     TOTAL_HOURS,
     PIXELS_PER_MIN
 } from '../utils';
@@ -326,8 +325,8 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
         >
             <div className="flex min-w-max relative min-h-full" style={{ height: TOTAL_HEIGHT + 40 + TOP_OFFSET + BOTTOM_OFFSET }}>
                 {/* Time Ruler */}
-                <div className="w-16 flex-shrink-0 sticky left-0 z-30 transition-colors duration-300 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-indigo-900/50">
-                    <div className="h-10 sticky top-0 z-40 transition-colors duration-300 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-indigo-900/50"></div>
+                <div className="w-16 flex-shrink-0 sticky left-0 z-30 transition-colors duration-300 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800/60">
+                    <div className="h-10 sticky top-0 z-40 transition-colors duration-300 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800/60"></div>
                     {Array.from({ length: TOTAL_HOURS + 1 }).map((_, i) => {
                         const rawHour = START_HOUR + i;
                         const displayHour = rawHour % 24;
@@ -336,7 +335,7 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
                         return (
                             <div
                                 key={i}
-                                className={`absolute w-full text-right pr-2 text-xs transition-colors duration-300 border-t border-slate-200 dark:border-indigo-900/50 ${isPastMidnight ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-500 dark:text-indigo-300'}`}
+                                className={`absolute w-full text-right pr-2 text-xs transition-colors duration-300 border-t border-slate-200 dark:border-slate-800/60 ${isPastMidnight ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-500 dark:text-white/60'}`}
                                 style={{ top: i * 60 * PIXELS_PER_MIN + 40 + TOP_OFFSET, height: 60 * PIXELS_PER_MIN }}
                             >
                                 <span className="-translate-y-2 block bg-slate-50 dark:bg-slate-900 px-1 inline-block">{label}</span>
@@ -360,13 +359,13 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
                     return (
                         <div
                             key={columnId}
-                            className="min-w-[200px] flex-1 relative group transition-colors duration-300 bg-white dark:bg-slate-950/50 border-r border-slate-200 dark:border-indigo-900/50"
+                            className="min-w-[200px] flex-1 relative group transition-colors duration-300 bg-white dark:bg-slate-950/50 border-r border-slate-200 dark:border-slate-800/60"
                             onDragOver={(e) => handleDragOver(e, aud.id, dateObj)}
                             onDrop={(e) => handleDrop(e, aud.id)}
                             onDragLeave={handleDragLeave}
                         >
                             {/* Header */}
-                            <div className="h-10 flex items-center justify-center font-bold text-sm sticky top-0 z-10 px-2 text-center transition-colors duration-300 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-indigo-900/50 text-slate-700 dark:text-indigo-100 ">
+                            <div className="h-10 flex items-center justify-center font-bold text-sm sticky top-0 z-10 px-2 text-center transition-colors duration-300 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800/60 text-slate-700 dark:text-white/90 ">
                                 {dateString}
                             </div>
 
@@ -379,7 +378,7 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
                                     return (
                                         <div
                                             key={i}
-                                            className={`absolute w-full border-t border-dashed pointer-events-none ${isPastMidnight ? 'border-indigo-200/50 dark:border-indigo-900/30' : 'border-slate-100 dark:border-indigo-900/50/50'}`}
+                                            className={`absolute w-full border-t border-dashed pointer-events-none ${isPastMidnight ? 'border-indigo-200/50 dark:border-indigo-900/30' : 'border-slate-100 dark:border-slate-800/60/50'}`}
                                             style={{ top: i * 60 * PIXELS_PER_MIN + TOP_OFFSET, height: 60 * PIXELS_PER_MIN }}
                                         >
                                         </div>
@@ -391,7 +390,7 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
                                     const midnightPixel = (24 - START_HOUR) * 60 * PIXELS_PER_MIN + TOP_OFFSET;
                                     return (
                                         <div
-                                            className="absolute left-0 right-0 border-t-2 border-dashed border-indigo-400/40 dark:border-indigo-500/30 pointer-events-none z-[2]"
+                                            className="absolute left-0 right-0 border-t-2 border-dashed border-indigo-400/40 dark:border-indigo-500/20 pointer-events-none z-[2]"
                                             style={{ top: midnightPixel }}
                                         >
                                             <span className="absolute right-1 -top-3 text-[10px] font-semibold text-indigo-400 dark:text-indigo-500 bg-white dark:bg-slate-950 px-1 rounded">

@@ -44,7 +44,7 @@ const SeatReport: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className={`text-3xl font-black mb-2 border-l-4 border-red-600 pl-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+          <h1 className={`text-3xl font-black mb-2 border-l-4 border-red-600 pl-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
             }`}>
             Seat Report
           </h1>
@@ -56,9 +56,9 @@ const SeatReport: React.FC = () => {
           <select
             value={selectedPeriod}
             onChange={(e) => setSelectedPeriod(e.target.value)}
-            className={`px-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-red-600 ${theme === 'dark'
+            className={`px-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-indigo-500/50 focus:shadow-[0_0_15px_rgba(99,102,241,0.3)] ${theme === 'dark'
                 ? 'bg-gray-900 border-gray-800 text-white'
-                : 'bg-white border-gray-300 text-gray-900'
+                : 'bg-white border-gray-300 text-gray-900 dark:text-white modern:text-white'
               }`}
           >
             <option value="week">Tuần này</option>
@@ -84,7 +84,7 @@ const SeatReport: React.FC = () => {
               }`}>Tổng số ghế</span>
             <BarChart3 className="w-5 h-5 text-blue-500" />
           </div>
-          <h3 className={`text-3xl font-black mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+          <h3 className={`text-3xl font-black mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
             }`}>
             {currentReport.totalSeats.toLocaleString()}
           </h3>
@@ -101,7 +101,7 @@ const SeatReport: React.FC = () => {
               }`}>Ghế trống</span>
             <TrendingUp className="w-5 h-5 text-green-500" />
           </div>
-          <h3 className={`text-3xl font-black mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+          <h3 className={`text-3xl font-black mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
             }`}>
             {currentReport.availableSeats.toLocaleString()}
           </h3>
@@ -117,7 +117,7 @@ const SeatReport: React.FC = () => {
               }`}>Ghế đã sử dụng</span>
             <TrendingDown className="w-5 h-5 text-red-500" />
           </div>
-          <h3 className={`text-3xl font-black mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+          <h3 className={`text-3xl font-black mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
             }`}>
             {currentReport.occupiedSeats.toLocaleString()}
           </h3>
@@ -131,9 +131,9 @@ const SeatReport: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <span className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
               }`}>Tỷ lệ sử dụng</span>
-            <Calendar className="w-5 h-5 text-cyan-400" />
+            <Calendar className="w-5 h-5 text-white/90" />
           </div>
-          <h3 className={`text-3xl font-black mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+          <h3 className={`text-3xl font-black mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
             }`}>{currentReport.utilizationRate}%</h3>
           <div className={`w-full rounded-full h-2 mt-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-200'
             }`}>
@@ -150,7 +150,7 @@ const SeatReport: React.FC = () => {
           ? 'bg-gray-900 border-gray-800'
           : 'bg-white border-gray-200 shadow-sm'
         }`}>
-        <h2 className={`text-xl font-bold mb-6 border-l-4 border-red-600 pl-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+        <h2 className={`text-xl font-bold mb-6 border-l-4 border-red-600 pl-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
           }`}>
           Report History
         </h2>
@@ -165,7 +165,7 @@ const SeatReport: React.FC = () => {
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h3 className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>{report.period}</h3>
+                  <h3 className={theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'}>{report.period}</h3>
                   {report.status === 'warning' && (
                     <span className="px-2 py-1 rounded-full text-xs bg-yellow-900/40 text-yellow-400 border border-yellow-700">
                       Cần chú ý
@@ -175,17 +175,17 @@ const SeatReport: React.FC = () => {
                 <div className="grid grid-cols-3 gap-4 text-sm">
                   <div>
                     <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>Tổng ghế:</span>
-                    <span className={`font-semibold ml-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    <span className={`font-semibold ml-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
                       }`}>{report.totalSeats.toLocaleString()}</span>
                   </div>
                   <div>
                     <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>Đã sử dụng:</span>
-                    <span className={`font-semibold ml-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    <span className={`font-semibold ml-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
                       }`}>{report.occupiedSeats.toLocaleString()}</span>
                   </div>
                   <div>
                     <span className={theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}>Tỷ lệ:</span>
-                    <span className={`font-semibold ml-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    <span className={`font-semibold ml-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
                       }`}>{report.utilizationRate}%</span>
                   </div>
                 </div>
@@ -193,7 +193,7 @@ const SeatReport: React.FC = () => {
               <div className="mt-4 sm:mt-0 sm:ml-4">
                 <button className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm ${theme === 'dark'
                     ? 'bg-gray-700 hover:bg-gray-600 text-white'
-                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700 dark:text-gray-300 modern:text-gray-200'
                   }`}>
                   <Download className="w-4 h-4" />
                   Tải xuống
@@ -209,7 +209,7 @@ const SeatReport: React.FC = () => {
           ? 'bg-gray-900 border-gray-800'
           : 'bg-white border-gray-200 shadow-sm'
         }`}>
-        <h2 className={`text-xl font-bold mb-6 border-l-4 border-red-600 pl-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900'
+        <h2 className={`text-xl font-bold mb-6 border-l-4 border-red-600 pl-4 ${theme === 'dark' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
           }`}>
           Biểu đồ sử dụng ghế
         </h2>

@@ -67,7 +67,7 @@ const InputField = ({
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className="w-full py-3.5 pl-12 pr-4 text-white placeholder-gray-500 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all duration-200"
+                className="w-full py-3.5 pl-12 pr-4 text-white placeholder-gray-500 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-indigo-500/50 focus:shadow-[0_0_15px_rgba(99,102,241,0.3)] focus:ring-1 focus:ring-red-600 transition-all duration-200"
                 required
             />
         </div>

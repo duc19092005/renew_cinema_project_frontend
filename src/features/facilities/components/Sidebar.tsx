@@ -28,8 +28,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
           className={`lg:hidden fixed top-3 left-4 z-[60] p-2 border rounded-lg transition-colors ${theme === 'dark'
             ? 'bg-gray-900 border-gray-700 text-white hover:bg-gray-800'
             : theme === 'modern'
-              ? 'bg-[#15102B]/90 border-indigo-500/30 shadow-sm shadow-indigo-500/10 text-white hover:bg-slate-800/60 backdrop-blur-2xl'
-              : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
+              ? 'bg-[#1e293b]/30 backdrop-blur-xl border-indigo-500/20 text-white hover:bg-indigo-500/10'
+              : 'bg-white border-gray-300 text-gray-700 dark:text-gray-300 modern:text-gray-200 hover:bg-gray-50'
             }`}
           aria-label="Open menu"
         >
@@ -56,7 +56,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
           } lg:translate-x-0 w-64 ${theme === 'dark'
             ? 'bg-gray-900 border-gray-800'
             : theme === 'modern'
-              ? 'bg-[#0E0A20]/95 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
+              ? 'bg-[#0f172a]/40 backdrop-blur-2xl border-indigo-500/20 shadow-sm'
               : 'bg-white border-gray-200'
           }`}
       >
@@ -65,15 +65,15 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
           <div className={`p-6 border-b flex items-center justify-between ${theme === 'dark'
             ? 'border-gray-800'
             : theme === 'modern'
-              ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10'
+              ? 'border-indigo-500/20 shadow-sm'
               : 'border-gray-200'
             }`}>
             <div>
               <div className={`text-xl font-black tracking-widest uppercase ${theme === 'modern'
-                ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-pink-300 to-rose-300 drop-shadow-sm'
+                ? 'text-slate-100 font-semibold tracking-wide'
                 : 'text-red-600'
                 }`}>
-                CINEMA<span className={theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}>PRO</span>
+                CINEMA<span className={theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'}>PRO</span>
               </div>
               <p className={`text-xs mt-1 ${theme === 'dark'
                 ? 'text-gray-400'
@@ -88,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
                 ? 'text-gray-400 hover:bg-gray-800 hover:text-white'
                 : theme === 'modern'
                   ? 'text-white font-medium hover:bg-[#1F173D]/60 hover:text-white'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-white modern:text-white'
                 }`}
               aria-label="Close menu"
             >
@@ -114,13 +114,13 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive
                     ? theme === 'modern'
-                      ? 'bg-cyan-900/20 text-cyan-400 border border-cyan-500/50 shadow-[inset_0_0_20px_rgba(6,182,212,0.1),0_0_15px_rgba(6,182,212,0.2)]'
+                      ? 'bg-cyan-900/20 text-white/90 border border-cyan-500/50 shadow-[inset_0_0_20px_rgba(6,182,212,0.1),0_0_15px_rgba(6,182,212,0.2)]'
                       : 'bg-red-600 text-white shadow-lg shadow-red-600/20'
                     : theme === 'dark'
                       ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
                       : theme === 'modern'
-                        ? 'text-white font-medium hover:bg-[#15102B]/60 hover:text-white'
-                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                        ? 'text-white font-medium hover:bg-[#0f172a]/30 backdrop-blur-xl hover:text-white'
+                        : 'text-gray-700 dark:text-gray-300 modern:text-gray-200 hover:bg-gray-100 hover:text-gray-900 dark:text-white modern:text-white'
                     }`}
                 >
                   <Icon className="w-5 h-5 shrink-0" />
@@ -134,7 +134,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
           <div className={`p-4 border-t ${theme === 'dark'
             ? 'border-gray-800'
             : theme === 'modern'
-              ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10'
+              ? 'border-indigo-500/20 shadow-sm'
               : 'border-gray-200'
             }`}>
             <div className="flex items-center justify-between mb-4">
@@ -160,7 +160,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
             <p className={`text-xs text-center ${theme === 'dark'
               ? 'text-gray-500'
               : theme === 'modern'
-                ? 'text-indigo-300'
+                ? 'text-white/60'
                 : 'text-gray-400'
               }`}>
               © 2024 CinemaPro

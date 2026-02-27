@@ -22,12 +22,12 @@ import Dashboard from './components/Dashboard';
 import CinemaManagement from './components/CinemaManagement';
 import SeatReport from './components/SeatReport';
 import LogoutModal from '../../components/LogoutModal';
-import { useTranslation } from 'react-i18next';
+
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 const FacilitiesManagerPage: React.FC = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+
   const { theme, setTheme } = useTheme();
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const themeDropdownRef = useRef<HTMLDivElement>(null);
@@ -248,7 +248,7 @@ const FacilitiesManagerPage: React.FC = () => {
                 ? 'bg-gray-900 border border-gray-700'
                 : theme === 'modern'
                   ? 'bg-gradient-to-br from-[#15102B]/95 to-[#0b061c]/95 border border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
-                  : 'bg-white border border-gray-200'
+                  : 'bg-white border border-gray-200'} ${theme === 'modern' ? 'bg-[#0f172a]/40 backdrop-blur-2xl border-indigo-500/20' : ''}'
                 }`}>
                 <div className="py-2">
                   <div className={`px-4 py-2 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'border-gray-200'
@@ -351,67 +351,44 @@ const FacilitiesManagerPage: React.FC = () => {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className={`flex items-center gap-3 p-2 rounded-lg transition-colors outline-none focus:ring-2 focus:ring-red-600/50 ${theme === 'dark'
-                ? 'hover:bg-gray-800'
-                : 'hover:bg-gray-100'
+              className={`flex items-center gap-3 p-2 rounded-lg transition-colors outline-none focus:ring-2 ${theme === 'dark' ? 'hover:bg-gray-800 focus:ring-red-600/50' : theme === 'modern' ? 'hover:bg-indigo-500/10 hover:shadow-[0_0_8px_rgba(99,102,241,0.15)] focus:ring-indigo-500/50' : 'hover:bg-gray-100 focus:ring-red-600/50'
                 }`}
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center shadow-red-glow">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-lg ${theme === 'modern' ? 'bg-gradient-to-br from-indigo-600 to-purple-700 opacity-90 shadow-indigo-500/20' : 'bg-gradient-to-br from-red-600 to-red-800'}`}>
                 <User className="w-5 h-5 text-white" />
               </div>
-
-              <span className={`hidden sm:block font-bold text-sm ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'
-                }`}>
+              <span className={`hidden sm:block font-bold text-sm ${theme === 'dark' ? 'text-gray-200' : theme === 'modern' ? 'text-white' : 'text-gray-700'}`}>
                 {user?.username || 'Guest'}
               </span>
-
-              <ChevronDown
-                className={`w-4 h-4 transition-transform duration-200 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-                  } ${isDropdownOpen ? 'rotate-180' : ''}`}
-              />
+              <ChevronDown className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''} ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white/60' : 'text-gray-600'}`} />
             </button>
 
             {isDropdownOpen && (
-              <div className={`absolute right-0 mt-2 w-56 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ${theme === 'dark'
-                ? 'bg-gray-900 border border-gray-700'
-                : 'bg-white border border-gray-200'
+              <div className={`absolute right-0 mt-2 w-56 rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ${theme === 'dark' ? 'bg-gray-900 border border-gray-700' : theme === 'modern' ? 'bg-[#0f172a]/40 backdrop-blur-2xl border border-indigo-500/20' : 'bg-white border border-gray-200'
                 }`}>
                 <div className="py-2">
-                  <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
-                    }`}>
-                    <p className={`text-xs uppercase font-bold ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'
-                      }`}>SIGNED IN AS</p>
-                    <p className={`text-sm font-bold truncate ${theme === 'dark' ? 'text-white' : 'text-gray-900'
-                      }`}>{user?.username}</p>
+                  <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/20' : 'border-gray-200'}`}>
+                    <p className={`text-xs uppercase font-bold ${theme === 'dark' ? 'text-gray-500' : theme === 'modern' ? 'text-indigo-400' : 'text-gray-400'}`}>SIGNED IN AS</p>
+                    <p className={`text-sm font-bold truncate ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}`}>{user?.username}</p>
                     {user?.selectedRole && (
-                      <p className="mt-1 text-[11px] text-red-400 uppercase tracking-wide">
+                      <p className={`mt-1 text-[11px] uppercase tracking-wide ${theme === 'modern' ? 'text-indigo-300' : 'text-red-400'}`}>
                         Role: {user.selectedRole}
                       </p>
                     )}
                   </div>
 
-                  <button className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === 'dark'
-                    ? 'text-gray-300 hover:bg-gray-800 hover:text-red-500'
-                    : 'text-gray-700 hover:bg-gray-100 hover:text-red-600'
-                    }`}>
-                    <UserCircle className="w-4 h-4" />
-                    {t('header.accountInfo')}
+                  <button className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-800 hover:text-indigo-400' : theme === 'modern' ? 'text-white hover:bg-indigo-500/20 hover:text-indigo-300 hover:drop-shadow-[0_0_3px_rgba(129,140,248,0.4)]' : 'text-gray-700 hover:bg-gray-100 hover:text-indigo-400'}`}>
+                    <UserCircle className="w-4 h-4" />Account Information
                   </button>
 
-                  <button className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === 'dark'
-                    ? 'text-gray-300 hover:bg-gray-800 hover:text-red-500'
-                    : 'text-gray-700 hover:bg-gray-100 hover:text-red-600'
-                    }`}>
-                    <Settings className="w-4 h-4" />
-                    {t('header.changePassword')}
+                  <button className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-800 hover:text-indigo-400' : theme === 'modern' ? 'text-white hover:bg-indigo-500/20 hover:text-indigo-300 hover:drop-shadow-[0_0_3px_rgba(129,140,248,0.4)]' : 'text-gray-700 hover:bg-gray-100 hover:text-indigo-400'}`}>
+                    <Settings className="w-4 h-4" />Change Password
                   </button>
 
                   {user?.roles && user.roles.length > 1 && (
                     <button
                       onClick={() => navigate('/role-selection')}
-                      className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === 'dark'
-                        ? 'text-gray-300 hover:bg-gray-800 hover:text-blue-500'
-                        : 'text-gray-700 hover:bg-gray-100 hover:text-blue-600'
+                      className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-800 hover:text-blue-500' : theme === 'modern' ? 'text-white hover:bg-indigo-500/20 hover:text-indigo-300 hover:drop-shadow-[0_0_3px_rgba(129,140,248,0.4)]' : 'text-gray-700 hover:bg-gray-100 hover:text-blue-600'
                         }`}
                     >
                       <ArrowLeftRight className="w-4 h-4" />
@@ -419,18 +396,15 @@ const FacilitiesManagerPage: React.FC = () => {
                     </button>
                   )}
 
-                  <div className={`border-t mt-1 ${theme === 'dark' ? 'border-gray-800' : 'border-gray-200'
-                    }`} />
+                  <div className={`border-t mt-1 ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/20' : 'border-gray-200'}`}></div>
 
                   <button
                     onClick={handleLogoutClick}
-                    className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors font-bold ${theme === 'dark'
-                      ? 'text-red-500 hover:bg-red-900/20 hover:text-red-400'
-                      : 'text-red-600 hover:bg-red-50 hover:text-red-700'
+                    className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors font-bold ${theme === 'dark' ? 'text-red-500 hover:bg-red-900/20 hover:drop-shadow-[0_0_4px_rgba(239,68,68,0.4)]' : theme === 'modern' ? 'text-red-400 hover:bg-red-500/20 hover:text-red-300 hover:drop-shadow-[0_0_4px_rgba(248,113,113,0.4)]' : 'text-red-600 hover:bg-red-50'
                       }`}
                   >
                     <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
+                    Logout
                   </button>
                 </div>
               </div>

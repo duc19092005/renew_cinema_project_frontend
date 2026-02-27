@@ -35,12 +35,12 @@ const LogoutModal: React.FC<LogoutModalProps> = ({
         className={`relative w-full max-w-md rounded-xl border shadow-2xl transition-all ${theme === 'dark'
           ? 'bg-gray-900 border-gray-800'
           : theme === 'modern'
-            ? 'bg-[#15102B]/80 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
+            ? 'bg-[#0f172a]/40 backdrop-blur-2xl border-indigo-500/20 shadow-sm'
             : 'bg-white border-gray-200'
           }`}
       >
         {/* Header */}
-        <div className={`flex items-center justify-between p-6 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'border-gray-200'
+        <div className={`flex items-center justify-between p-6 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/20 shadow-sm' : 'border-gray-200'
           }`}>
           <div className="flex items-center gap-3">
             <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${theme === 'modern'
@@ -49,7 +49,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({
               }`}>
               <LogOut className="w-6 h-6 text-white" />
             </div>
-            <h2 className={`text-2xl font-black ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
+            <h2 className={`text-2xl font-black ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900 dark:text-white modern:text-white'
               }`}>
               Confirm Logout
             </h2>
@@ -60,7 +60,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({
               className={`p-2 rounded-lg transition-colors ${theme === 'dark'
                 ? 'hover:bg-gray-800 text-gray-400'
                 : theme === 'modern'
-                  ? 'hover:bg-[#15102B]/60 text-white font-medium'
+                  ? 'hover:bg-[#0f172a]/30 backdrop-blur-xl text-white font-medium'
                   : 'hover:bg-gray-100 text-gray-600'
                 }`}
             >
@@ -84,11 +84,11 @@ const LogoutModal: React.FC<LogoutModalProps> = ({
           )}
 
           <div className="space-y-4">
-            <p className={`text-base ${theme === 'dark' ? 'text-gray-300' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-700'
+            <p className={`text-base ${theme === 'dark' ? 'text-gray-300' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-700 dark:text-gray-300 modern:text-gray-200'
               }`}>
               Are you sure you want to log out of the system?
             </p>
-            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-indigo-300' : 'text-gray-500'
+            <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white/60' : 'text-gray-500'
               }`}>
               After logging out, you will need to log back in to continue using the service.
             </p>
@@ -96,7 +96,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className={`flex justify-end gap-3 p-6 border-t ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'border-gray-200'
+        <div className={`flex justify-end gap-3 p-6 border-t ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/20 shadow-sm' : 'border-gray-200'
           }`}>
           <button
             onClick={onClose}
@@ -108,7 +108,7 @@ const LogoutModal: React.FC<LogoutModalProps> = ({
                 ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
                 : theme === 'modern'
                   ? 'bg-[#1F173D]/60 hover:bg-[#1F173D]/50 text-white font-medium'
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:text-gray-300 modern:text-gray-200'
               }`}
           >
             Cancel

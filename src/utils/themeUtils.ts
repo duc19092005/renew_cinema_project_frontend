@@ -5,84 +5,84 @@ export const getThemeClasses = {
   // Background colors
   bg: (theme: Theme) => {
     if (theme === 'dark') return 'bg-black';
-    if (theme === 'web3') return 'bg-gradient-to-br from-purple-950 via-indigo-950 to-cyan-950';
+    if (theme === 'modern') return 'bg-gradient-to-br from-[#0D081D] via-[#050A14] to-[#12081C]';
     return 'bg-gray-50';
   },
-  
+
   bgCard: (theme: Theme) => {
     if (theme === 'dark') return 'bg-gray-900';
-    if (theme === 'web3') return 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 backdrop-blur-xl';
+    if (theme === 'modern') return 'bg-[#15102B]/80 backdrop-blur-2xl border border-indigo-500/40 shadow-sm shadow-indigo-500/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]';
     return 'bg-white';
   },
-  
+
   bgSecondary: (theme: Theme) => {
     if (theme === 'dark') return 'bg-gray-800';
-    if (theme === 'web3') return 'bg-purple-900/60 backdrop-blur-xl';
+    if (theme === 'modern') return 'bg-slate-800/40 backdrop-blur-lg border border-indigo-500/40 shadow-sm shadow-indigo-500/10';
     return 'bg-gray-50';
   },
-  
+
   // Text colors
   text: (theme: Theme) => {
     if (theme === 'dark') return 'text-white';
-    if (theme === 'web3') return 'text-white';
+    if (theme === 'modern') return 'text-white';
     return 'text-gray-900';
   },
-  
+
   textSecondary: (theme: Theme) => {
     if (theme === 'dark') return 'text-gray-400';
-    if (theme === 'web3') return 'text-purple-200';
+    if (theme === 'modern') return 'text-white font-medium';
     return 'text-gray-600';
   },
-  
+
   textMuted: (theme: Theme) => {
     if (theme === 'dark') return 'text-gray-500';
-    if (theme === 'web3') return 'text-purple-300/70';
+    if (theme === 'modern') return 'text-indigo-300';
     return 'text-gray-500';
   },
-  
+
   // Border colors
   border: (theme: Theme) => {
     if (theme === 'dark') return 'border-gray-800';
-    if (theme === 'web3') return 'border-purple-500/30';
+    if (theme === 'modern') return 'border-indigo-500/30 shadow-sm shadow-indigo-500/10';
     return 'border-gray-200';
   },
-  
+
   borderHover: (theme: Theme) => {
     if (theme === 'dark') return 'hover:border-red-600';
-    if (theme === 'web3') return 'hover:border-purple-400';
+    if (theme === 'modern') return 'hover:border-cyan-300 shadow-md shadow-cyan-500/20';
     return 'hover:border-red-600';
   },
-  
+
   // Header/Background overlay
   headerBg: (theme: Theme) => {
     if (theme === 'dark') return 'bg-black/80 border-gray-800';
-    if (theme === 'web3') return 'bg-gradient-to-r from-purple-900/90 via-indigo-900/90 to-cyan-900/90 border-purple-500/30';
+    if (theme === 'modern') return 'bg-[#0E0A20]/80 border-indigo-900/50/80 shadow-lg';
     return 'bg-white/80 border-gray-200';
   },
-  
+
   // Sidebar
   sidebarBg: (theme: Theme) => {
     if (theme === 'dark') return 'bg-gray-900 border-gray-800';
-    if (theme === 'web3') return 'bg-gradient-to-b from-purple-900/95 via-indigo-900/95 to-cyan-900/95 border-purple-500/30 backdrop-blur-xl';
+    if (theme === 'modern') return 'bg-[#0E0A20]/95 border-indigo-900/50 backdrop-blur-2xl shadow-2xl shadow-cyan-900/20';
     return 'bg-white border-gray-200';
   },
-  
+
   // Button styles
   buttonPrimary: (theme: Theme) => {
     if (theme === 'dark') return 'bg-red-600 hover:bg-red-700 text-white';
-    if (theme === 'web3') return 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white';
+    if (theme === 'modern') return 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white shadow-[0_0_15px_rgba(6,182,212,0.4)]';
     return 'bg-red-600 hover:bg-red-700 text-white';
   },
-  
+
   buttonSecondary: (theme: Theme) => {
     if (theme === 'dark') return 'bg-gray-800 hover:bg-gray-700 text-gray-300';
-    if (theme === 'web3') return 'bg-purple-800/50 hover:bg-purple-700/50 text-purple-200';
+    if (theme === 'modern') return 'bg-slate-800/60 hover:bg-slate-700/60 text-white font-medium border border-slate-700';
     return 'bg-gray-100 hover:bg-gray-200 text-gray-700';
   },
-  
+
   // Logo gradient
   logoGradient: (theme: Theme) => {
-    if (theme === 'web3') return 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400';
+    if (theme === 'modern') return 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-pink-300 to-rose-300 drop-shadow-sm';
     return 'text-red-600';
   },
 };

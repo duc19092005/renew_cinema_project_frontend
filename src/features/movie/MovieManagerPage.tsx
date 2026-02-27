@@ -61,13 +61,13 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
             {/* Mobile hamburger */}
             <button
                 onClick={onToggle}
-                className={`lg:hidden fixed top-4 left-4 z-[60] p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-800 text-white' : theme === 'web3' ? 'bg-purple-900 text-white' : 'bg-white text-gray-900 shadow'
+                className={`lg:hidden fixed top-4 left-4 z-[60] p-2 rounded-lg ${theme === 'dark' ? 'bg-gray-800 text-white' : theme === 'modern' ? 'bg-[#0E0A20] text-white' : 'bg-white text-gray-900 shadow'
                     }`}
             >
                 <div className="w-5 h-5 flex flex-col justify-center gap-1">
-                    <span className={`block h-0.5 w-full ${theme === 'dark' || theme === 'web3' ? 'bg-white' : 'bg-gray-900'} transition-transform ${isOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
-                    <span className={`block h-0.5 w-full ${theme === 'dark' || theme === 'web3' ? 'bg-white' : 'bg-gray-900'} transition-opacity ${isOpen ? 'opacity-0' : ''}`} />
-                    <span className={`block h-0.5 w-full ${theme === 'dark' || theme === 'web3' ? 'bg-white' : 'bg-gray-900'} transition-transform ${isOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
+                    <span className={`block h-0.5 w-full ${theme === 'dark' || theme === 'modern' ? 'bg-white' : 'bg-gray-900'} transition-transform ${isOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
+                    <span className={`block h-0.5 w-full ${theme === 'dark' || theme === 'modern' ? 'bg-white' : 'bg-gray-900'} transition-opacity ${isOpen ? 'opacity-0' : ''}`} />
+                    <span className={`block h-0.5 w-full ${theme === 'dark' || theme === 'modern' ? 'bg-white' : 'bg-gray-900'} transition-transform ${isOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
                 </div>
             </button>
 
@@ -80,32 +80,32 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
             <aside className={`fixed top-0 left-0 h-full w-64 z-50 border-r transition-transform duration-300 lg:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'
                 } ${theme === 'dark'
                     ? 'bg-gray-950 border-gray-800'
-                    : theme === 'web3'
-                        ? 'bg-gradient-to-b from-purple-950 via-indigo-950 to-cyan-950 border-purple-500/30'
+                    : theme === 'modern'
+                        ? 'bg-[#0E0A20] border-indigo-500/30 shadow-sm shadow-indigo-500/10'
                         : 'bg-white border-gray-200'
                 }`}>
                 {/* Logo */}
-                <div className={`h-16 flex items-center px-6 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
+                <div className={`h-16 flex items-center px-6 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'border-gray-200'
                     }`}>
                     <div
                         className="flex items-center gap-2 cursor-pointer"
                         onClick={() => navigate('/home')}
                     >
-                        <Clapperboard className={`w-7 h-7 ${theme === 'web3' ? 'text-cyan-400' : 'text-red-600'}`} />
-                        <span className={`text-xl font-black tracking-wider ${theme === 'web3'
-                            ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400'
+                        <Clapperboard className={`w-7 h-7 ${theme === 'modern' ? 'text-cyan-400' : 'text-red-600'}`} />
+                        <span className={`text-xl font-black tracking-wider ${theme === 'modern'
+                            ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-pink-300 to-rose-300 drop-shadow-sm'
                             : 'text-red-600'
                             }`}>
-                            CINEMA<span className={theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}>PRO</span>
+                            CINEMA<span className={theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}>PRO</span>
                         </span>
                     </div>
                 </div>
 
                 {/* Role badge */}
-                <div className={`px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
+                <div className={`px-6 py-4 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'border-gray-200'
                     }`}>
-                    <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold uppercase tracking-wider ${theme === 'web3'
-                        ? 'bg-gradient-to-r from-purple-700/50 to-cyan-700/50 text-cyan-300'
+                    <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold uppercase tracking-wider ${theme === 'modern'
+                        ? 'bg-gradient-to-r from-[#1E293B] to-[#0F172A] text-cyan-400 border border-slate-700'
                         : 'bg-red-600/10 text-red-500'
                         }`}>
                         <Film className="w-4 h-4" />
@@ -120,13 +120,13 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
                             key={item.id}
                             onClick={() => { onTabChange(item.id); onToggle(); }}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all ${activeTab === item.id
-                                ? theme === 'web3'
-                                    ? 'bg-gradient-to-r from-purple-600/40 to-cyan-600/40 text-white border border-purple-400/30'
+                                ? theme === 'modern'
+                                    ? 'bg-cyan-900/20 text-cyan-400 border border-cyan-500/50 shadow-[inset_0_0_20px_rgba(6,182,212,0.1),0_0_15px_rgba(6,182,212,0.2)]'
                                     : 'bg-red-600 text-white shadow-lg shadow-red-600/20'
                                 : theme === 'dark'
                                     ? 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                                    : theme === 'web3'
-                                        ? 'text-purple-300 hover:bg-purple-800/30 hover:text-white'
+                                    : theme === 'modern'
+                                        ? 'text-white font-medium hover:bg-[#15102B]/60 hover:text-white'
                                         : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                                 }`}
                         >
@@ -166,16 +166,16 @@ const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, isOpen, onCl
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
             <div className={`relative w-full max-w-3xl max-h-[90vh] rounded-2xl border shadow-2xl overflow-hidden flex flex-col ${theme === 'dark'
                 ? 'bg-gray-900 border-gray-800'
-                : theme === 'web3'
-                    ? 'bg-gradient-to-br from-purple-900/95 to-cyan-900/95 border-purple-500/30 backdrop-blur-xl'
+                : theme === 'modern'
+                    ? 'bg-[#15102B]/95 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
                     : 'bg-white border-gray-200'
                 }`} onClick={(e) => e.stopPropagation()}>
                 {/* Movie Image Banner */}
-                <div className="relative h-48 sm:h-64 overflow-hidden">
+                <div className="relative h-48 sm:h-64 overflow-hidden bg-black/40">
                     <img
                         src={movie.movieImageUrl || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800'}
                         alt={movie.movieName}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain object-center"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                     <button
@@ -200,41 +200,41 @@ const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, isOpen, onCl
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     {/* Info Grid */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div className={`p-4 rounded-xl border ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700' : theme === 'web3' ? 'bg-purple-800/30 border-purple-500/20' : 'bg-gray-50 border-gray-200'
+                        <div className={`p-4 rounded-xl border ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700' : theme === 'modern' ? 'bg-[#15102B]/60 border-indigo-500/20' : 'bg-gray-50 border-gray-200'
                             }`}>
-                            <div className={`flex items-center gap-2 text-xs font-semibold mb-1 ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300' : 'text-gray-500'}`}>
+                            <div className={`flex items-center gap-2 text-xs font-semibold mb-1 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'}`}>
                                 <Clock className="w-3.5 h-3.5" /> Duration
                             </div>
-                            <p className={`text-lg font-bold ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}`}>
+                            <p className={`text-lg font-bold ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}`}>
                                 {movie.duration} min
                             </p>
                         </div>
-                        <div className={`p-4 rounded-xl border ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700' : theme === 'web3' ? 'bg-purple-800/30 border-purple-500/20' : 'bg-gray-50 border-gray-200'
+                        <div className={`p-4 rounded-xl border ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700' : theme === 'modern' ? 'bg-[#15102B]/60 border-indigo-500/20' : 'bg-gray-50 border-gray-200'
                             }`}>
-                            <div className={`flex items-center gap-2 text-xs font-semibold mb-1 ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300' : 'text-gray-500'}`}>
+                            <div className={`flex items-center gap-2 text-xs font-semibold mb-1 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'}`}>
                                 <Calendar className="w-3.5 h-3.5" /> Start Date
                             </div>
-                            <p className={`text-lg font-bold ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}`}>
+                            <p className={`text-lg font-bold ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}`}>
                                 {formatDate(movie.startedDate)}
                             </p>
                         </div>
-                        <div className={`p-4 rounded-xl border ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700' : theme === 'web3' ? 'bg-purple-800/30 border-purple-500/20' : 'bg-gray-50 border-gray-200'
+                        <div className={`p-4 rounded-xl border ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700' : theme === 'modern' ? 'bg-[#15102B]/60 border-indigo-500/20' : 'bg-gray-50 border-gray-200'
                             }`}>
-                            <div className={`flex items-center gap-2 text-xs font-semibold mb-1 ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300' : 'text-gray-500'}`}>
+                            <div className={`flex items-center gap-2 text-xs font-semibold mb-1 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'}`}>
                                 <Calendar className="w-3.5 h-3.5" /> End Date
                             </div>
-                            <p className={`text-lg font-bold ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}`}>
+                            <p className={`text-lg font-bold ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}`}>
                                 {formatDate(movie.endedDate)}
                             </p>
                         </div>
-                        <div className={`p-4 rounded-xl border ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700' : theme === 'web3' ? 'bg-purple-800/30 border-purple-500/20' : 'bg-gray-50 border-gray-200'
+                        <div className={`p-4 rounded-xl border ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700' : theme === 'modern' ? 'bg-[#15102B]/60 border-indigo-500/20' : 'bg-gray-50 border-gray-200'
                             }`}>
-                            <div className={`flex items-center gap-2 text-xs font-semibold mb-1 ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300' : 'text-gray-500'}`}>
+                            <div className={`flex items-center gap-2 text-xs font-semibold mb-1 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'}`}>
                                 <Tag className="w-3.5 h-3.5" /> Formats
                             </div>
                             <div className="flex flex-wrap gap-1">
                                 {movie.movieVisualFormatInfos.map((f, i) => (
-                                    <span key={i} className={`px-2 py-0.5 rounded text-xs font-semibold ${theme === 'web3' ? 'bg-cyan-600/30 text-cyan-300' : 'bg-red-600/20 text-red-400'
+                                    <span key={i} className={`px-2 py-0.5 rounded text-xs font-semibold ${theme === 'modern' ? 'bg-cyan-600/30 text-cyan-400 drop-shadow-md' : 'bg-red-600/20 text-red-400'
                                         }`}>{f}</span>
                                 ))}
                             </div>
@@ -243,16 +243,16 @@ const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, isOpen, onCl
 
                     {/* Description */}
                     <div>
-                        <h3 className={`text-sm font-bold uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300' : 'text-gray-500'
+                        <h3 className={`text-sm font-bold uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'
                             }`}>Description</h3>
-                        <p className={`text-sm leading-relaxed ${theme === 'dark' ? 'text-gray-300' : theme === 'web3' ? 'text-purple-100' : 'text-gray-700'
+                        <p className={`text-sm leading-relaxed ${theme === 'dark' ? 'text-gray-300' : theme === 'modern' ? 'text-indigo-100 ' : 'text-gray-700'
                             }`}>
                             {movie.movieDescriptions || 'No description available.'}
                         </p>
                     </div>
 
                     {/* Metadata */}
-                    <div className={`text-xs space-y-1 pt-4 border-t ${theme === 'dark' ? 'border-gray-800 text-gray-500' : theme === 'web3' ? 'border-purple-500/30 text-purple-400' : 'border-gray-200 text-gray-400'
+                    <div className={`text-xs space-y-1 pt-4 border-t ${theme === 'dark' ? 'border-gray-800 text-gray-500' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10 text-cyan-400' : 'border-gray-200 text-gray-400'
                         }`}>
                         <p>Created by: {movie.createdBy} • {formatDate(movie.createdAt)}</p>
                         <p>Updated by: {movie.updatedBy} • {formatDate(movie.updatedAt)}</p>
@@ -363,15 +363,15 @@ const CreateMovieModal: React.FC<CreateMovieModalProps> = ({ isOpen, onClose, on
         }
     };
 
-    const inputClass = `w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${theme === 'web3' ? 'focus:border-purple-400' : 'focus:border-red-600'
+    const inputClass = `w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${theme === 'modern' ? 'focus:border-cyan-300 shadow-md shadow-cyan-500/20' : 'focus:border-red-600'
         } ${theme === 'dark'
             ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
-            : theme === 'web3'
-                ? 'bg-purple-800/30 border-purple-500/30 text-white placeholder-purple-300/70'
+            : theme === 'modern'
+                ? 'bg-[#15102B]/60 border-indigo-500/30 shadow-sm shadow-indigo-500/10 text-white placeholder-slate-500'
                 : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
         }`;
 
-    const labelClass = `block text-sm font-semibold mb-2 ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+    const labelClass = `block text-sm font-semibold mb-2 ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
         }`;
 
     return (
@@ -379,17 +379,17 @@ const CreateMovieModal: React.FC<CreateMovieModalProps> = ({ isOpen, onClose, on
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
             <div className={`relative w-full max-w-2xl max-h-[90vh] rounded-xl border shadow-2xl flex flex-col ${theme === 'dark'
                 ? 'bg-gray-900 border-gray-800'
-                : theme === 'web3'
-                    ? 'bg-gradient-to-br from-purple-900/95 to-cyan-900/95 border-purple-500/30 backdrop-blur-xl'
+                : theme === 'modern'
+                    ? 'bg-[#15102B]/95 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
                     : 'bg-white border-gray-200'
                 }`} onClick={(e) => e.stopPropagation()}>
                 {/* Header */}
-                <div className={`flex items-center justify-between p-6 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
+                <div className={`flex items-center justify-between p-6 border-b ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'border-gray-200'
                     }`}>
-                    <h2 className={`text-2xl font-black ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}`}>
+                    <h2 className={`text-2xl font-black ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}`}>
                         Add New Movie
                     </h2>
-                    <button onClick={onClose} className={`p-2 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-gray-800 text-gray-400' : theme === 'web3' ? 'hover:bg-purple-800/30 text-purple-300' : 'hover:bg-gray-100 text-gray-600'
+                    <button onClick={onClose} className={`p-2 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-gray-800 text-gray-400' : theme === 'modern' ? 'hover:bg-[#15102B]/60 text-white font-medium' : 'hover:bg-gray-100 text-gray-600'
                         }`}>
                         <X className="w-5 h-5" />
                     </button>
@@ -398,14 +398,14 @@ const CreateMovieModal: React.FC<CreateMovieModalProps> = ({ isOpen, onClose, on
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto p-6">
                     {success && (
-                        <div className={`mb-4 p-4 rounded-lg border flex items-center ${theme === 'dark' || theme === 'web3' ? 'bg-green-900/40 border-green-500/50 text-green-100' : 'bg-green-50 border-green-200 text-green-800'
+                        <div className={`mb-4 p-4 rounded-lg border flex items-center ${theme === 'dark' || theme === 'modern' ? 'bg-green-900/40 border-green-500/50 text-green-100' : 'bg-green-50 border-green-200 text-green-800'
                             }`}>
                             <CheckCircle className="w-5 h-5 mr-3 text-green-500" />
                             <span className="text-sm font-medium">Movie added successfully!</span>
                         </div>
                     )}
                     {error && (
-                        <div className={`mb-4 p-4 rounded-lg border flex items-center ${theme === 'dark' || theme === 'web3' ? 'bg-red-900/40 border-red-500/50 text-red-100' : 'bg-red-50 border-red-200 text-red-800'
+                        <div className={`mb-4 p-4 rounded-lg border flex items-center ${theme === 'dark' || theme === 'modern' ? 'bg-red-900/40 border-red-500/50 text-red-100' : 'bg-red-50 border-red-200 text-red-800'
                             }`}>
                             <AlertCircle className="w-5 h-5 mr-3 text-red-500" />
                             <span className="text-sm font-medium">{error}</span>
@@ -426,17 +426,17 @@ const CreateMovieModal: React.FC<CreateMovieModalProps> = ({ isOpen, onClose, on
                                 onClick={() => fileInputRef.current?.click()}
                                 className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${theme === 'dark'
                                     ? 'border-gray-700 hover:border-red-600 bg-gray-800/50'
-                                    : theme === 'web3'
-                                        ? 'border-purple-500/30 hover:border-purple-400 bg-purple-800/20'
+                                    : theme === 'modern'
+                                        ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10 hover:border-cyan-300 shadow-md shadow-cyan-500/20 bg-[#15102B]/40'
                                         : 'border-gray-300 hover:border-red-500 bg-gray-50'
                                     }`}
                             >
                                 {imagePreview ? (
-                                    <img src={imagePreview} alt="Preview" className="w-32 h-48 object-cover rounded-lg mx-auto" />
+                                    <img src={imagePreview} alt="Preview" className="w-[80%] max-w-[200px] h-48 object-contain object-center rounded-lg mx-auto bg-black/20" />
                                 ) : (
                                     <>
-                                        <Image className={`w-12 h-12 mx-auto mb-3 ${theme === 'dark' ? 'text-gray-600' : theme === 'web3' ? 'text-purple-400' : 'text-gray-400'}`} />
-                                        <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300' : 'text-gray-500'}`}>
+                                        <Image className={`w-12 h-12 mx-auto mb-3 ${theme === 'dark' ? 'text-gray-600' : theme === 'modern' ? 'text-cyan-400' : 'text-gray-400'}`} />
+                                        <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'}`}>
                                             Click to upload poster image
                                         </p>
                                     </>
@@ -492,13 +492,13 @@ const CreateMovieModal: React.FC<CreateMovieModalProps> = ({ isOpen, onClose, on
                                         type="button"
                                         onClick={() => handleFormatToggle(f.formatId)}
                                         className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all border ${formData.movieFormatIds.includes(f.formatId)
-                                            ? theme === 'web3'
-                                                ? 'bg-gradient-to-r from-purple-600 to-cyan-600 text-white border-purple-400'
+                                            ? theme === 'modern'
+                                                ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 text-white border-cyan-300 shadow-md shadow-cyan-500/20'
                                                 : 'bg-red-600 text-white border-red-600'
                                             : theme === 'dark'
                                                 ? 'bg-gray-800 text-gray-300 border-gray-700 hover:border-red-600'
-                                                : theme === 'web3'
-                                                    ? 'bg-purple-800/30 text-purple-300 border-purple-500/30 hover:border-purple-400'
+                                                : theme === 'modern'
+                                                    ? 'bg-[#15102B]/60 text-white font-medium border-indigo-500/30 shadow-sm shadow-indigo-500/10 hover:border-cyan-300 shadow-md shadow-cyan-500/20'
                                                     : 'bg-gray-100 text-gray-700 border-gray-300 hover:border-red-500'
                                             }`}
                                     >
@@ -506,7 +506,7 @@ const CreateMovieModal: React.FC<CreateMovieModalProps> = ({ isOpen, onClose, on
                                     </button>
                                 ))}
                                 {formats.length === 0 && (
-                                    <p className={`text-sm ${theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-400' : 'text-gray-400'}`}>
+                                    <p className={`text-sm ${theme === 'dark' ? 'text-gray-500' : theme === 'modern' ? 'text-cyan-400' : 'text-gray-400'}`}>
                                         No formats available. Please configure formats in Facilities Manager.
                                     </p>
                                 )}
@@ -515,10 +515,10 @@ const CreateMovieModal: React.FC<CreateMovieModalProps> = ({ isOpen, onClose, on
 
                         {/* Submit */}
                         <div className="flex justify-end gap-3 pt-4">
-                            <button type="button" onClick={onClose} disabled={loading} className={`px-4 py-2 rounded-lg font-semibold transition-colors ${theme === 'dark' ? 'bg-gray-800 hover:bg-gray-700 text-gray-300' : theme === 'web3' ? 'bg-purple-800/50 hover:bg-purple-700/50 text-purple-200' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                            <button type="button" onClick={onClose} disabled={loading} className={`px-4 py-2 rounded-lg font-semibold transition-colors ${theme === 'dark' ? 'bg-gray-800 hover:bg-gray-700 text-gray-300' : theme === 'modern' ? 'bg-[#1F173D]/60 hover:bg-[#1F173D]/50 text-white font-medium' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                 } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>Cancel</button>
                             <button type="submit" disabled={loading} className={`px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''
-                                } ${theme === 'web3' ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white' : 'bg-red-600 hover:bg-red-700 text-white'
+                                } ${theme === 'modern' ? 'bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 shadow-lg shadow-pink-500/20 text-white border border-pink-400/50' : 'bg-red-600 hover:bg-red-700 text-white'
                                 }`}>
                                 {loading ? (<><Loader2 className="w-4 h-4 animate-spin" /> Creating...</>) : (<><Plus className="w-4 h-4" /> Create Movie</>)}
                             </button>
@@ -654,19 +654,19 @@ const MovieManagerPage: React.FC = () => {
     };
 
     return (
-        <div className={`min-h-screen font-sans transition-colors duration-300 ${theme === 'dark' ? 'bg-black text-white' : theme === 'web3' ? 'bg-gradient-to-br from-purple-950 via-indigo-950 to-cyan-950 text-white' : 'bg-gray-50 text-gray-900'
+        <div className={`min-h-screen font-sans transition-colors duration-300 ${theme === 'dark' ? 'bg-black text-white' : theme === 'modern' ? 'bg-gradient-to-br from-[#0D081D] via-[#050A14] to-[#12081C] text-white' : 'bg-gray-50 text-gray-900'
             }`}>
             <Sidebar activeTab={activeTab} onTabChange={setActiveTab} isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
 
             {/* HEADER */}
-            <header className={`fixed top-0 left-0 right-0 lg:left-64 z-50 backdrop-blur-md border-b h-16 flex items-center justify-between px-6 shadow-lg transition-colors duration-300 ${theme === 'dark' ? 'bg-black/80 border-gray-800' : theme === 'web3' ? 'bg-gradient-to-r from-purple-900/90 via-indigo-900/90 to-cyan-900/90 border-purple-500/30' : 'bg-white/80 border-gray-200'
+            <header className={`fixed top-0 left-0 right-0 lg:left-64 z-50 backdrop-blur-md border-b h-16 flex items-center justify-between px-6 shadow-lg transition-colors duration-300 ${theme === 'dark' ? 'bg-black/80 border-gray-800' : theme === 'modern' ? 'bg-[#0E0A20]/90 shadow-2xl border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'bg-white/80 border-gray-200'
                 }`}>
                 <div className="hidden lg:flex items-center gap-3 cursor-pointer" onClick={() => navigate('/home')}>
-                    <div className={`text-2xl font-black tracking-widest uppercase ${theme === 'web3' ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400' : 'text-red-600'
+                    <div className={`text-2xl font-black tracking-widest uppercase ${theme === 'modern' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-pink-300 to-rose-300 drop-shadow-sm' : 'text-red-600'
                         }`}>
-                        CINEMA<span className={theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}>PRO</span>
+                        CINEMA<span className={theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}>PRO</span>
                     </div>
-                    <span className={`text-xs border-l pl-3 ${theme === 'dark' ? 'text-gray-400 border-gray-700' : theme === 'web3' ? 'text-purple-200 border-purple-500/30' : 'text-gray-600 border-gray-300'
+                    <span className={`text-xs border-l pl-3 ${theme === 'dark' ? 'text-gray-400 border-gray-700' : theme === 'modern' ? 'text-white font-medium border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'text-gray-600 border-gray-300'
                         }`}>Movie Manager Dashboard</span>
                 </div>
                 <div className="lg:hidden flex-1" />
@@ -675,21 +675,21 @@ const MovieManagerPage: React.FC = () => {
                     <LanguageSwitcher />
                     {/* Theme Dropdown */}
                     <div className="relative" ref={themeDropdownRef}>
-                        <button onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)} className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-gray-800 text-gray-300' : theme === 'web3' ? 'hover:bg-purple-900/30 text-purple-300' : 'hover:bg-gray-100 text-gray-700'
+                        <button onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)} className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-gray-800 text-gray-300' : theme === 'modern' ? 'hover:bg-[#0E0A20]/30 text-white font-medium' : 'hover:bg-gray-100 text-gray-700'
                             }`}>
-                            {theme === 'dark' ? <Moon className="w-5 h-5" /> : theme === 'web3' ? <Sparkles className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-                            <span className="hidden sm:inline-block text-sm font-medium">{theme === 'dark' ? 'Dark' : theme === 'web3' ? 'Web3' : 'Light'}</span>
+                            {theme === 'dark' ? <Moon className="w-5 h-5" /> : theme === 'modern' ? <Sparkles className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+                            <span className="hidden sm:inline-block text-sm font-medium">{theme === 'dark' ? 'Dark' : theme === 'modern' ? 'Modern' : 'Light'}</span>
                             <ChevronDown className={`w-4 h-4 transition-transform ${isThemeDropdownOpen ? 'rotate-180' : ''}`} />
                         </button>
                         {isThemeDropdownOpen && (
-                            <div className={`absolute right-0 mt-2 w-48 rounded-xl shadow-xl overflow-hidden ${theme === 'dark' ? 'bg-gray-900 border border-gray-700' : theme === 'web3' ? 'bg-purple-900/95 border border-purple-500/30 backdrop-blur-xl' : 'bg-white border border-gray-200'
+                            <div className={`absolute right-0 mt-2 w-48 rounded-xl shadow-xl overflow-hidden ${theme === 'dark' ? 'bg-gray-900 border border-gray-700' : theme === 'modern' ? 'bg-[#0E0A20]/95 border border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl' : 'bg-white border border-gray-200'
                                 }`}>
-                                {(['light', 'dark', 'web3'] as const).map((t) => (
-                                    <button key={t} onClick={() => { setTheme(t); setIsThemeDropdownOpen(false); }} className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === t ? (theme === 'dark' ? 'bg-gray-800 text-white' : theme === 'web3' ? 'bg-purple-800/50 text-white' : 'bg-gray-100 text-gray-900')
-                                        : theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' : theme === 'web3' ? 'text-purple-200 hover:bg-purple-800/30' : 'text-gray-700 hover:bg-gray-100'
+                                {(['light', 'dark', 'modern'] as const).map((t) => (
+                                    <button key={t} onClick={() => { setTheme(t); setIsThemeDropdownOpen(false); }} className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === t ? (theme === 'dark' ? 'bg-gray-800 text-white' : theme === 'modern' ? 'bg-[#1F173D]/60 text-white' : 'bg-gray-100 text-gray-900')
+                                        : theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' : theme === 'modern' ? 'text-white font-medium hover:bg-[#15102B]/60' : 'text-gray-700 hover:bg-gray-100'
                                         }`}>
                                         {t === 'light' ? <Sun className="w-4 h-4" /> : t === 'dark' ? <Moon className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
-                                        {t === 'light' ? 'Light Mode' : t === 'dark' ? 'Dark Mode' : 'Web3 View'}
+                                        {t === 'light' ? 'Light Mode' : t === 'dark' ? 'Dark Mode' : 'Modern View'}
                                     </button>
                                 ))}
                             </div>
@@ -754,15 +754,15 @@ const MovieManagerPage: React.FC = () => {
                     {/* Page Header */}
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                         <div className="flex-1 min-w-0">
-                            <h1 className={`text-2xl sm:text-3xl font-black mb-2 border-l-4 pl-4 ${theme === 'web3' ? 'border-purple-400' : 'border-red-600'
-                                } ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}`}>
+                            <h1 className={`text-2xl sm:text-3xl font-black mb-2 border-l-4 pl-4 ${theme === 'modern' ? 'border-cyan-300 shadow-md shadow-cyan-500/20' : 'border-red-600'
+                                } ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}`}>
                                 Movie Management
                             </h1>
-                            <p className={`text-sm sm:text-base ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}`}>
+                            <p className={`text-sm sm:text-base ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'}`}>
                                 Manage all movies in the system — add, edit and track movie schedules
                             </p>
                         </div>
-                        <button onClick={() => setIsCreateModalOpen(true)} className={`inline-flex items-center justify-center gap-2 px-4 py-2 text-white font-semibold rounded-lg transition-colors whitespace-nowrap ${theme === 'web3' ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500' : 'bg-red-600 hover:bg-red-700'
+                        <button onClick={() => setIsCreateModalOpen(true)} className={`inline-flex items-center justify-center gap-2 px-4 py-2 text-white font-semibold rounded-lg transition-colors whitespace-nowrap ${theme === 'modern' ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : 'bg-red-600 hover:bg-red-700'
                             }`}>
                             <Plus className="w-5 h-5" />
                             <span className="hidden sm:inline">Add New Movie</span>
@@ -772,7 +772,7 @@ const MovieManagerPage: React.FC = () => {
 
                     {/* Error */}
                     {error && (
-                        <div className={`mb-6 p-4 rounded-lg border flex items-center ${theme === 'dark' || theme === 'web3' ? 'bg-red-900/40 border-red-500/50 text-red-100' : 'bg-red-50 border-red-200 text-red-800'
+                        <div className={`mb-6 p-4 rounded-lg border flex items-center ${theme === 'dark' || theme === 'modern' ? 'bg-red-900/40 border-red-500/50 text-red-100' : 'bg-red-50 border-red-200 text-red-800'
                             }`}>
                             <AlertCircle className="w-5 h-5 mr-3 text-red-500" />
                             <span className="text-sm font-medium flex-1">{error}</span>
@@ -782,14 +782,14 @@ const MovieManagerPage: React.FC = () => {
 
                     {/* Search */}
                     <div className="relative mb-6">
-                        <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300' : 'text-gray-500'
+                        <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'
                             }`} />
                         <input
                             type="text" placeholder="Search movies..." value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none transition-colors ${theme === 'web3' ? 'focus:border-purple-400' : 'focus:border-red-600'
+                            className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none transition-colors ${theme === 'modern' ? 'focus:border-cyan-300 shadow-md shadow-cyan-500/20' : 'focus:border-red-600'
                                 } ${theme === 'dark' ? 'bg-gray-900 border-gray-800 text-white placeholder-gray-500'
-                                    : theme === 'web3' ? 'bg-purple-900/60 border-purple-500/30 text-white placeholder-purple-300/70 backdrop-blur-xl'
+                                    : theme === 'modern' ? 'bg-[#0E0A20]/60 border-indigo-500/30 shadow-sm shadow-indigo-500/10 text-white placeholder-slate-500 backdrop-blur-2xl'
                                         : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
                                 }`}
                         />
@@ -797,10 +797,10 @@ const MovieManagerPage: React.FC = () => {
 
                     {/* Loading */}
                     {loading && (
-                        <div className={`text-center py-12 rounded-xl border ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'web3' ? 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 border-purple-500/30' : 'bg-white border-gray-200'
+                        <div className={`text-center py-12 rounded-xl border ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'modern' ? 'bg-[#15102B]/80 border border-indigo-500/40 shadow-sm shadow-indigo-500/10 border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'bg-white border-gray-200'
                             }`}>
-                            <Loader2 className={`w-12 h-12 animate-spin mx-auto mb-4 ${theme === 'web3' ? 'text-purple-400' : 'text-red-600'}`} />
-                            <p className={theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300' : 'text-gray-600'}>Loading movies...</p>
+                            <Loader2 className={`w-12 h-12 animate-spin mx-auto mb-4 ${theme === 'modern' ? 'text-cyan-400' : 'text-red-600'}`} />
+                            <p className={theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'}>Loading movies...</p>
                         </div>
                     )}
 
@@ -812,18 +812,18 @@ const MovieManagerPage: React.FC = () => {
                                     key={movie.movieId}
                                     className={`group rounded-xl overflow-hidden border transition-all hover:-translate-y-1 cursor-pointer ${theme === 'dark'
                                         ? 'bg-gray-900 border-gray-800 hover:border-red-600'
-                                        : theme === 'web3'
-                                            ? 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 border-purple-500/30 hover:border-purple-400 backdrop-blur-xl'
+                                        : theme === 'modern'
+                                            ? 'bg-[#15102B]/80 border border-indigo-500/40 shadow-sm shadow-indigo-500/10 border-indigo-500/30 shadow-sm shadow-indigo-500/10 hover:border-cyan-300 shadow-md shadow-cyan-500/20 backdrop-blur-2xl'
                                             : 'bg-white border-gray-200 hover:border-red-600 shadow-sm'
                                         }`}
                                     onClick={() => { setSelectedMovie(movie); setIsDetailModalOpen(true); }}
                                 >
                                     {/* Poster */}
-                                    <div className="aspect-[2/3] relative overflow-hidden">
+                                    <div className="aspect-[2/3] relative overflow-hidden bg-black/20">
                                         <img
                                             src={movie.movieImageUrl || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400'}
                                             alt={movie.movieName}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -847,7 +847,7 @@ const MovieManagerPage: React.FC = () => {
                                         {/* Format Tags */}
                                         <div className="absolute top-2 left-2 flex flex-col gap-1">
                                             {movie.movieVisualFormatInfos.slice(0, 2).map((format, i) => (
-                                                <span key={i} className={`px-2 py-0.5 rounded text-[10px] font-bold ${theme === 'web3' ? 'bg-purple-600/80 text-white' : 'bg-red-600/80 text-white'
+                                                <span key={i} className={`px-2 py-0.5 rounded text-[10px] font-bold ${theme === 'modern' ? 'bg-blue-600/80 text-white' : 'bg-red-600/80 text-white'
                                                     }`}>{format}</span>
                                             ))}
                                         </div>
@@ -855,15 +855,15 @@ const MovieManagerPage: React.FC = () => {
 
                                     {/* Info */}
                                     <div className="p-3 sm:p-4">
-                                        <h3 className={`font-bold text-sm sm:text-base truncate mb-1 ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                                        <h3 className={`font-bold text-sm sm:text-base truncate mb-1 ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
                                             }`}>{movie.movieName}</h3>
                                         <div className="flex flex-wrap gap-1 mb-2">
                                             {movie.movieGenresInfos.slice(0, 2).map((genre, i) => (
-                                                <span key={i} className={`text-[10px] px-1.5 py-0.5 rounded ${theme === 'dark' ? 'bg-gray-800 text-gray-400' : theme === 'web3' ? 'bg-purple-800/40 text-purple-300' : 'bg-gray-100 text-gray-600'
+                                                <span key={i} className={`text-[10px] px-1.5 py-0.5 rounded ${theme === 'dark' ? 'bg-gray-800 text-gray-400' : theme === 'modern' ? 'bg-[#15102B]/80 text-white font-medium' : 'bg-gray-100 text-gray-600'
                                                     }`}>{genre}</span>
                                             ))}
                                         </div>
-                                        <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-400' : 'text-gray-500'}`}>
+                                        <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : theme === 'modern' ? 'text-cyan-400' : 'text-gray-500'}`}>
                                             {formatDate(movie.startedDate)} — {formatDate(movie.endedDate)}
                                         </p>
                                     </div>
@@ -874,13 +874,13 @@ const MovieManagerPage: React.FC = () => {
 
                     {/* Empty State */}
                     {!loading && filteredMovies.length === 0 && (
-                        <div className={`text-center py-16 rounded-xl border ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'web3' ? 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 border-purple-500/30' : 'bg-white border-gray-200'
+                        <div className={`text-center py-16 rounded-xl border ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'modern' ? 'bg-[#15102B]/80 border border-indigo-500/40 shadow-sm shadow-indigo-500/10 border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'bg-white border-gray-200'
                             }`}>
-                            <Film className={`w-16 h-16 mx-auto mb-4 ${theme === 'dark' ? 'text-gray-600' : theme === 'web3' ? 'text-purple-600' : 'text-gray-400'}`} />
-                            <p className={`text-lg font-semibold mb-1 ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}`}>
+                            <Film className={`w-16 h-16 mx-auto mb-4 ${theme === 'dark' ? 'text-gray-600' : theme === 'modern' ? 'text-cyan-500' : 'text-gray-400'}`} />
+                            <p className={`text-lg font-semibold mb-1 ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}`}>
                                 {searchTerm ? 'No movies found' : 'No movies yet'}
                             </p>
-                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-400' : 'text-gray-400'}`}>
+                            <p className={`text-sm ${theme === 'dark' ? 'text-gray-500' : theme === 'modern' ? 'text-cyan-400' : 'text-gray-400'}`}>
                                 {searchTerm ? 'Try adjusting your search' : 'Click "Add New Movie" to get started'}
                             </p>
                         </div>

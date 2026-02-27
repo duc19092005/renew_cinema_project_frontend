@@ -43,7 +43,7 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
       label: 'Total Capacity',
       value: totalCapacity.toLocaleString(),
       icon: Users,
-      color: 'from-purple-600 to-purple-800',
+      color: 'from-pink-600 to-rose-900',
       change: '+500',
     },
   ];
@@ -53,7 +53,7 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
       <div className="flex items-center justify-center py-16">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className={theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}>Loading statistics...</p>
+          <p className={theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'}>Loading statistics...</p>
         </div>
       </div>
     );
@@ -71,8 +71,8 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
               className={`rounded-xl p-6 border transition-all hover:-translate-y-1 ${
                 theme === 'dark'
                   ? 'bg-gray-900 border-gray-800 hover:border-red-600'
-                  : theme === 'web3'
-                    ? 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 border-purple-500/30 hover:border-purple-400 backdrop-blur-xl'
+                  : theme === 'modern'
+                    ? 'bg-gradient-to-br from-[#15102B]/80 border-indigo-500/30 shadow-sm shadow-indigo-500/10 hover:border-pink-400 text-white shadow-md shadow-pink-500/20 backdrop-blur-2xl'
                     : 'bg-white border-gray-200 hover:border-red-600 shadow-sm'
               }`}
             >
@@ -86,10 +86,10 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
                 </span>
               </div>
               <h3 className={`text-3xl font-black mb-1 ${
-                theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
               }`}>{stat.value}</h3>
               <p className={`text-sm ${
-                theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'
               }`}>{stat.label}</p>
             </div>
           );
@@ -100,15 +100,15 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
       <div className={`rounded-xl p-6 border ${
         theme === 'dark'
           ? 'bg-gray-900 border-gray-800'
-          : theme === 'web3'
-            ? 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 border-purple-500/30 backdrop-blur-xl'
+          : theme === 'modern'
+            ? 'bg-gradient-to-br from-[#15102B]/80 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
             : 'bg-white border-gray-200 shadow-sm'
       }`}>
         <div className="flex items-center justify-between mb-6">
           <h2 className={`text-2xl font-black border-l-4 pl-4 ${
-            theme === 'web3' ? 'border-purple-400' : 'border-red-600'
+            theme === 'modern' ? 'border-pink-400 text-white shadow-md shadow-pink-500/20' : 'border-red-600'
           } ${
-            theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+            theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
           }`}>
             Cinema List
           </h2>
@@ -117,9 +117,9 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
         {cinemas.length === 0 ? (
           <div className="text-center py-12">
             <AlertCircle className={`w-12 h-12 mx-auto mb-4 ${
-              theme === 'dark' ? 'text-gray-600' : theme === 'web3' ? 'text-purple-600' : 'text-gray-400'
+              theme === 'dark' ? 'text-gray-600' : theme === 'modern' ? 'text-pink-400' : 'text-gray-400'
             }`} />
-            <p className={theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-300' : 'text-gray-400'}>No cinemas available</p>
+            <p className={theme === 'dark' ? 'text-gray-500' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-400'}>No cinemas available</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -129,34 +129,34 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
                 className={`flex items-center justify-between p-4 rounded-lg border transition-colors ${
                   theme === 'dark'
                     ? 'bg-gray-800 border-gray-700 hover:border-red-600'
-                    : theme === 'web3'
-                      ? 'bg-purple-900/60 border-purple-500/30 hover:border-purple-400 backdrop-blur-xl'
+                    : theme === 'modern'
+                      ? 'bg-slate-800/60 border-indigo-500/30 shadow-sm shadow-indigo-500/10 hover:border-pink-400 text-white shadow-md shadow-pink-500/20 backdrop-blur-2xl'
                       : 'bg-gray-50 border-gray-200 hover:border-red-600'
                 }`}
               >
                 <div className="flex items-center gap-4">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                    theme === 'web3' 
-                      ? 'bg-gradient-to-br from-purple-600 to-cyan-600' 
+                    theme === 'modern' 
+                      ? 'bg-gradient-to-br from-pink-500 to-rose-500 shadow-md shadow-pink-500/20' 
                       : 'bg-gradient-to-br from-red-600 to-red-800'
                   }`}>
                     <Building2 className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <h3 className={`font-bold ${
-                      theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                      theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
                     }`}>{cinema.cinemaName}</h3>
                     <p className={`text-sm ${
-                      theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                      theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'
                     }`}>{cinema.cinemaLocation}</p>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className={`text-sm font-semibold ${
-                    theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                    theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
                   }`}>{cinema.totalRooms} rooms</p>
                   <p className={`text-xs ${
-                    theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                    theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'
                   }`}>Active</p>
                 </div>
               </div>
@@ -170,26 +170,26 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
         <div className={`rounded-xl p-6 border ${
           theme === 'dark'
             ? 'bg-gray-900 border-gray-800'
-            : theme === 'web3'
-              ? 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 border-purple-500/30 backdrop-blur-xl'
+            : theme === 'modern'
+              ? 'bg-gradient-to-br from-[#15102B]/80 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
               : 'bg-white border-gray-200 shadow-sm'
         }`}>
           <h3 className={`text-lg font-bold mb-4 ${
-            theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+            theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
           }`}>Quick Statistics</h3>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className={theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}>Room Utilization Rate</span>
+              <span className={theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'}>Room Utilization Rate</span>
               <span className={`font-bold ${
-                theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
               }`}>85%</span>
             </div>
             <div className={`w-full rounded-full h-2 ${
-              theme === 'dark' ? 'bg-gray-800' : theme === 'web3' ? 'bg-purple-900/50' : 'bg-gray-200'
+              theme === 'dark' ? 'bg-gray-800' : theme === 'modern' ? 'bg-slate-800/50' : 'bg-gray-200'
             }`}>
               <div className={`h-2 rounded-full ${
-                theme === 'web3' 
-                  ? 'bg-gradient-to-r from-purple-500 to-cyan-500' 
+                theme === 'modern' 
+                  ? 'bg-gradient-to-r from-pink-500 to-rose-500' 
                   : 'bg-gradient-to-r from-red-600 to-red-800'
               }`} style={{ width: '85%' }} />
             </div>
@@ -199,15 +199,15 @@ const Dashboard: React.FC<DashboardProps> = ({ cinemas, loading }) => {
         <div className={`rounded-xl p-6 border ${
           theme === 'dark'
             ? 'bg-gray-900 border-gray-800'
-            : theme === 'web3'
-              ? 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 border-purple-500/30 backdrop-blur-xl'
+            : theme === 'modern'
+              ? 'bg-gradient-to-br from-[#15102B]/80 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
               : 'bg-white border-gray-200 shadow-sm'
         }`}>
           <h3 className={`text-lg font-bold mb-4 ${
-            theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+            theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
           }`}>Recent Activity</h3>
           <div className={`space-y-2 text-sm ${
-            theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+            theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'
           }`}>
             <p>• Added 2 new auditoriums</p>
             <p>• Updated VietNam cinema information</p>

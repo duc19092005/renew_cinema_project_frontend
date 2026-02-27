@@ -238,10 +238,10 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                     <h3 className={`text-2xl font-black mb-1 ${
                       theme === 'dark' ? 'text-white' : 'text-gray-900'
                     }`}>
-                      {room.roomName}
+                      {room.auditoriumName}
                     </h3>
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-                      room.roomStatus === 'active' || !room.roomStatus
+                      room.auditoriumStatus === 'active' || !room.auditoriumStatus
                         ? theme === 'dark'
                           ? 'bg-green-900/40 text-green-400 border-green-700'
                           : 'bg-green-50 text-green-700 border-green-300'
@@ -249,7 +249,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                           ? 'bg-yellow-900/40 text-yellow-400 border-yellow-700'
                           : 'bg-yellow-50 text-yellow-700 border-yellow-300'
                     }`}>
-                      {room.roomStatus === 'active' || !room.roomStatus ? 'Hoạt động' : 'Maintenance'}
+                      {room.auditoriumStatus === 'active' || !room.auditoriumStatus ? 'Hoạt động' : 'Maintenance'}
                     </span>
                   </div>
                 </div>
@@ -272,19 +272,19 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                         <p className={`text-2xl font-black ${
                           theme === 'dark' ? 'text-white' : 'text-gray-900'
                         }`}>
-                          {room.roomCapacity} ghế
+                          {room.totalSeats} ghế
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  {room.roomStatus && (
+                  {room.auditoriumStatus && (
                     <div className={`p-4 rounded-lg ${
                       theme === 'dark' ? 'bg-gray-900' : 'bg-white'
                     }`}>
                       <div className="flex items-center gap-3">
                         <Activity className={`w-5 h-5 ${
-                          theme === 'dark' ? 'text-purple-500' : 'text-purple-600'
+                          theme === 'dark' ? 'text-pink-500' : 'text-pink-400'
                         }`} />
                         <div>
                           <p className={`text-xs mb-1 ${
@@ -293,8 +293,8 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                             Status
                           </p>
                           <p className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>
-                            {room.roomStatus === 'active' ? 'Hoạt động' : 
-                             room.roomStatus === 'maintenance' ? 'Maintenance' : 'Ngừng hoạt động'}
+                            {room.auditoriumStatus === 'active' ? 'Hoạt động' : 
+                             room.auditoriumStatus === 'maintenance' ? 'Maintenance' : 'Ngừng hoạt động'}
                           </p>
                         </div>
                       </div>
@@ -304,7 +304,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
               </div>
 
               {/* Room ID (for reference) */}
-              {room.roomId && (
+              {room.auditoriumId && (
                 <div className={`p-3 rounded-lg border ${
                   theme === 'dark'
                     ? 'bg-gray-800 border-gray-700'
@@ -318,7 +318,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                   <p className={`text-xs font-mono ${
                     theme === 'dark' ? 'text-gray-500' : 'text-gray-500'
                   }`}>
-                    {room.roomId}
+                    {room.auditoriumId}
                   </p>
                 </div>
               )}
@@ -333,8 +333,8 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
           <button
             onClick={handleCreateShowtime}
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors ${
-              theme === 'web3'
-                ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white'
+              theme === 'modern'
+                ? 'bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 border border-pink-400/50 shadow-md shadow-pink-500/20 text-white'
                 : 'bg-red-600 hover:bg-red-700 text-white'
             }`}
           >
@@ -371,18 +371,18 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
             className={`relative w-full max-w-3xl max-h-[90vh] rounded-xl border shadow-2xl transition-all flex flex-col ${
               theme === 'dark'
                 ? 'bg-gray-900 border-gray-800'
-                : theme === 'web3'
-                  ? 'bg-gradient-to-br from-purple-900/95 to-cyan-900/95 border-purple-500/30 backdrop-blur-xl'
+                : theme === 'modern'
+                  ? 'bg-gradient-to-br from-[#15102B]/95 to-[#0b061c]/95 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
                   : 'bg-white border-gray-200'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div className={`flex items-center justify-between p-6 border-b ${
-              theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
+              theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'border-gray-200'
             }`}>
               <h2 className={`text-2xl font-black ${
-                theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
               }`}>
                 Select Movie Format
               </h2>
@@ -394,8 +394,8 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                 className={`p-2 rounded-lg transition-colors ${
                   theme === 'dark'
                     ? 'hover:bg-gray-800 text-gray-400'
-                    : theme === 'web3'
-                      ? 'hover:bg-purple-800/30 text-purple-300'
+                    : theme === 'modern'
+                      ? 'hover:bg-indigo-800/40 text-white font-medium'
                       : 'hover:bg-gray-100 text-gray-600'
                 }`}
               >
@@ -409,9 +409,9 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                 <div className="flex items-center justify-center py-12">
                   <div className="text-center">
                     <Loader2 className={`w-12 h-12 animate-spin mx-auto mb-4 ${
-                      theme === 'web3' ? 'text-purple-400' : 'text-red-600'
+                      theme === 'modern' ? 'text-indigo-300' : 'text-red-600'
                     }`} />
-                    <p className={theme === 'dark' || theme === 'web3' ? 'text-gray-400' : 'text-gray-600'}>
+                    <p className={theme === 'dark' || theme === 'modern' ? 'text-gray-400' : 'text-gray-600'}>
                       Loading list định dạng...
                     </p>
                   </div>
@@ -422,7 +422,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                 <div className={`p-4 rounded-lg border flex items-center ${
                   theme === 'dark'
                     ? 'bg-red-900/40 border-red-500/50 text-red-100'
-                    : theme === 'web3'
+                    : theme === 'modern'
                       ? 'bg-red-900/40 border-red-500/50 text-red-100'
                       : 'bg-red-50 border-red-200 text-red-800'
                 }`}>
@@ -439,13 +439,13 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                       onClick={() => handleFormatSelect(format)}
                       className={`p-4 rounded-lg border text-left transition-all ${
                         selectedFormat?.formatId === format.formatId
-                          ? theme === 'web3'
-                            ? 'border-purple-400 bg-purple-800/30 shadow-lg shadow-purple-500/20'
+                          ? theme === 'modern'
+                            ? 'border-pink-400 text-white shadow-md shadow-pink-500/20 bg-indigo-800/40 shadow-lg shadow-pink-500/20'
                             : 'border-red-600 bg-red-50 shadow-lg'
                           : theme === 'dark'
                             ? 'bg-gray-800 border-gray-700 hover:border-gray-600'
-                            : theme === 'web3'
-                              ? 'bg-purple-800/20 border-purple-500/30 hover:border-purple-400/50'
+                            : theme === 'modern'
+                              ? 'bg-slate-800/20 border-indigo-500/30 shadow-sm shadow-indigo-500/10 hover:border-pink-400 text-white shadow-md shadow-pink-500/20/50'
                               : 'bg-white border-gray-200 hover:border-red-300'
                       }`}
                     >
@@ -453,14 +453,14 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <h3 className={`font-bold text-lg ${
-                              theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                              theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
                             }`}>
                               {format.formatName}
                             </h3>
                             {selectedFormat?.formatId === format.formatId && (
                               <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                                theme === 'web3'
-                                  ? 'bg-purple-500'
+                                theme === 'modern'
+                                  ? 'bg-pink-500 shadow-md shadow-pink-500/20 text-white'
                                   : 'bg-red-600'
                               }`}>
                                 <Check className="w-4 h-4 text-white" />
@@ -468,13 +468,13 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                             )}
                           </div>
                           <p className={`text-sm mb-3 ${
-                            theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                            theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'
                           }`}>
                             {format.formatDescription}
                           </p>
                           <p className={`text-lg font-black ${
-                            theme === 'web3'
-                              ? 'text-purple-300'
+                            theme === 'modern'
+                              ? 'text-white font-medium'
                               : 'text-red-600'
                           }`}>
                             {formatPrice(format.movieFormatPrice)}
@@ -489,9 +489,9 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
               {!formatsLoading && !formatsError && movieFormats.length === 0 && (
                 <div className="text-center py-12">
                   <Film className={`w-12 h-12 mx-auto mb-4 ${
-                    theme === 'dark' ? 'text-gray-600' : theme === 'web3' ? 'text-purple-600' : 'text-gray-400'
+                    theme === 'dark' ? 'text-gray-600' : theme === 'modern' ? 'text-pink-400' : 'text-gray-400'
                   }`} />
-                  <p className={theme === 'dark' || theme === 'web3' ? 'text-gray-400' : 'text-gray-500'}>
+                  <p className={theme === 'dark' || theme === 'modern' ? 'text-gray-400' : 'text-gray-500'}>
                     No movie formats
                   </p>
                 </div>
@@ -500,7 +500,7 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
 
             {/* Footer */}
             <div className={`flex justify-end gap-3 p-6 border-t ${
-              theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
+              theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'border-gray-200'
             }`}>
               <button
                 onClick={() => {
@@ -510,8 +510,8 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
                   theme === 'dark'
                     ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                    : theme === 'web3'
-                      ? 'bg-purple-800/50 hover:bg-purple-700/50 text-purple-200'
+                    : theme === 'modern'
+                      ? 'bg-[#15102B] hover:bg-slate-600/50 text-white font-medium'
                       : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                 }`}
               >
@@ -525,8 +525,8 @@ const RoomDetailModal: React.FC<RoomDetailModalProps> = ({ roomId, isOpen, onClo
                     ? 'opacity-50 cursor-not-allowed'
                     : ''
                 } ${
-                  theme === 'web3'
-                    ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white'
+                  theme === 'modern'
+                    ? 'bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 border border-pink-400/50 shadow-md shadow-pink-500/20 text-white'
                     : 'bg-red-600 hover:bg-red-700 text-white'
                 }`}
               >

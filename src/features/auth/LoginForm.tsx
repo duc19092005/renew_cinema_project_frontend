@@ -129,7 +129,7 @@ const LoginForm: React.FC = () => {
                         {/* Red Glow */}
                         <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-red-900 rounded-2xl blur-lg opacity-30"></div>
 
-                        <div className="relative bg-black/80 border border-gray-800 rounded-2xl p-8 shadow-2xl backdrop-blur-xl">
+                        <div className="relative bg-black/80 border border-gray-800 rounded-2xl p-8 shadow-2xl backdrop-blur-2xl">
                             {/* Header */}
                             <div className="flex flex-col items-center mb-8 text-center">
                                 <div className="p-3 bg-red-600/20 rounded-full mb-4 border border-red-600/40 shadow-[0_0_20px_rgba(220,38,38,0.5)]">

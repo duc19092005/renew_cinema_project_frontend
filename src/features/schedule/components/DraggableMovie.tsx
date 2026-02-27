@@ -24,7 +24,7 @@ const DraggableMovie: React.FC<DraggableMovieProps> = ({ movie, onDragStart, onD
             style={{ borderLeft: `4px solid ${movie.color || '#cbd5e1'}` }}
         >
             <div className="font-semibold text-slate-800 dark:text-slate-100">{movie.title}</div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex justify-between">
+            <div className="text-xs text-slate-500 dark:text-indigo-300 mt-1 flex justify-between">
                 <span>{movie.durationMinutes} min</span>
                 <div className="flex gap-1">
                     {movie.formats.map(f => (

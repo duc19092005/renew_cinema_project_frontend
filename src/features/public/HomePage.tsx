@@ -109,37 +109,37 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen font-sans transition-colors duration-300 ${theme === 'dark' ? 'bg-black text-white' : theme === 'web3' ? 'bg-gradient-to-br from-purple-950 via-indigo-950 to-cyan-950 text-white' : 'bg-gray-50 text-gray-900'
+    <div className={`min-h-screen font-sans transition-colors duration-300 ${theme === 'dark' ? 'bg-black text-white' : theme === 'modern' ? 'bg-gradient-to-br from-[#0D081D] via-[#050A14] to-[#12081C] text-white' : 'bg-gray-50 text-gray-900'
       }`}>
       {/* --- HEADER --- */}
-      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b h-16 flex items-center justify-between px-6 shadow-lg transition-colors duration-300 ${theme === 'dark' ? 'bg-black/80 border-gray-800' : theme === 'web3' ? 'bg-gradient-to-r from-purple-900/90 via-indigo-900/90 to-cyan-900/90 border-purple-500/30' : 'bg-white/80 border-gray-200'
+      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b h-16 flex items-center justify-between px-6 shadow-lg transition-colors duration-300 ${theme === 'dark' ? 'bg-black/80 border-gray-800' : theme === 'modern' ? 'bg-gradient-to-r from-[#0E0A20]/90 shadow-2xl border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'bg-white/80 border-gray-200'
         }`}>
-        <div className={`text-2xl font-black tracking-widest uppercase cursor-pointer ${theme === 'web3' ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400' : 'text-red-600'
+        <div className={`text-2xl font-black tracking-widest uppercase cursor-pointer ${theme === 'modern' ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-pink-300 to-rose-300 drop-shadow-sm' : 'text-red-600'
           }`}
           onClick={() => navigate('/home')}
         >
-          CINEMA<span className={theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}>PRO</span>
+          CINEMA<span className={theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}>PRO</span>
         </div>
 
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
           {/* Theme Dropdown */}
           <div className="relative" ref={themeDropdownRef}>
-            <button onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)} className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-gray-800 text-gray-300' : theme === 'web3' ? 'hover:bg-purple-900/30 text-purple-300' : 'hover:bg-gray-100 text-gray-700'
+            <button onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)} className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${theme === 'dark' ? 'hover:bg-gray-800 text-gray-300' : theme === 'modern' ? 'hover:bg-indigo-800/40 text-white font-medium' : 'hover:bg-gray-100 text-gray-700'
               }`}>
-              {theme === 'dark' ? <Moon className="w-5 h-5" /> : theme === 'web3' ? <Sparkles className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
-              <span className="hidden sm:inline-block text-sm font-medium">{theme === 'dark' ? 'Dark' : theme === 'web3' ? 'Web3' : 'Light'}</span>
+              {theme === 'dark' ? <Moon className="w-5 h-5" /> : theme === 'modern' ? <Sparkles className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+              <span className="hidden sm:inline-block text-sm font-medium">{theme === 'dark' ? 'Dark' : theme === 'modern' ? 'Modern' : 'Light'}</span>
               <ChevronDown className={`w-4 h-4 transition-transform ${isThemeDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
             {isThemeDropdownOpen && (
-              <div className={`absolute right-0 mt-2 w-48 rounded-xl shadow-xl overflow-hidden ${theme === 'dark' ? 'bg-gray-900 border border-gray-700' : theme === 'web3' ? 'bg-purple-900/95 border border-purple-500/30 backdrop-blur-xl' : 'bg-white border border-gray-200'
+              <div className={`absolute right-0 mt-2 w-48 rounded-xl shadow-xl overflow-hidden ${theme === 'dark' ? 'bg-gray-900 border border-gray-700' : theme === 'modern' ? 'bg-[#0E0A20]/95 border border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl' : 'bg-white border border-gray-200'
                 }`}>
-                {(['light', 'dark', 'web3'] as const).map((t) => (
-                  <button key={t} onClick={() => { setTheme(t); setIsThemeDropdownOpen(false); }} className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === t ? (theme === 'dark' ? 'bg-gray-800 text-white' : theme === 'web3' ? 'bg-purple-800/50 text-white' : 'bg-gray-100 text-gray-900')
-                    : theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' : theme === 'web3' ? 'text-purple-200 hover:bg-purple-800/30' : 'text-gray-700 hover:bg-gray-100'
+                {(['light', 'dark', 'modern'] as const).map((t) => (
+                  <button key={t} onClick={() => { setTheme(t); setIsThemeDropdownOpen(false); }} className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-colors ${theme === t ? (theme === 'dark' ? 'bg-gray-800 text-white' : theme === 'modern' ? 'bg-[#15102B] text-white' : 'bg-gray-100 text-gray-900')
+                    : theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' : theme === 'modern' ? 'text-white font-medium hover:bg-indigo-800/40' : 'text-gray-700 hover:bg-gray-100'
                     }`}>
                     {t === 'light' ? <Sun className="w-4 h-4" /> : t === 'dark' ? <Moon className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
-                    {t === 'light' ? 'Light Mode' : t === 'dark' ? 'Dark Mode' : 'Web3 View'}
+                    {t === 'light' ? 'Light Mode' : t === 'dark' ? 'Dark Mode' : 'Modern View'}
                   </button>
                 ))}
               </div>
@@ -209,11 +209,11 @@ const HomePage: React.FC = () => {
 
       {/* --- BODY CONTENT --- */}
       <main className="pt-24 px-6 container mx-auto mb-16">
-        <h2 className={`text-3xl font-black mb-6 border-l-4 pl-4 ${theme === 'web3' ? 'border-purple-400 text-white' : 'border-red-600'
+        <h2 className={`text-3xl font-black mb-6 border-l-4 pl-4 ${theme === 'modern' ? 'border-pink-400 text-white shadow-md shadow-pink-500/20 text-white' : 'border-red-600'
           }`}>Now Showing</h2>
 
         {error && (
-          <div className={`mb-6 p-4 rounded-lg border flex items-center ${theme === 'dark' || theme === 'web3' ? 'bg-red-900/40 border-red-500/50 text-red-100' : 'bg-red-50 border-red-200 text-red-800'
+          <div className={`mb-6 p-4 rounded-lg border flex items-center ${theme === 'dark' || theme === 'modern' ? 'bg-red-900/40 border-red-500/50 text-red-100' : 'bg-red-50 border-red-200 text-red-800'
             }`}>
             <AlertCircle className="w-5 h-5 mr-3 text-red-500" />
             <span className="text-sm font-medium flex-1">{error}</span>
@@ -222,10 +222,10 @@ const HomePage: React.FC = () => {
         )}
 
         {loading ? (
-          <div className={`text-center py-20 rounded-xl border ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'web3' ? 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 border-purple-500/30' : 'bg-white border-gray-200'
+          <div className={`text-center py-20 rounded-xl border ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'modern' ? 'bg-gradient-to-br from-[#15102B]/80 border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'bg-white border-gray-200'
             }`}>
-            <Loader2 className={`w-12 h-12 animate-spin mx-auto mb-4 ${theme === 'web3' ? 'text-purple-400' : 'text-red-600'}`} />
-            <p className={theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300' : 'text-gray-600'}>Loading movies...</p>
+            <Loader2 className={`w-12 h-12 animate-spin mx-auto mb-4 ${theme === 'modern' ? 'text-indigo-300' : 'text-red-600'}`} />
+            <p className={theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'}>Loading movies...</p>
           </div>
         ) : movies.length === 0 ? (
           <div className={`text-center py-20 rounded-xl border ${theme === 'dark' ? 'bg-gray-900 border-gray-800 text-gray-400' : 'bg-white border-gray-200 text-gray-500'}`}>
@@ -236,8 +236,8 @@ const HomePage: React.FC = () => {
             {movies.map((movie) => (
               <div key={movie.movieId} className={`group rounded-xl overflow-hidden shadow-lg border transition-all hover:-translate-y-1 cursor-pointer ${theme === 'dark'
                 ? 'bg-gray-900 border-gray-800 hover:border-red-600'
-                : theme === 'web3'
-                  ? 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 border-purple-500/30 hover:border-purple-400 backdrop-blur-xl'
+                : theme === 'modern'
+                  ? 'bg-gradient-to-br from-[#15102B]/80 border-indigo-500/30 shadow-sm shadow-indigo-500/10 hover:border-pink-400 text-white shadow-md shadow-pink-500/20 backdrop-blur-2xl'
                   : 'bg-white border-gray-200 hover:border-red-600 shadow-sm'
                 }`}>
                 <div className="aspect-[2/3] relative">
@@ -248,20 +248,20 @@ const HomePage: React.FC = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                     <div className="p-4 w-full">
-                      <button className={`w-full py-2 rounded font-bold text-sm ${theme === 'web3' ? 'bg-purple-600 text-white' : 'bg-red-600 text-white'}`}>Book Ticket</button>
+                      <button className={`w-full py-2 rounded font-bold text-sm ${theme === 'modern' ? 'bg-pink-600 shadow-md shadow-pink-500/20 text-white' : 'bg-red-600 text-white'}`}>Book Ticket</button>
                     </div>
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className={`font-bold text-sm sm:text-base truncate mb-1 ${theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                  <h3 className={`font-bold text-sm sm:text-base truncate mb-1 ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
                     }`}>{movie.movieName}</h3>
                   <div className="flex flex-wrap gap-1 mb-2">
                     {movie.movieGenresInfos.slice(0, 2).map((genre, i) => (
-                      <span key={i} className={`text-[10px] px-1.5 py-0.5 rounded ${theme === 'dark' ? 'bg-gray-800 text-gray-400' : theme === 'web3' ? 'bg-purple-800/40 text-purple-300' : 'bg-gray-100 text-gray-600'
+                      <span key={i} className={`text-[10px] px-1.5 py-0.5 rounded ${theme === 'dark' ? 'bg-gray-800 text-gray-400' : theme === 'modern' ? 'bg-indigo-800/40 text-white font-medium' : 'bg-gray-100 text-gray-600'
                         }`}>{genre}</span>
                     ))}
                   </div>
-                  <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-400' : 'text-gray-500'}`}>
+                  <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : theme === 'modern' ? 'text-indigo-300' : 'text-gray-500'}`}>
                     {movie.duration} min • {formatDate(movie.startedDate)}
                   </p>
                 </div>

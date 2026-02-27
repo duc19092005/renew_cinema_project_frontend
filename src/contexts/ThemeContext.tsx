@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 
-export type Theme = 'light' | 'dark' | 'web3';
+export type Theme = 'light' | 'dark' | 'modern';
 
 interface ThemeContextType {
   theme: Theme;
@@ -12,18 +12,20 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    // Lấy theme từ localStorage hoặc mặc định là dark
-    const savedTheme = localStorage.getItem('theme') as Theme;
-    return (savedTheme && ['light', 'dark', 'web3'].includes(savedTheme)) ? savedTheme : 'dark';
+    // Migration: if 'web3' was saved, automatically migrate to 'modern'
+    let savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'web3') {
+      savedTheme = 'modern';
+      localStorage.setItem('theme', 'modern');
+    }
+    return (savedTheme && ['light', 'dark', 'modern'].includes(savedTheme)) ? (savedTheme as Theme) : 'dark';
   });
 
   useEffect(() => {
-    // Lưu theme vào localStorage
     localStorage.setItem('theme', theme);
-    // Áp dụng theme vào document root
-    document.documentElement.classList.remove('light', 'dark', 'web3');
+    document.documentElement.classList.remove('light', 'dark', 'modern', 'web3');
     document.documentElement.classList.add(theme);
-    if (theme === 'web3') {
+    if (theme === 'modern') {
       document.documentElement.classList.add('dark');
     }
   }, [theme]);

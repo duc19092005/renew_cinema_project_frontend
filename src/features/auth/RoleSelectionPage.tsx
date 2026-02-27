@@ -23,7 +23,7 @@ const roleConfig: Record<string, { icon: React.ElementType; color: string; label
   },
   Admin: {
     icon: Shield,
-    color: 'from-purple-600 to-purple-800',
+    color: 'from-pink-600 to-rose-900',
     label: 'roles.admin',
     route: '/admin'
   },

@@ -27,8 +27,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
           onClick={onToggle}
           className={`lg:hidden fixed top-3 left-4 z-[60] p-2 border rounded-lg transition-colors ${theme === 'dark'
             ? 'bg-gray-900 border-gray-700 text-white hover:bg-gray-800'
-            : theme === 'web3'
-              ? 'bg-purple-900/90 border-purple-500/30 text-white hover:bg-purple-800/90 backdrop-blur-xl'
+            : theme === 'modern'
+              ? 'bg-[#15102B]/90 border-indigo-500/30 shadow-sm shadow-indigo-500/10 text-white hover:bg-slate-800/60 backdrop-blur-2xl'
               : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
             }`}
           aria-label="Open menu"
@@ -42,8 +42,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
         <div
           className={`lg:hidden fixed inset-0 z-50 ${theme === 'dark'
             ? 'bg-black/50'
-            : theme === 'web3'
-              ? 'bg-purple-950/60'
+            : theme === 'modern'
+              ? 'bg-slate-950/80'
               : 'bg-black/30'
             }`}
           onClick={onToggle}
@@ -55,8 +55,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
         className={`fixed top-0 left-0 h-full border-r z-[60] transition-all duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
           } lg:translate-x-0 w-64 ${theme === 'dark'
             ? 'bg-gray-900 border-gray-800'
-            : theme === 'web3'
-              ? 'bg-gradient-to-b from-purple-900/95 via-indigo-900/95 to-cyan-900/95 border-purple-500/30 backdrop-blur-xl'
+            : theme === 'modern'
+              ? 'bg-[#0E0A20]/95 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
               : 'bg-white border-gray-200'
           }`}
       >
@@ -64,21 +64,21 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
           {/* Logo & Close */}
           <div className={`p-6 border-b flex items-center justify-between ${theme === 'dark'
             ? 'border-gray-800'
-            : theme === 'web3'
-              ? 'border-purple-500/30'
+            : theme === 'modern'
+              ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10'
               : 'border-gray-200'
             }`}>
             <div>
-              <div className={`text-xl font-black tracking-widest uppercase ${theme === 'web3'
-                ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-cyan-400 to-purple-400'
+              <div className={`text-xl font-black tracking-widest uppercase ${theme === 'modern'
+                ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-pink-300 to-rose-300 drop-shadow-sm'
                 : 'text-red-600'
                 }`}>
-                CINEMA<span className={theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'}>PRO</span>
+                CINEMA<span className={theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}>PRO</span>
               </div>
               <p className={`text-xs mt-1 ${theme === 'dark'
                 ? 'text-gray-400'
-                : theme === 'web3'
-                  ? 'text-purple-200'
+                : theme === 'modern'
+                  ? 'text-white font-medium'
                   : 'text-gray-600'
                 }`}>{t('sidebar.facilitiesManager')}</p>
             </div>
@@ -86,8 +86,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
               onClick={onToggle}
               className={`lg:hidden p-2 -mr-2 rounded-lg transition-colors ${theme === 'dark'
                 ? 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                : theme === 'web3'
-                  ? 'text-purple-300 hover:bg-purple-800/50 hover:text-white'
+                : theme === 'modern'
+                  ? 'text-white font-medium hover:bg-[#1F173D]/60 hover:text-white'
                   : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 }`}
               aria-label="Close menu"
@@ -113,13 +113,13 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
                     }
                   }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive
-                    ? theme === 'web3'
-                      ? 'bg-gradient-to-r from-purple-600 to-cyan-600 text-white shadow-lg shadow-purple-600/30'
+                    ? theme === 'modern'
+                      ? 'bg-cyan-900/20 text-cyan-400 border border-cyan-500/50 shadow-[inset_0_0_20px_rgba(6,182,212,0.1),0_0_15px_rgba(6,182,212,0.2)]'
                       : 'bg-red-600 text-white shadow-lg shadow-red-600/20'
                     : theme === 'dark'
                       ? 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                      : theme === 'web3'
-                        ? 'text-purple-200 hover:bg-purple-800/30 hover:text-white'
+                      : theme === 'modern'
+                        ? 'text-white font-medium hover:bg-[#15102B]/60 hover:text-white'
                         : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                     }`}
                 >
@@ -133,12 +133,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
           {/* Footer */}
           <div className={`p-4 border-t ${theme === 'dark'
             ? 'border-gray-800'
-            : theme === 'web3'
-              ? 'border-purple-500/30'
+            : theme === 'modern'
+              ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10'
               : 'border-gray-200'
             }`}>
             <div className="flex items-center justify-between mb-4">
-              <span className={`text-sm flex items-center gap-2 font-medium ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}`}>
+              <span className={`text-sm flex items-center gap-2 font-medium ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'}`}>
                 <Languages className="w-4 h-4" />
                 {t('sidebar.language')}
               </span>
@@ -159,8 +159,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
             </div>
             <p className={`text-xs text-center ${theme === 'dark'
               ? 'text-gray-500'
-              : theme === 'web3'
-                ? 'text-purple-300/70'
+              : theme === 'modern'
+                ? 'text-indigo-300'
                 : 'text-gray-400'
               }`}>
               © 2024 CinemaPro

@@ -156,21 +156,21 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex-1 min-w-0">
           <h1 className={`text-2xl sm:text-3xl font-black mb-2 border-l-4 pl-4 ${
-            theme === 'web3' ? 'border-purple-400' : 'border-red-600'
+            theme === 'modern' ? 'border-pink-400 text-white shadow-md shadow-pink-500/20' : 'border-red-600'
           } ${
-            theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+            theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
           }`}>
             Cinema Management
           </h1>
-          <p className={`text-sm sm:text-base ${theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}`}>
+          <p className={`text-sm sm:text-base ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'}`}>
             Manage and monitor all cinemas in the system
           </p>
         </div>
         <button 
           onClick={handleOpenCreateModal}
           className={`inline-flex items-center justify-center gap-2 px-4 py-2 text-white font-semibold rounded-lg transition-colors whitespace-nowrap ${
-            theme === 'web3'
-              ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500'
+            theme === 'modern'
+              ? 'bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 border border-pink-400/50 shadow-md shadow-pink-500/20'
               : 'bg-red-600 hover:bg-red-700'
           }`}
         >
@@ -185,7 +185,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
         <div className={`p-4 rounded-lg border flex items-center ${
           theme === 'dark'
             ? 'bg-red-900/40 border-red-500/50 text-red-100'
-            : theme === 'web3'
+            : theme === 'modern'
               ? 'bg-red-900/40 border-red-500/50 text-red-100'
               : 'bg-red-50 border-red-200 text-red-800'
         }`}>
@@ -195,7 +195,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
             <button
               onClick={onRefresh}
               className={`ml-3 px-3 py-1 rounded text-sm font-semibold ${
-                theme === 'dark' || theme === 'web3'
+                theme === 'dark' || theme === 'modern'
                   ? 'bg-red-600 hover:bg-red-700 text-white'
                   : 'bg-red-600 hover:bg-red-700 text-white'
               }`}
@@ -209,7 +209,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
       {/* Search Bar */}
       <div className="relative">
         <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${
-          theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300' : 'text-gray-500'
+          theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'
         }`} />
         <input
           type="text"
@@ -217,14 +217,14 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className={`w-full pl-12 pr-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-            theme === 'web3' 
-              ? 'focus:border-purple-400' 
+            theme === 'modern' 
+              ? 'focus:border-pink-400 text-white shadow-md shadow-pink-500/20' 
               : 'focus:border-red-600'
           } ${
             theme === 'dark'
               ? 'bg-gray-900 border-gray-800 text-white placeholder-gray-500'
-              : theme === 'web3'
-                ? 'bg-purple-900/60 border-purple-500/30 text-white placeholder-purple-300/70 backdrop-blur-xl'
+              : theme === 'modern'
+                ? 'bg-slate-800/60 border-indigo-500/30 shadow-sm shadow-indigo-500/10 text-white placeholder-slate-400/70 backdrop-blur-2xl'
                 : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
           }`}
         />
@@ -235,14 +235,14 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
         <div className={`text-center py-12 rounded-xl border ${
           theme === 'dark'
             ? 'bg-gray-900 border-gray-800'
-            : theme === 'web3'
-              ? 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 border-purple-500/30 backdrop-blur-xl'
+            : theme === 'modern'
+              ? 'bg-gradient-to-br from-[#15102B]/80 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
               : 'bg-white border-gray-200 shadow-sm'
         }`}>
           <Loader2 className={`w-12 h-12 animate-spin mx-auto mb-4 ${
-            theme === 'web3' ? 'text-purple-400' : 'text-red-600'
+            theme === 'modern' ? 'text-indigo-300' : 'text-red-600'
           }`} />
-          <p className={theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-300' : 'text-gray-600'}>
+          <p className={theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'}>
             Loading cinemas...
           </p>
         </div>
@@ -257,8 +257,8 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
             className={`rounded-xl p-6 border transition-all hover:-translate-y-1 ${
               theme === 'dark'
                 ? 'bg-gray-900 border-gray-800 hover:border-red-600'
-                : theme === 'web3'
-                  ? 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 border-purple-500/30 hover:border-purple-400 backdrop-blur-xl'
+                : theme === 'modern'
+                  ? 'bg-gradient-to-br from-[#15102B]/80 border-indigo-500/30 shadow-sm shadow-indigo-500/10 hover:border-pink-400 text-white shadow-md shadow-pink-500/20 backdrop-blur-2xl'
                   : 'bg-white border-gray-200 hover:border-red-600 shadow-sm'
             }`}
           >
@@ -266,25 +266,25 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
             <div className="flex items-center justify-between mb-4 gap-2">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                  theme === 'web3'
-                    ? 'bg-gradient-to-br from-purple-600 to-cyan-600'
+                  theme === 'modern'
+                    ? 'bg-gradient-to-br from-pink-500 to-rose-500 shadow-md shadow-pink-500/20'
                     : 'bg-gradient-to-br from-red-600 to-red-800'
                 }`}>
                   <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <h3 className={`font-bold truncate ${
-                    theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                    theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
                   }`}>{cinema.cinemaName}</h3>
                   <p className={`text-xs ${
-                    theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'
+                    theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'
                   }`}>Cinema</p>
                 </div>
               </div>
                <span className={`px-2 py-1 rounded-full text-xs font-semibold border flex-shrink-0 ${
                  theme === 'dark'
                    ? 'bg-green-900/40 text-green-400 border-green-700'
-                   : theme === 'web3'
+                   : theme === 'modern'
                      ? 'bg-green-900/40 text-green-400 border-green-700'
                      : 'bg-green-50 text-green-700 border-green-300'
                }`}>
@@ -296,7 +296,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
             <div className="space-y-3 mb-4">
               {cinema.cinemaDescription && (
                 <p className={`text-sm line-clamp-2 ${
-                  theme === 'dark' ? 'text-gray-300' : theme === 'web3' ? 'text-purple-100' : 'text-gray-700'
+                  theme === 'dark' ? 'text-gray-300' : theme === 'modern' ? 'text-indigo-100 ' : 'text-gray-700'
                 }`}>
                   {cinema.cinemaDescription}
                 </p>
@@ -304,27 +304,27 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
 
               <div className="flex items-center gap-2 text-sm">
                 <MapPin className={`w-4 h-4 ${
-                  theme === 'dark' ? 'text-red-500' : theme === 'web3' ? 'text-purple-400' : 'text-red-600'
+                  theme === 'dark' ? 'text-red-500' : theme === 'modern' ? 'text-indigo-300' : 'text-red-600'
                 }`} />
-                <span className={theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}>
+                <span className={theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'}>
                   {cinema.cinemaLocation}
                 </span>
               </div>
 
               <div className="flex items-center gap-2 text-sm">
                 <Phone className={`w-4 h-4 ${
-                  theme === 'dark' ? 'text-red-500' : theme === 'web3' ? 'text-purple-400' : 'text-red-600'
+                  theme === 'dark' ? 'text-red-500' : theme === 'modern' ? 'text-indigo-300' : 'text-red-600'
                 }`} />
-                <span className={theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}>
+                <span className={theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'}>
                   {cinema.cinemaHotlineNumber}
                 </span>
               </div>
 
               <div className="flex items-center gap-2 text-sm">
                 <Film className={`w-4 h-4 ${
-                  theme === 'dark' ? 'text-red-500' : theme === 'web3' ? 'text-purple-400' : 'text-red-600'
+                  theme === 'dark' ? 'text-red-500' : theme === 'modern' ? 'text-indigo-300' : 'text-red-600'
                 }`} />
-                <span className={theme === 'dark' ? 'text-gray-400' : theme === 'web3' ? 'text-purple-200' : 'text-gray-600'}>
+                <span className={theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-600'}>
                   {cinema.totalRooms} rooms
                 </span>
               </div>
@@ -332,7 +332,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
 
             {/* Actions */}
             <div className={`flex flex-col sm:flex-row gap-2 pt-4 border-t ${
-              theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
+              theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'border-gray-200'
             }`}>
               <button
                 onClick={() => {
@@ -349,8 +349,8 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                 } ${
                   theme === 'dark'
                     ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                    : theme === 'web3'
-                      ? 'bg-purple-800/50 hover:bg-purple-700/50 text-purple-200'
+                    : theme === 'modern'
+                      ? 'bg-[#15102B] hover:bg-slate-600/50 text-white font-medium'
                       : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                 }`}
               >
@@ -361,8 +361,8 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
               <button className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm ${
                 theme === 'dark'
                   ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                  : theme === 'web3'
-                    ? 'bg-purple-800/50 hover:bg-purple-700/50 text-purple-200'
+                  : theme === 'modern'
+                    ? 'bg-[#15102B] hover:bg-slate-600/50 text-white font-medium'
                     : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
               }`}>
                 <Edit className="w-4 h-4" />
@@ -371,7 +371,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                <button className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg transition-colors text-sm border ${
                  theme === 'dark'
                    ? 'bg-red-900/40 hover:bg-red-900/60 text-red-400 border-red-800'
-                   : theme === 'web3'
+                   : theme === 'modern'
                      ? 'bg-red-900/40 hover:bg-red-900/60 text-red-400 border-red-800'
                      : 'bg-red-50 hover:bg-red-100 text-red-600 border-red-300'
                }`}>
@@ -389,14 +389,14 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
         <div className={`text-center py-12 rounded-xl border ${
           theme === 'dark'
             ? 'bg-gray-900 border-gray-800'
-            : theme === 'web3'
-              ? 'bg-gradient-to-br from-purple-900/80 via-indigo-900/80 to-cyan-900/80 border-purple-500/30 backdrop-blur-xl'
+            : theme === 'modern'
+              ? 'bg-gradient-to-br from-[#15102B]/80 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
               : 'bg-white border-gray-200 shadow-sm'
         }`}>
           <Building2 className={`w-12 h-12 mx-auto mb-4 ${
-            theme === 'dark' ? 'text-gray-600' : theme === 'web3' ? 'text-purple-600' : 'text-gray-400'
+            theme === 'dark' ? 'text-gray-600' : theme === 'modern' ? 'text-pink-400' : 'text-gray-400'
           }`} />
-          <p className={theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-300' : 'text-gray-400'}>
+          <p className={theme === 'dark' ? 'text-gray-500' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-400'}>
             {searchTerm ? 'No cinemas found' : 'No cinemas available'}
           </p>
         </div>
@@ -428,18 +428,18 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
             className={`relative w-full max-w-2xl max-h-[90vh] rounded-xl border shadow-2xl transition-all flex flex-col ${
               theme === 'dark'
                 ? 'bg-gray-900 border-gray-800'
-                : theme === 'web3'
-                  ? 'bg-gradient-to-br from-purple-900/95 to-cyan-900/95 border-purple-500/30 backdrop-blur-xl'
+                : theme === 'modern'
+                  ? 'bg-gradient-to-br from-[#15102B]/95 to-[#0b061c]/95 border-indigo-500/30 shadow-sm shadow-indigo-500/10 backdrop-blur-2xl'
                   : 'bg-white border-gray-200'
             }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div className={`flex items-center justify-between p-6 border-b ${
-              theme === 'dark' ? 'border-gray-800' : theme === 'web3' ? 'border-purple-500/30' : 'border-gray-200'
+              theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30 shadow-sm shadow-indigo-500/10' : 'border-gray-200'
             }`}>
               <h2 className={`text-2xl font-black ${
-                theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
               }`}>
                 Add New Cinema
               </h2>
@@ -448,8 +448,8 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                 className={`p-2 rounded-lg transition-colors ${
                   theme === 'dark'
                     ? 'hover:bg-gray-800 text-gray-400'
-                    : theme === 'web3'
-                      ? 'hover:bg-purple-800/30 text-purple-300'
+                    : theme === 'modern'
+                      ? 'hover:bg-indigo-800/40 text-white font-medium'
                       : 'hover:bg-gray-100 text-gray-600'
                 }`}
               >
@@ -464,7 +464,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                 <div className={`mb-4 p-4 rounded-lg border flex items-center ${
                   theme === 'dark'
                     ? 'bg-green-900/40 border-green-500/50 text-green-100'
-                    : theme === 'web3'
+                    : theme === 'modern'
                       ? 'bg-green-900/40 border-green-500/50 text-green-100'
                       : 'bg-green-50 border-green-200 text-green-800'
                 }`}>
@@ -478,7 +478,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                 <div className={`mb-4 p-4 rounded-lg border flex items-center ${
                   theme === 'dark'
                     ? 'bg-red-900/40 border-red-500/50 text-red-100'
-                    : theme === 'web3'
+                    : theme === 'modern'
                       ? 'bg-red-900/40 border-red-500/50 text-red-100'
                       : 'bg-red-50 border-red-200 text-red-800'
                 }`}>
@@ -492,7 +492,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                 {/* Cinema Name */}
                 <div>
                   <label className={`block text-sm font-semibold mb-2 ${
-                    theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                    theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
                   }`}>
                     Cinema Name <span className="text-red-500">*</span>
                   </label>
@@ -503,14 +503,14 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                     onChange={handleInputChange}
                     required
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                      theme === 'web3' 
-                        ? 'focus:border-purple-400' 
+                      theme === 'modern' 
+                        ? 'focus:border-pink-400 text-white shadow-md shadow-pink-500/20' 
                         : 'focus:border-red-600'
                     } ${
                       theme === 'dark'
                         ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
-                        : theme === 'web3'
-                          ? 'bg-purple-800/30 border-purple-500/30 text-white placeholder-purple-300/70'
+                        : theme === 'modern'
+                          ? 'bg-indigo-800/40 border-indigo-500/30 shadow-sm shadow-indigo-500/10 text-white placeholder-slate-400/70'
                           : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
                     }`}
                     placeholder="Enter cinema name"
@@ -520,7 +520,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                 {/* Cinema Location */}
                 <div>
                   <label className={`block text-sm font-semibold mb-2 ${
-                    theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                    theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
                   }`}>
                     Location <span className="text-red-500">*</span>
                   </label>
@@ -531,14 +531,14 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                     onChange={handleInputChange}
                     required
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                      theme === 'web3' 
-                        ? 'focus:border-purple-400' 
+                      theme === 'modern' 
+                        ? 'focus:border-pink-400 text-white shadow-md shadow-pink-500/20' 
                         : 'focus:border-red-600'
                     } ${
                       theme === 'dark'
                         ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
-                        : theme === 'web3'
-                          ? 'bg-purple-800/30 border-purple-500/30 text-white placeholder-purple-300/70'
+                        : theme === 'modern'
+                          ? 'bg-indigo-800/40 border-indigo-500/30 shadow-sm shadow-indigo-500/10 text-white placeholder-slate-400/70'
                           : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
                     }`}
                     placeholder="Enter cinema location"
@@ -548,7 +548,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                 {/* Cinema Hotline */}
                 <div>
                   <label className={`block text-sm font-semibold mb-2 ${
-                    theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                    theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
                   }`}>
                     Hotline Number <span className="text-red-500">*</span>
                   </label>
@@ -559,14 +559,14 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                     onChange={handleInputChange}
                     required
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                      theme === 'web3' 
-                        ? 'focus:border-purple-400' 
+                      theme === 'modern' 
+                        ? 'focus:border-pink-400 text-white shadow-md shadow-pink-500/20' 
                         : 'focus:border-red-600'
                     } ${
                       theme === 'dark'
                         ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
-                        : theme === 'web3'
-                          ? 'bg-purple-800/30 border-purple-500/30 text-white placeholder-purple-300/70'
+                        : theme === 'modern'
+                          ? 'bg-indigo-800/40 border-indigo-500/30 shadow-sm shadow-indigo-500/10 text-white placeholder-slate-400/70'
                           : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
                     }`}
                     placeholder="Enter hotline number"
@@ -576,7 +576,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                 {/* Cinema Description */}
                 <div>
                   <label className={`block text-sm font-semibold mb-2 ${
-                    theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                    theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
                   }`}>
                     Description
                   </label>
@@ -586,14 +586,14 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                     onChange={handleInputChange}
                     rows={4}
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors resize-none ${
-                      theme === 'web3' 
-                        ? 'focus:border-purple-400' 
+                      theme === 'modern' 
+                        ? 'focus:border-pink-400 text-white shadow-md shadow-pink-500/20' 
                         : 'focus:border-red-600'
                     } ${
                       theme === 'dark'
                         ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
-                        : theme === 'web3'
-                          ? 'bg-purple-800/30 border-purple-500/30 text-white placeholder-purple-300/70'
+                        : theme === 'modern'
+                          ? 'bg-indigo-800/40 border-indigo-500/30 shadow-sm shadow-indigo-500/10 text-white placeholder-slate-400/70'
                           : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
                     }`}
                     placeholder="Enter cinema description (optional)"
@@ -603,7 +603,7 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                 {/* Active At (Ngày khai trương) */}
                 <div>
                   <label className={`block text-sm font-semibold mb-2 ${
-                    theme === 'dark' || theme === 'web3' ? 'text-white' : 'text-gray-900'
+                    theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'
                   }`}>
                     Opening Date
                   </label>
@@ -612,19 +612,19 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                     value={formData.activeAt ? new Date(formData.activeAt).toISOString().slice(0, 16) : ''}
                     onChange={handleDateChange}
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                      theme === 'web3' 
-                        ? 'focus:border-purple-400' 
+                      theme === 'modern' 
+                        ? 'focus:border-pink-400 text-white shadow-md shadow-pink-500/20' 
                         : 'focus:border-red-600'
                     } ${
                       theme === 'dark'
                         ? 'bg-gray-800 border-gray-700 text-white placeholder-gray-500'
-                        : theme === 'web3'
-                          ? 'bg-purple-800/30 border-purple-500/30 text-white placeholder-purple-300/70'
+                        : theme === 'modern'
+                          ? 'bg-indigo-800/40 border-indigo-500/30 shadow-sm shadow-indigo-500/10 text-white placeholder-slate-400/70'
                           : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
                     }`}
                   />
                   <p className={`text-xs mt-1 ${
-                    theme === 'dark' ? 'text-gray-500' : theme === 'web3' ? 'text-purple-300/70' : 'text-gray-500'
+                    theme === 'dark' ? 'text-gray-500' : theme === 'modern' ? 'text-indigo-300/70' : 'text-gray-500'
                   }`}>
                     Leave empty to use current date as opening date
                   </p>
@@ -639,8 +639,8 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                     className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
                       theme === 'dark'
                         ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                        : theme === 'web3'
-                          ? 'bg-purple-800/50 hover:bg-purple-700/50 text-purple-200'
+                        : theme === 'modern'
+                          ? 'bg-[#15102B] hover:bg-slate-600/50 text-white font-medium'
                           : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                     } ${createLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
@@ -652,8 +652,8 @@ const CinemaManagement: React.FC<CinemaManagementProps> = ({ cinemas, loading = 
                     className={`px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 ${
                       createLoading ? 'opacity-50 cursor-not-allowed' : ''
                     } ${
-                      theme === 'web3'
-                        ? 'bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white'
+                      theme === 'modern'
+                        ? 'bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-400 hover:to-rose-400 border border-pink-400/50 shadow-md shadow-pink-500/20 text-white'
                         : 'bg-red-600 hover:bg-red-700 text-white'
                     }`}
                   >

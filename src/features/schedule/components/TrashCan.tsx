@@ -52,7 +52,7 @@ const TrashCan: React.FC<TrashCanProps> = ({ onDeleteSlot }) => {
             className={`fixed bottom-8 right-8 rounded-2xl shadow-lg transition-all z-50 flex items-center justify-center gap-2
                 ${isOver
                     ? 'bg-red-600 text-white scale-105 shadow-red-500/50'
-                    : 'bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 hover:text-red-500 dark:hover:text-red-500'
+                    : 'bg-white dark:bg-slate-800 text-indigo-300 dark:text-slate-500 border border-slate-200 dark:border-slate-700 hover:text-red-500 dark:hover:text-red-500'
                 }
             `}
             onDragOver={handleDragOver}

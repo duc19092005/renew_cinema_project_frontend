@@ -59,7 +59,33 @@ export const theaterAxios = axios.create({
 // SHARED INTERCEPTORS
 // =============================================
 
-const allInstances = [identityAxios, facilitiesAxios, movieAxios, theaterAxios];
+/**
+ * Axios instance for Booking APIs
+ * Base URL: http://localhost:5032/api/v1/booking
+ */
+export const bookingAxios = axios.create({
+  baseURL: `${API_BASE_URL}/api/v1/booking`,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true,
+  timeout: 10000,
+});
+
+/**
+ * Axios instance for Public APIs
+ * Base URL: http://localhost:5032/api/v1/public
+ * Notice: No withCredentials since it is public, but you can include interceptors for Language
+ */
+export const publicAxios = axios.create({
+  baseURL: `${API_BASE_URL}/api/v1/public`,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 10000,
+});
+
+const allInstances = [identityAxios, facilitiesAxios, movieAxios, theaterAxios, bookingAxios, publicAxios];
 
 allInstances.forEach((instance) => {
   // Request interceptor — attach language header

@@ -241,14 +241,46 @@ const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, isOpen, onCl
                         </div>
                     </div>
 
-                    {/* Description */}
-                    <div>
-                        <h3 className={`text-sm font-bold uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'
-                            }`}>Description</h3>
-                        <p className={`text-sm leading-relaxed ${theme === 'dark' ? 'text-gray-300' : theme === 'modern' ? 'text-indigo-100 ' : 'text-gray-700'
-                            }`}>
-                            {movie.movieDescriptions || 'No description available.'}
-                        </p>
+                    <div className="space-y-4">
+                        {/* Description */}
+                        <div>
+                            <h3 className={`text-sm font-bold uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'
+                                }`}>Description</h3>
+                            <p className={`text-sm leading-relaxed ${theme === 'dark' ? 'text-gray-300' : theme === 'modern' ? 'text-indigo-100 ' : 'text-gray-700'
+                                }`}>
+                                {movie.movieDescriptions || 'No description available.'}
+                            </p>
+                        </div>
+
+                        {(movie.director || movie.actors) && (
+                            <div className={`p-4 rounded-xl border ${theme === 'dark' ? 'bg-gray-800/50 border-gray-700' : theme === 'modern' ? 'bg-[#15102B]/60 border-indigo-500/20' : 'bg-gray-50 border-gray-200'
+                                }`}>
+                                {movie.director && (
+                                    <div className="mb-2">
+                                        <h3 className={`text-xs font-bold uppercase tracking-wider mb-1 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'
+                                            }`}>Director</h3>
+                                        <p className={`text-sm ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}`}>{movie.director}</p>
+                                    </div>
+                                )}
+                                {movie.actors && (
+                                    <div>
+                                        <h3 className={`text-xs font-bold uppercase tracking-wider mb-1 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'
+                                            }`}>Actors</h3>
+                                        <p className={`text-sm ${theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}`}>{movie.actors}</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {movie.trailerUrl && (
+                            <div>
+                                <h3 className={`text-sm font-bold uppercase tracking-wider mb-2 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-white font-medium' : 'text-gray-500'
+                                    }`}>Trailer</h3>
+                                <a href={movie.trailerUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-blue-500 hover:underline">
+                                    Watch Trailer on YouTube
+                                </a>
+                            </div>
+                        )}
                     </div>
 
                     {/* Metadata */}
@@ -293,6 +325,9 @@ const CreateMovieModal: React.FC<CreateMovieModalProps> = ({ isOpen, onClose, on
         movieFormatIds: [] as string[],
         movieGenreIds: [] as string[],
         movieRequiredAgeId: '00000000-0000-0000-0000-000000000000', // Default placeholder
+        trailerUrl: '',
+        director: '',
+        actors: '',
     });
 
     if (!isOpen) return null;
@@ -346,6 +381,9 @@ const CreateMovieModal: React.FC<CreateMovieModalProps> = ({ isOpen, onClose, on
                 duration: parseInt(formData.duration),
                 movieFormatIds: formData.movieFormatIds,
                 movieGenreIds: formData.movieGenreIds,
+                trailerUrl: formData.trailerUrl.trim() || undefined,
+                director: formData.director.trim() || undefined,
+                actors: formData.actors.trim() || undefined,
             });
 
             setSuccess(true);
@@ -467,6 +505,22 @@ const CreateMovieModal: React.FC<CreateMovieModalProps> = ({ isOpen, onClose, on
                         <div>
                             <label className={labelClass}>Description</label>
                             <textarea name="movieDescription" value={formData.movieDescription} onChange={handleInputChange} rows={3} className={`${inputClass} resize-none`} placeholder="Enter movie description" maxLength={200} />
+                        </div>
+
+                        {/* Additional Info */}
+                        <div>
+                            <label className={labelClass}>Trailer URL</label>
+                            <input type="url" name="trailerUrl" value={formData.trailerUrl} onChange={handleInputChange} className={inputClass} placeholder="Enter YouTube trailer URL" />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label className={labelClass}>Director</label>
+                                <input type="text" name="director" value={formData.director} onChange={handleInputChange} className={inputClass} placeholder="Enter director name" />
+                            </div>
+                            <div>
+                                <label className={labelClass}>Actors</label>
+                                <input type="text" name="actors" value={formData.actors} onChange={handleInputChange} className={inputClass} placeholder="Enter actors (comma separated)" />
+                            </div>
                         </div>
 
                         {/* Required Age */}

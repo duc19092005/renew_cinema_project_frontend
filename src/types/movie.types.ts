@@ -25,6 +25,9 @@ export interface Movie {
     updatedBy: string;
     createdBy: string;
     duration: number; // minutes
+    trailerUrl?: string;
+    director?: string;
+    actors?: string;
 }
 
 /** POST /api/movieManager/movies — multipart/form-data */
@@ -38,6 +41,9 @@ export interface CreateMovieFormData {
     movieFormatIds: string[];
     movieGenreIds: string[];
     duration: number;
+    trailerUrl?: string;
+    director?: string;
+    actors?: string;
 }
 
 /** PUT /api/movieManager/movies/{movieId} — multipart/form-data */
@@ -51,4 +57,7 @@ export interface UpdateMovieFormData {
     movieFormatIds?: string[];
     movieGenreIds?: string[];
     duration?: number;
+    trailerUrl?: string;
+    director?: string;
+    actors?: string;
 }

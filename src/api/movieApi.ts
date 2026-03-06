@@ -48,6 +48,9 @@ export const movieApi = {
         formData.append('endedDate', data.endedDate);
         formData.append('startedDate', data.startedDate);
         formData.append('duration', data.duration.toString());
+        if (data.trailerUrl) formData.append('TrailerUrl', data.trailerUrl);
+        if (data.director) formData.append('Director', data.director);
+        if (data.actors) formData.append('Actors', data.actors);
 
         // Append arrays
         data.movieFormatIds.forEach((id) => {
@@ -80,6 +83,9 @@ export const movieApi = {
         if (data.endedDate) formData.append('endedDate', data.endedDate);
         if (data.startedDate) formData.append('startedDate', data.startedDate);
         if (data.duration !== undefined) formData.append('duration', data.duration.toString());
+        if (data.trailerUrl) formData.append('TrailerUrl', data.trailerUrl);
+        if (data.director) formData.append('Director', data.director);
+        if (data.actors) formData.append('Actors', data.actors);
 
         if (data.movieFormatIds) {
             data.movieFormatIds.forEach((id) => {

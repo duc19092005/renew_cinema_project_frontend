@@ -12,6 +12,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AuthRedirect from './components/AuthRedirect';
 import ScheduleManagerPage from './features/schedule/ScheduleManagerPage';
 import TheaterManagerPage from './features/theater/TheaterManagerPage';
+import MovieDetailPage from './features/booking/MovieDetailPage';
+import BookingPage from './features/booking/BookingPage';
+import BookingSuccessPage from './features/booking/BookingSuccessPage';
+import BookingFailedPage from './features/booking/BookingFailedPage';
 
 function App() {
   return (
@@ -33,6 +37,10 @@ function App() {
           <Route path="/movie-manager" element={<ProtectedRoute requiredRole="MovieManager"><MovieManagerPage /></ProtectedRoute>} />
           <Route path="/theater-manager" element={<ProtectedRoute requiredRole="TheaterManager"><TheaterManagerPage /></ProtectedRoute>} />
           <Route path="/facilities-manager" element={<ProtectedRoute requiredRole="FacilitiesManager"><FacilitiesManagerPage /></ProtectedRoute>} />
+          <Route path="/movie/:movieId" element={<MovieDetailPage />} />
+          <Route path="/booking/:scheduleId" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} />
+          <Route path="/booking/success" element={<ProtectedRoute><BookingSuccessPage /></ProtectedRoute>} />
+          <Route path="/booking/failed" element={<ProtectedRoute><BookingFailedPage /></ProtectedRoute>} />
           <Route path="/schedule" element={<ScheduleManagerPage />} />
 
           <Route path="*" element={<NotFound />} />

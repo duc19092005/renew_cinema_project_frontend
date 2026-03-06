@@ -12,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AuthRedirect from './components/AuthRedirect';
 import ScheduleManagerPage from './features/schedule/ScheduleManagerPage';
 import TheaterManagerPage from './features/theater/TheaterManagerPage';
+import AdminPage from './features/admin/AdminPage';
 import MovieDetailPage from './features/booking/MovieDetailPage';
 import BookingPage from './features/booking/BookingPage';
 import BookingSuccessPage from './features/booking/BookingSuccessPage';
@@ -33,7 +34,7 @@ function App() {
           <Route path="/role-selection" element={<ProtectedRoute><RoleSelectionPage /></ProtectedRoute>} />
           <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
           <Route path="/cashier" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute requiredRole="Admin"><AdminPage /></ProtectedRoute>} />
           <Route path="/movie-manager" element={<ProtectedRoute requiredRole="MovieManager"><MovieManagerPage /></ProtectedRoute>} />
           <Route path="/theater-manager" element={<ProtectedRoute requiredRole="TheaterManager"><TheaterManagerPage /></ProtectedRoute>} />
           <Route path="/facilities-manager" element={<ProtectedRoute requiredRole="FacilitiesManager"><FacilitiesManagerPage /></ProtectedRoute>} />

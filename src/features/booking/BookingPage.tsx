@@ -4,6 +4,7 @@ import {
     Loader2, AlertCircle, ShoppingCart,
     ChevronLeft, CreditCard
 } from 'lucide-react';
+import * as signalR from '@microsoft/signalr';
 import { publicApi } from '../../api/publicApi';
 import { bookingApi } from '../../api/bookingApi';
 import type { PublicSeatMap, PublicSeat, PublicPricing, PublicSegmentPrice } from '../../types/public.types';
@@ -30,6 +31,9 @@ const BookingPage: React.FC = () => {
         address: ''
     });
 
+    const [hubConnection, setHubConnection] = useState<signalR.HubConnection | null>(null);
+    const [lockedSeats, setLockedSeats] = useState<Record<string, string>>({});
+
     useEffect(() => {
         const storedUser = localStorage.getItem('user_info');
         if (!storedUser) {
@@ -46,6 +50,48 @@ const BookingPage: React.FC = () => {
 
         if (scheduleId) {
             fetchData();
+
+            // Set up SignalR
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("http://localhost:5032/ws/seat")
+                .withAutomaticReconnect()
+                .build();
+
+            const startConnection = async () => {
+                try {
+                    await connection.start();
+                    console.log("SignalR Connected.");
+                    await connection.invoke("JoinSchedule", scheduleId);
+
+                    connection.on("OnSeatSelected", (seatId: string, userName: string) => {
+                        console.log(`Seat ${seatId} currently selected by ${userName}`);
+                        setLockedSeats(prev => ({ ...prev, [seatId]: userName }));
+                    });
+
+                    connection.on("OnSeatUnselected", (seatId: string) => {
+                        console.log(`Seat ${seatId} unselected`);
+                        setLockedSeats(prev => {
+                            const next = { ...prev };
+                            delete next[seatId];
+                            return next;
+                        });
+                    });
+
+                    setHubConnection(connection);
+                } catch (err) {
+                    console.error("SignalR Connection Error:", err);
+                }
+            };
+
+            startConnection();
+
+            return () => {
+                if (connection.state === signalR.HubConnectionState.Connected) {
+                    connection.invoke("LeaveSchedule", scheduleId)
+                        .then(() => connection.stop())
+                        .catch(err => console.error("Error leaving schedule:", err));
+                }
+            };
         }
     }, [scheduleId]);
 
@@ -69,21 +115,36 @@ const BookingPage: React.FC = () => {
         }
     };
 
-    const toggleSeat = (seat: PublicSeat) => {
+    const toggleSeat = async (seat: PublicSeat) => {
         if (seat.isOccupied) return;
+        if (lockedSeats[seat.seatId]) return;
 
-        setSelectedSeats(prev => {
-            const isSelected = prev.find(s => s.seatId === seat.seatId);
-            if (isSelected) {
-                return prev.filter(s => s.seatId !== seat.seatId);
-            } else {
-                if (prev.length >= 8) {
-                    toast.error('Maximum 8 seats per booking');
-                    return prev;
+        const isCurrentlySelected = selectedSeats.find(s => s.seatId === seat.seatId);
+
+        if (isCurrentlySelected) {
+            setSelectedSeats(prev => prev.filter(s => s.seatId !== seat.seatId));
+            if (hubConnection && hubConnection.state === signalR.HubConnectionState.Connected) {
+                try {
+                    await hubConnection.invoke("UnselectSeat", scheduleId, seat.seatId);
+                } catch (err) {
+                    console.error("Error unselecting seat", err);
                 }
-                return [...prev, seat];
             }
-        });
+        } else {
+            if (selectedSeats.length >= 8) {
+                toast.error('Maximum 8 seats per booking');
+                return;
+            }
+            setSelectedSeats(prev => [...prev, seat]);
+            if (hubConnection && hubConnection.state === signalR.HubConnectionState.Connected) {
+                try {
+                    const userName = customerInfo.name || "A User";
+                    await hubConnection.invoke("SelectSeat", scheduleId, seat.seatId, userName);
+                } catch (err) {
+                    console.error("Error selecting seat", err);
+                }
+            }
+        }
     };
 
     const handleBooking = async () => {
@@ -172,18 +233,23 @@ const BookingPage: React.FC = () => {
                             }}>
                                 {seatMap.seats.map((seat) => {
                                     const isSelected = selectedSeats.find(s => s.seatId === seat.seatId);
+                                    const lockedBy = lockedSeats[seat.seatId];
+                                    const isLockedByOther = lockedBy && !isSelected;
+
                                     return (
                                         <button
                                             key={seat.seatId}
-                                            disabled={seat.isOccupied}
+                                            disabled={seat.isOccupied || !!isLockedByOther}
                                             onClick={() => toggleSeat(seat)}
                                             className={`relative w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all ${seat.isOccupied
                                                 ? 'bg-gray-800 text-gray-600 cursor-not-allowed opacity-30'
-                                                : isSelected
-                                                    ? 'bg-red-600 text-white shadow-lg shadow-red-600/40 transform scale-110 z-10'
-                                                    : theme === 'dark' ? 'bg-gray-900 border border-gray-800 hover:border-gray-500 text-gray-400' : 'bg-gray-100 border border-gray-300 hover:border-gray-500 text-gray-600'
+                                                : isLockedByOther
+                                                    ? 'bg-yellow-600 border border-yellow-500 text-white cursor-not-allowed opacity-80'
+                                                    : isSelected
+                                                        ? 'bg-red-600 text-white shadow-lg shadow-red-600/40 transform scale-110 z-10'
+                                                        : theme === 'dark' ? 'bg-gray-900 border border-gray-800 hover:border-gray-500 text-gray-400' : 'bg-gray-100 border border-gray-300 hover:border-gray-500 text-gray-600'
                                                 }`}
-                                            title={seat.seatNumber}
+                                            title={isLockedByOther ? `Selected by ${lockedBy}` : seat.seatNumber}
                                         >
                                             <span className="text-[10px] font-bold">{seat.seatNumber}</span>
                                         </button>
@@ -192,9 +258,10 @@ const BookingPage: React.FC = () => {
                             </div>
 
                             {/* Legend */}
-                            <div className="flex gap-6 mt-16 text-sm">
+                            <div className="flex gap-4 sm:gap-6 mt-16 text-xs sm:text-sm flex-wrap justify-center">
                                 <div className="flex items-center gap-2"><div className="w-4 h-4 rounded bg-gray-900 border border-gray-800" /> Available</div>
                                 <div className="flex items-center gap-2"><div className="w-4 h-4 rounded bg-red-600" /> Selected</div>
+                                <div className="flex items-center gap-2"><div className="w-4 h-4 rounded bg-yellow-600" /> Locked</div>
                                 <div className="flex items-center gap-2"><div className="w-4 h-4 rounded bg-gray-800 opacity-30" /> Occupied</div>
                             </div>
                         </div>

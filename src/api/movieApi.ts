@@ -109,4 +109,12 @@ export const movieApi = {
         );
         return response.data;
     },
+
+    /** DELETE /api/movieManager/movies/{movieId} */
+    deleteMovie: async (movieId: string): Promise<ApiSuccessResponse> => {
+        const response = await movieAxios.delete<ApiSuccessResponse>(
+            `/movieManager/movies/${movieId}`
+        );
+        return response.data;
+    },
 };

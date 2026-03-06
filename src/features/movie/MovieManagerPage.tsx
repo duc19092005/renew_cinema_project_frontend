@@ -25,9 +25,11 @@ import {
     CheckCircle,
     Image,
     Clapperboard,
+    Trash2,
 } from 'lucide-react';
 import { movieApi } from '../../api/movieApi';
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 import { authApi } from '../../api/authApi';
 import type { ApiErrorResponse } from '../../types/auth.types';
 import type { Movie, MovieRequiredAge } from '../../types/movie.types';
@@ -617,6 +619,18 @@ const MovieManagerPage: React.FC = () => {
     const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
+    const handleDeleteMovie = async (movie: Movie) => {
+        if (!window.confirm(`Are you sure you want to delete movie "${movie.movieName}"?`)) return;
+        try {
+            await movieApi.deleteMovie(movie.movieId!);
+            toast.success('Xóa phim thành công');
+            fetchMovies();
+        } catch (err: any) {
+            const msg = err.response?.data?.message || 'Không thể xóa phim này';
+            toast.error(msg);
+        }
+    };
+
     useEffect(() => {
         const storedUser = localStorage.getItem('user_info');
         if (!storedUser) { navigate('/login'); return; }
@@ -900,11 +914,11 @@ const MovieManagerPage: React.FC = () => {
                                         {/* Hover Actions */}
                                         <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                                             <div className="flex gap-2">
-                                                <button className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-white/20 backdrop-blur-md rounded-lg text-white text-xs font-semibold hover:bg-white/30 transition-colors">
+                                                <button onClick={(e) => { e.stopPropagation(); setSelectedMovie(movie); setIsDetailModalOpen(true); }} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-white/20 backdrop-blur-md rounded-lg text-white text-[10px] font-semibold hover:bg-white/30 transition-colors">
                                                     <Eye className="w-3.5 h-3.5" /> View
                                                 </button>
-                                                <button className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-white/20 backdrop-blur-md rounded-lg text-white text-xs font-semibold hover:bg-white/30 transition-colors">
-                                                    <Edit className="w-3.5 h-3.5" /> Edit
+                                                <button onClick={(e) => { e.stopPropagation(); handleDeleteMovie(movie); }} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-red-600/80 backdrop-blur-md rounded-lg text-white text-[10px] font-semibold hover:bg-red-700 transition-colors">
+                                                    <Trash2 className="w-3.5 h-3.5" /> Delete
                                                 </button>
                                             </div>
                                         </div>

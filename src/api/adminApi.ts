@@ -1,0 +1,46 @@
+// src/api/adminApi.ts
+import { identityAxios } from './axiosClient';
+import type { ApiSuccessResponse } from '../types/auth.types';
+import type { AdminUserDto, ScheduleJobDto } from '../types/admin.types';
+
+export const adminApi = {
+    /** GET /api/v1/AdminManageUsers */
+    getUsers: async (): Promise<ApiSuccessResponse<AdminUserDto[]>> => {
+        const response = await identityAxios.get<ApiSuccessResponse<AdminUserDto[]>>(
+            '/AdminManageUsers'
+        );
+        return response.data;
+    },
+
+    /** PUT /api/v1/AdminManageUsers/{userId}/status?status={STATUS_INT} */
+    updateUserStatus: async (userId: string, status: number): Promise<ApiSuccessResponse> => {
+        const response = await identityAxios.put<ApiSuccessResponse>(
+            `/AdminManageUsers/${userId}/status?status=${status}`
+        );
+        return response.data;
+    },
+
+    /** PUT /api/v1/AdminManageUsers/{userId}/role?roleName={ROLE_NAME} */
+    updateUserRole: async (userId: string, roleName: string): Promise<ApiSuccessResponse> => {
+        const response = await identityAxios.put<ApiSuccessResponse>(
+            `/AdminManageUsers/${userId}/role?roleName=${roleName}`
+        );
+        return response.data;
+    },
+
+    /** PUT /api/v1/AdminManageUsers/cinemas/{cinemaId}/manager?managerId={USER_ID} */
+    assignTheaterManager: async (cinemaId: string, managerId: string): Promise<ApiSuccessResponse> => {
+        const response = await identityAxios.put<ApiSuccessResponse>(
+            `/AdminManageUsers/cinemas/${cinemaId}/manager?managerId=${managerId}`
+        );
+        return response.data;
+    },
+
+    /** GET /api/v1/ScheduleJobs */
+    getScheduleJobs: async (): Promise<ApiSuccessResponse<ScheduleJobDto[]>> => {
+        const response = await identityAxios.get<ApiSuccessResponse<ScheduleJobDto[]>>(
+            '/ScheduleJobs'
+        );
+        return response.data;
+    },
+};

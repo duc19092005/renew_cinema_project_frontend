@@ -14,7 +14,9 @@ import {
     Loader2,
     Clock,
     CheckCircle,
-    XCircle
+    XCircle,
+    UserCog,
+    ShieldCheck
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { adminApi } from '../../api/adminApi';
@@ -22,6 +24,8 @@ import { authApi } from '../../api/authApi';
 import type { AdminUserDto, ScheduleJobDto } from '../../types/admin.types';
 import toast from 'react-hot-toast';
 import LogoutModal from '../../components/LogoutModal';
+import RoleUpdateModal from '../../components/RoleUpdateModal';
+import CinemaAssignModal from '../../components/CinemaAssignModal';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 // =============================================
@@ -126,6 +130,25 @@ const AdminPage: React.FC = () => {
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [user, setUser] = useState<{ username: string; roles?: string[] } | null>(null);
 
+    const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState<string>('');
+    const [selectedUserEmail, setSelectedUserEmail] = useState<string>('');
+    const [selectedUserRoles, setSelectedUserRoles] = useState<string>('');
+
+    const [isCinemaModalOpen, setIsCinemaModalOpen] = useState(false);
+    const [activeActionMenu, setActiveActionMenu] = useState<string | null>(null);
+
+    // Click outside handler for action menu
+    useEffect(() => {
+        const handleClickOutside = () => {
+            if (activeActionMenu) {
+                setActiveActionMenu(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, [activeActionMenu]);
+
     useEffect(() => {
         const storedUser = localStorage.getItem('user_info');
         if (!storedUser) { navigate('/login'); return; }
@@ -174,26 +197,17 @@ const AdminPage: React.FC = () => {
         }
     };
 
-    const handleUpdateUserRole = async (userId: string) => {
-        const role = prompt("Enter new role: Admin, TheaterManager, SystemAdmin, User...", "User");
-        if (!role) return;
-        try {
-            await adminApi.updateUserRole(userId, role);
-            toast.success('User role updated successfully');
-        } catch (err: any) {
-            toast.error(err.response?.data?.message || 'Failed to update user role');
-        }
+    const handleUpdateUserRole = (userId: string, email: string, roles: string) => {
+        setSelectedUserId(userId);
+        setSelectedUserEmail(email);
+        setSelectedUserRoles(roles);
+        setIsRoleModalOpen(true);
     };
 
-    const handleAssignTheaterManager = async (userId: string) => {
-        const cinemaId = prompt("Enter the exact Cinema ID to assign this user to:");
-        if (!cinemaId) return;
-        try {
-            await adminApi.assignTheaterManager(cinemaId, userId);
-            toast.success('Theater manager assigned successfully');
-        } catch (err: any) {
-            toast.error(err.response?.data?.message || 'Failed to assign theater manager');
-        }
+    const handleAssignTheaterManager = (userId: string, email: string) => {
+        setSelectedUserId(userId);
+        setSelectedUserEmail(email);
+        setIsCinemaModalOpen(true);
     };
 
     const handleLogoutConfirm = async () => {
@@ -426,42 +440,114 @@ const AdminPage: React.FC = () => {
                 </div>
             </header>
 
-            <main className="pt-24 lg:pl-64 min-h-screen p-6">
-                <div className={`rounded-xl border shadow-sm overflow-hidden ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'modern' ? 'bg-[#15102B]/80 border-indigo-500/30 backdrop-blur-xl' : 'bg-white border-gray-200'}`}>
+            <main className="pt-24 lg:pl-64 min-h-screen p-6 flex justify-center">
+                <div className={`w-full max-w-7xl rounded-xl border shadow-sm h-fit ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'modern' ? 'bg-[#15102B]/80 border-indigo-500/30 backdrop-blur-xl' : 'bg-white border-gray-200'}`}>
                     {loading ? (
                         <div className="p-12 text-center">
                             <Loader2 className="w-10 h-10 animate-spin mx-auto text-red-600 mb-4" />
                             <p>Loading data...</p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto pb-20">
                             {activeTab === 'users' && (
-                                <table className="w-full text-left text-sm whitespace-nowrap">
+                                <table className="w-full text-left text-sm">
                                     <thead className={`border-b ${theme === 'dark' ? 'bg-gray-950 border-gray-800' : theme === 'modern' ? 'bg-[#0E0A20]' : 'bg-gray-50'}`}>
                                         <tr>
                                             <th className="px-6 py-4 font-bold">Email</th>
-                                            <th className="px-6 py-4 font-bold">Full Name</th>
-                                            <th className="px-6 py-4 font-bold">Status</th>
-                                            <th className="px-6 py-4 font-bold">Actions</th>
+                                            <th className="px-6 py-4 font-bold">Tên đầy đủ</th>
+                                            <th className="px-6 py-4 font-bold">Vai Trò</th>
+                                            <th className="px-6 py-4 font-bold">Trạng Thái</th>
+                                            <th className="px-6 py-4 font-bold text-right pr-8">Hành Động</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 divide-opacity-20">
                                         {users.map(u => (
                                             <tr key={u.userId} className={`hover:bg-black/5 transaction-colors`}>
-                                                <td className="px-6 py-4">{u.userEmail}</td>
-                                                <td className="px-6 py-4">{u.fullName || 'N/A'}</td>
+                                                <td className="px-6 py-4 break-all max-w-[200px]">{u.userEmail}</td>
+                                                <td className="px-6 py-4 break-words max-w-[150px]">{u.userName || u.fullName || 'N/A'}</td>
                                                 <td className="px-6 py-4">
-                                                    {u.accountStatus === 1 && <span className="px-2 py-1 rounded text-xs bg-green-500/20 text-green-500 font-bold border border-green-500/30"><CheckCircle className="inline w-3 h-3 mr-1" /> Active</span>}
-                                                    {u.accountStatus !== 1 && <span className="px-2 py-1 rounded text-xs bg-red-500/20 text-red-500 font-bold border border-red-500/30"><XCircle className="inline w-3 h-3 mr-1" /> Locked ({u.accountStatus})</span>}
+                                                    <div className="flex flex-wrap gap-1 min-w-[120px]">
+                                                        {(u.userRoles || '').split(',').map((role, idx) => (
+                                                            <span key={idx} className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                                                                role.trim() === 'Admin' ? 'bg-red-500/10 text-red-500 border-red-500/30' :
+                                                                role.trim() === 'TheaterManager' ? 'bg-pink-500/10 text-pink-500 border-pink-500/30' :
+                                                                role.trim() === 'Customer' ? 'bg-blue-500/10 text-blue-500 border-blue-500/30' :
+                                                                'bg-gray-500/10 text-gray-400 border-gray-500/30'
+                                                            }`}>
+                                                                {role.trim()}
+                                                            </span>
+                                                        ))}
+                                                    </div>
                                                 </td>
-                                                <td className="px-6 py-4 space-x-2">
-                                                    {u.accountStatus === 1 ? (
-                                                        <button onClick={() => handleUpdateUserStatus(u.userId, 2)} className="px-3 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded">Block</button>
-                                                    ) : (
-                                                        <button onClick={() => handleUpdateUserStatus(u.userId, 1)} className="px-3 py-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded">Activate</button>
-                                                    )}
-                                                    <button onClick={() => handleUpdateUserRole(u.userId)} className="px-3 py-1 text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded">Role</button>
-                                                    <button onClick={() => handleAssignTheaterManager(u.userId)} className="px-3 py-1 text-xs bg-pink-600 hover:bg-pink-700 text-white rounded">Assign Cinema</button>
+                                                <td className="px-6 py-4">
+                                                    {u.accountStatus === 1 && <span className="px-2 py-1 rounded text-[10px] bg-green-500/20 text-green-500 font-bold border border-green-500/30 whitespace-nowrap"><CheckCircle className="inline w-3 h-3 mr-1" /> Active</span>}
+                                                    {u.accountStatus !== 1 && <span className="px-2 py-1 rounded text-[10px] bg-red-500/20 text-red-500 font-bold border border-red-500/30 whitespace-nowrap"><XCircle className="inline w-3 h-3 mr-1" /> Locked ({u.accountStatus})</span>}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center justify-end gap-2 pr-4">
+                                                        {u.accountStatus === 1 ? (
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); handleUpdateUserStatus(u.userId, 2); }}
+                                                                className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${theme === 'modern' ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-red-600 hover:bg-red-700 text-white shadow-sm'}`}
+                                                            >
+                                                                Block
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); handleUpdateUserStatus(u.userId, 1); }}
+                                                                className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${theme === 'modern' ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30' : 'bg-green-600 hover:bg-green-700 text-white shadow-sm'}`}
+                                                            >
+                                                                Activate
+                                                            </button>
+                                                        )}
+
+                                                        <div className="relative">
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setActiveActionMenu(activeActionMenu === u.userId ? null : u.userId);
+                                                                }}
+                                                                className={`flex items-center gap-2 px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${theme === 'modern'
+                                                                    ? 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border border-indigo-500/30'
+                                                                    : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm'
+                                                                    }`}
+                                                            >
+                                                                <UserCog className="w-3.5 h-3.5" />
+                                                                Manage
+                                                                <ChevronDown className={`w-3 h-3 transition-transform ${activeActionMenu === u.userId ? 'rotate-180' : ''}`} />
+                                                            </button>
+
+                                                            {activeActionMenu === u.userId && (
+                                                                <div
+                                                                    className={`absolute right-0 top-full mt-1 w-40 rounded-xl shadow-2xl z-[100] border overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'modern' ? 'bg-[#1e1a3a] border-indigo-500/40 shadow-indigo-500/20' : 'bg-white border-gray-200'
+                                                                        }`}
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                >
+                                                                    <div className="py-1">
+                                                                        <button
+                                                                            onClick={() => { handleUpdateUserRole(u.userId, u.userEmail, u.userRoles); setActiveActionMenu(null); }}
+                                                                            className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-[10px] font-semibold transition-colors ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-800 hover:text-white' : theme === 'modern' ? 'text-white hover:bg-indigo-500/20 hover:text-indigo-300' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                                                                                }`}
+                                                                        >
+                                                                            <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+                                                                            Edit Roles
+                                                                        </button>
+
+                                                                        {(u.userRoles || '').includes('TheaterManager') && (
+                                                                            <button
+                                                                                onClick={() => { handleAssignTheaterManager(u.userId, u.userEmail); setActiveActionMenu(null); }}
+                                                                                className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-[10px] font-semibold transition-colors ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-800 hover:text-white' : theme === 'modern' ? 'text-white hover:bg-pink-500/20 hover:text-pink-300' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                                                                                    }`}
+                                                                            >
+                                                                                <Clapperboard className="w-3.5 h-3.5 text-pink-400" />
+                                                                                Assign Cinema
+                                                                            </button>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}
@@ -470,25 +556,25 @@ const AdminPage: React.FC = () => {
                             )}
 
                             {activeTab === 'jobs' && (
-                                <table className="w-full text-left text-sm whitespace-nowrap">
+                                <table className="w-full text-left text-sm">
                                     <thead className={`border-b ${theme === 'dark' ? 'bg-gray-950 border-gray-800' : theme === 'modern' ? 'bg-[#0E0A20]' : 'bg-gray-50'}`}>
                                         <tr>
-                                            <th className="px-6 py-4 font-bold">Job Type</th>
-                                            <th className="px-6 py-4 font-bold">Cron Expression</th>
-                                            <th className="px-6 py-4 font-bold">Last Execution</th>
-                                            <th className="px-6 py-4 font-bold">Next Execution</th>
-                                            <th className="px-6 py-4 font-bold">State</th>
+                                            <th className="px-4 py-4 font-bold">Job Type</th>
+                                            <th className="px-4 py-4 font-bold">Cron Expression</th>
+                                            <th className="px-4 py-4 font-bold">Last Execution</th>
+                                            <th className="px-4 py-4 font-bold">Next Execution</th>
+                                            <th className="px-4 py-4 font-bold">State</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 divide-opacity-20">
                                         {jobs.map((job, idx) => (
                                             <tr key={idx} className={`hover:bg-black/5 transaction-colors`}>
-                                                <td className="px-6 py-4 font-bold">{job.jobType}</td>
-                                                <td className="px-6 py-4 font-mono text-xs">{job.cronExpression || 'N/A'}</td>
-                                                <td className="px-6 py-4">{formatDate(job.lastExecutionTime)}</td>
-                                                <td className="px-6 py-4">{formatDate(job.nextExecutionTime)}</td>
-                                                <td className="px-6 py-4">
-                                                    <span className={`px-2 py-1 rounded text-xs border font-bold ${job.stateName === 'Enqueued' || job.stateName === 'Scheduled' ? 'bg-blue-500/20 text-blue-500 border-blue-500/30' :
+                                                <td className="px-4 py-4 font-bold">{job.jobType}</td>
+                                                <td className="px-4 py-4 font-mono text-[10px] truncate max-w-[100px]">{job.cronExpression || 'N/A'}</td>
+                                                <td className="px-4 py-4 text-xs">{formatDate(job.lastExecutionTime)}</td>
+                                                <td className="px-4 py-4 text-xs">{formatDate(job.nextExecutionTime)}</td>
+                                                <td className="px-4 py-4">
+                                                    <span className={`px-2 py-1 rounded text-[10px] border font-bold ${job.stateName === 'Enqueued' || job.stateName === 'Scheduled' ? 'bg-blue-500/20 text-blue-500 border-blue-500/30' :
                                                         job.stateName === 'Processing' ? 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30' :
                                                             job.stateName === 'Succeeded' ? 'bg-green-500/20 text-green-500 border-green-500/30' :
                                                                 'bg-red-500/20 text-red-500 border-red-500/30'
@@ -517,6 +603,23 @@ const AdminPage: React.FC = () => {
                 onConfirm={handleLogoutConfirm}
                 loading={logoutLoading}
                 error={logoutError}
+            />
+
+            <RoleUpdateModal
+                isOpen={isRoleModalOpen}
+                onClose={() => setIsRoleModalOpen(false)}
+                userId={selectedUserId}
+                currentUserEmail={selectedUserEmail}
+                currentUserRoles={selectedUserRoles}
+                onSuccess={fetchData}
+            />
+
+            <CinemaAssignModal
+                isOpen={isCinemaModalOpen}
+                onClose={() => setIsCinemaModalOpen(false)}
+                userId={selectedUserId}
+                currentUserEmail={selectedUserEmail}
+                onSuccess={fetchData}
             />
         </div>
     );

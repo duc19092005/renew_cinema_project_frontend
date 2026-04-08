@@ -15,6 +15,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import Sidebar from './components/Sidebar';
 import LogoutModal from '../../components/LogoutModal';
 import ScheduleManagerPage from '../schedule/ScheduleManagerPage';
+import TicketScanner from './components/TicketScanner';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import Cookies from 'js-cookie';
 import { useCinema } from '../../contexts/CinemaContext';
@@ -50,7 +51,10 @@ const TheaterManagerPage: React.FC = () => {
             const parsed = JSON.parse(storedUser) as { username: string; roles?: string[]; selectedRole?: string };
             const roles = parsed.roles || [];
 
-            if (!roles.includes('TheaterManager')) {
+            const hasTheaterManager = roles.includes('TheaterManager');
+            const hasAdmin = roles.includes('Admin');
+
+            if (!hasTheaterManager && !hasAdmin) {
                 navigate('/role-selection');
                 return;
             }
@@ -98,7 +102,9 @@ const TheaterManagerPage: React.FC = () => {
             );
         }
 
-        if (managedCinemas.length === 0) {
+        const isAdmin = user?.roles?.includes('Admin');
+
+        if (managedCinemas.length === 0 && !isAdmin) {
             return (
                 <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-700">
                     <div className="p-4 bg-red-600/10 rounded-full mb-6 border border-red-600/20 shadow-2xl shadow-red-600/10">
@@ -112,7 +118,7 @@ const TheaterManagerPage: React.FC = () => {
             );
         }
 
-        if (!activeCinemaId) {
+        if (!activeCinemaId && !isAdmin) {
             return (
                 <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-700">
                     <Loader2 className="w-8 h-8 animate-spin text-red-600 mb-4" />
@@ -124,6 +130,8 @@ const TheaterManagerPage: React.FC = () => {
         switch (activeTab) {
             case 'dashboard':
                 return <DashboardPlaceholder />;
+            case 'scanner':
+                return <TicketScanner />;
             case 'employees':
                 return <EmployeeManagementPlaceholder />;
             case 'schedule':
@@ -149,7 +157,7 @@ const TheaterManagerPage: React.FC = () => {
             />
 
             {/* HEADER */}
-            <header className={`fixed top-0 left-0 right-0 z-[100] h-20 border-b flex items-center justify-between px-6 transition-all duration-300 backdrop-blur-xl ${theme === 'dark'
+            <header className={`fixed top-0 left-0 right-0 lg:left-72 z-[100] h-20 border-b flex items-center justify-between px-6 transition-all duration-300 backdrop-blur-xl ${theme === 'dark'
                 ? 'bg-black/80 border-gray-800'
                 : theme === 'modern'
                     ? 'bg-[#030712]/80 border-indigo-500/20 shadow-2xl shadow-indigo-500/5'
@@ -168,7 +176,7 @@ const TheaterManagerPage: React.FC = () => {
                     </button>
 
                     <div
-                        className={`text-xl sm:text-2xl font-black tracking-widest cursor-pointer transition-all hover:scale-105 active:scale-95 ${theme === 'modern' ? 'text-white' : 'text-red-600'}`}
+                        className={`lg:hidden text-xl sm:text-2xl font-black tracking-widest cursor-pointer transition-all hover:scale-105 active:scale-95 ${theme === 'modern' ? 'text-white' : 'text-red-600'}`}
                         onClick={() => navigate('/home')}
                     >
                         CINEMA<span className={theme === 'dark' || theme === 'modern' ? 'text-white' : 'text-gray-900'}>PRO</span>
@@ -217,7 +225,7 @@ const TheaterManagerPage: React.FC = () => {
 
             {/* MAIN CONTENT */}
             <main className="pt-24 lg:pl-72 min-h-screen">
-                <div className="p-4 lg:p-10 w-full overflow-hidden">
+                <div className="p-4 lg:p-6 w-full" style={{ height: 'calc(100vh - 6rem)' }}>
                     {/* Mobile Cinema Selector */}
                     <div className="md:hidden mb-6">
                         <CinemaSelector />

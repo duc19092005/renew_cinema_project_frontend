@@ -19,6 +19,7 @@ interface TimelineGridProps {
     onAddSlot: (auditoriumId: string, slot: ShowTimeSlot) => void;
     onUpdateSlot: (auditoriumId: string, slotId: string, updates: Partial<ShowTimeSlot>) => void;
     onMoveSlot: (fromAuditoriumId: string, toAuditoriumId: string, slot: ShowTimeSlot) => void;
+    onCloneSlot?: (auditoriumId: string, slotId: string) => void;
 }
 
 // Helper: format local date as YYYY-MM-DD without timezone issues
@@ -53,7 +54,8 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
     selectedDate,
     onAddSlot,
     onUpdateSlot,
-    onMoveSlot
+    onMoveSlot,
+    onCloneSlot
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const lastMousePosRef = useRef<{ x: number; y: number } | null>(null);
@@ -227,7 +229,7 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
             // Find the first movie format that matches the auditorium's supported formats
             const matchedFormat = draggingMovie.formats.find(f => 
                 roomFormatIds.includes(f.id.toLowerCase())
-            ) || draggingMovie.formats[0]; // Fallback to first format if no match (shouldn't happen due to validation)
+            ) || draggingMovie.formats[0]; 
             
             const newSlot: ShowTimeSlot = {
                 id: `new-${crypto.randomUUID()}`,
@@ -351,8 +353,8 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
             }}
             onDrop={() => { lastMousePosRef.current = null; }}
         >
-            <div className="flex min-w-max relative min-h-full" style={{ height: TOTAL_HEIGHT + 40 + TOP_OFFSET + BOTTOM_OFFSET }}>
-                {/* Time Ruler */}
+            <div className="flex min-w-max relative min-h-full bg-white dark:bg-slate-950" style={{ height: TOTAL_HEIGHT + 40 + TOP_OFFSET + BOTTOM_OFFSET }}>
+                {/* Time Ruler Sidebar */}
                 <div className="w-16 flex-shrink-0 sticky left-0 z-30 transition-colors duration-300 bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800/60">
                     <div className="h-10 sticky top-0 z-40 transition-colors duration-300 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-800/60"></div>
                     {Array.from({ length: TOTAL_HOURS + 1 }).map((_, i) => {
@@ -468,6 +470,31 @@ const TimelineGrid: React.FC<TimelineGridProps> = ({
                                             <div className="font-bold truncate">{movie?.title || 'Unknown Movie'}</div>
                                             <div className="opacity-90">{formatTime(slot.start)} - {formatTime(slot.end)}</div>
                                             <div className="mt-1 opacity-75 font-bold">{slot.formatName || slot.formatId}</div>
+                                            
+                                            {/* Prototype Clone Button */}
+                                            {onCloneSlot && (
+                                                 <div className="absolute top-1 right-1 flex flex-col items-end gap-1 z-[40]">
+                                                     {slot.id.startsWith('new-') ? (
+                                                         <div className="px-1.5 py-0.5 bg-gray-500/50 backdrop-blur-sm rounded text-[8px] font-bold uppercase tracking-tighter">
+                                                             Save first to Clone
+                                                         </div>
+                                                     ) : (
+                                                         <button
+                                                             onClick={(e) => {
+                                                                 e.stopPropagation();
+                                                                 e.preventDefault();
+                                                                 onCloneSlot(aud.id, slot.id);
+                                                             }}
+                                                             className="group/clone flex items-center gap-1.5 pl-2 pr-1.5 py-1 bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow-lg border border-white/20 transition-all text-white cursor-pointer active:scale-95"
+                                                             title="Nhân bản sang Ngày Mai (Prototype Pattern)"
+                                                         >
+                                                             <span className="text-[10px] font-black uppercase tracking-tighter hidden group-hover/clone:block">Clone Tomorrow</span>
+                                                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                                         </button>
+                                                     )}
+                                                 </div>
+                                             )}
+
                                             <div
                                                 className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-black/20"
                                                 onMouseDown={(e) => {

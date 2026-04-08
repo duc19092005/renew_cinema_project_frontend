@@ -1,7 +1,7 @@
 // src/api/adminApi.ts
 import { identityAxios } from './axiosClient';
 import type { ApiSuccessResponse } from '../types/auth.types';
-import type { AdminUserDto, GroupedScheduleJobDto, RoleDto } from '../types/admin.types';
+import type { AdminUserDto, GroupedScheduleJobDto, RoleDto, AdminTicketPricingDto } from '../types/admin.types';
 
 export const adminApi = {
     /** GET /api/v1/AdminManageUsers */
@@ -66,6 +66,23 @@ export const adminApi = {
                 data: response.data
             };
         }
+        return response.data;
+    },
+
+    /** GET /api/v1/AdminTicketPricing */
+    getTicketPricing: async (): Promise<ApiSuccessResponse<AdminTicketPricingDto>> => {
+        const response = await identityAxios.get<ApiSuccessResponse<AdminTicketPricingDto>>(
+            '/AdminTicketPricing'
+        );
+        return response.data;
+    },
+
+    /** PUT /api/v1/AdminTicketPricing */
+    updateTicketPricing: async (data: AdminTicketPricingDto): Promise<ApiSuccessResponse> => {
+        const response = await identityAxios.put<ApiSuccessResponse>(
+            '/AdminTicketPricing',
+            data
+        );
         return response.data;
     },
 };

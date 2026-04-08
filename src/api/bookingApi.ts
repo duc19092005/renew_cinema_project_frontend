@@ -45,6 +45,22 @@ export const bookingApi = {
     /** Get ticket download URL */
     getTicketDownloadUrl: (orderId: string): string => {
         return `${API_BASE_URL}/api/v1/booking/ticket/${orderId}/download`;
+    },
+
+    /** POST /api/v1/booking/commands/lock-seat/{orderId} */
+    lockSeat: async (orderId: string): Promise<ApiSuccessResponse> => {
+        const response = await bookingAxios.post<ApiSuccessResponse>(
+            `/commands/lock-seat/${orderId}`
+        );
+        return response.data;
+    },
+
+    /** POST /api/v1/booking/commands/unlock-seat/{orderId} */
+    unlockSeat: async (orderId: string): Promise<ApiSuccessResponse> => {
+        const response = await bookingAxios.post<ApiSuccessResponse>(
+            `/commands/unlock-seat/${orderId}`
+        );
+        return response.data;
     }
 };
 

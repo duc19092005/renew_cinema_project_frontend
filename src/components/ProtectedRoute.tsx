@@ -25,9 +25,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole 
         return;
       }
 
-      // Check role nếu có yêu cầu
+      // Check role nếu có yêu cầu (Admin bypasses all)
       if (requiredRole) {
-        if (!userInfo.roles || !userInfo.roles.includes(requiredRole)) {
+        const hasAdmin = userInfo.roles?.includes('Admin');
+        const hasRequired = userInfo.roles?.includes(requiredRole);
+
+        if (!hasAdmin && !hasRequired) {
           setIsAuthenticated(false);
           setIsChecking(false);
           return;

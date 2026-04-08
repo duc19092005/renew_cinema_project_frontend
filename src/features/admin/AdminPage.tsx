@@ -21,6 +21,7 @@ import {
     SortDesc,
     Menu,
     XCircle,
+    Percent
 } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { adminApi } from '../../api/adminApi';
@@ -31,6 +32,7 @@ import LogoutModal from '../../components/LogoutModal';
 import RoleUpdateModal from '../../components/RoleUpdateModal';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import TransferRightsView from './components/TransferRightsView';
+import TicketPricingConfig from './components/TicketPricingConfig';
 import { useTranslation } from 'react-i18next';
 import Cookies from 'js-cookie';
 
@@ -38,8 +40,8 @@ import Cookies from 'js-cookie';
 // SIDEBAR COMPONENT
 // =============================================
 interface SidebarProps {
-    activeTab: 'users' | 'jobs' | 'transfer';
-    onTabChange: (tab: 'users' | 'jobs' | 'transfer') => void;
+    activeTab: 'users' | 'jobs' | 'transfer' | 'pricing';
+    onTabChange: (tab: 'users' | 'jobs' | 'transfer' | 'pricing') => void;
     isOpen: boolean;
     onClose: () => void;
 }
@@ -53,6 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onClo
         { id: 'users', label: t('User Management'), icon: Users },
         { id: 'jobs', label: t('Background Jobs'), icon: Clock },
         { id: 'transfer', label: t('Transfer Rights'), icon: Sparkles },
+        { id: 'pricing', label: t('Ticket Pricing'), icon: Percent },
     ] as const;
 
     const storedUserStr = localStorage.getItem('user_info');
@@ -61,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onClo
     const handleLogout = async () => {
         try {
             await authApi.logout();
-        } catch (e) {}
+        } catch (e) { }
         localStorage.removeItem('user_info');
         import('js-cookie').then(Cookies => Cookies.default.remove('X-Access-Token'));
         navigate('/login');
@@ -92,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onClo
 
             {/* Sidebar Content */}
             <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
-                
+
                 {/* -------------------- MOBILE ONLY VIEW -------------------- */}
                 {user && (
                     <div className="lg:hidden space-y-4 pb-4 border-b border-gray-500/10">
@@ -138,8 +141,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onClo
                         <button
                             onClick={() => navigate('/home')}
                             className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all active:scale-95 ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' :
-                                    theme === 'modern' ? 'text-white hover:bg-indigo-500/10' :
-                                        'text-gray-700 hover:bg-gray-100'
+                                theme === 'modern' ? 'text-white hover:bg-indigo-500/10' :
+                                    'text-gray-700 hover:bg-gray-100'
                                 }`}
                         >
                             <LayoutDashboard className="w-5 h-5 text-indigo-400" />
@@ -156,14 +159,14 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onClo
                                     if (window.innerWidth < 1024) onClose();
                                 }}
                                 className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all active:scale-95 ${activeTab === item.id
-                                        ? theme === 'modern'
-                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                                            : 'bg-red-600 text-white shadow-lg shadow-red-600/20'
-                                        : theme === 'dark'
-                                            ? 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                                            : theme === 'modern'
-                                                ? 'text-white/70 hover:bg-white/5 hover:text-white'
-                                                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                                    ? theme === 'modern'
+                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
+                                        : 'bg-red-600 text-white shadow-lg shadow-red-600/20'
+                                    : theme === 'dark'
+                                        ? 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                                        : theme === 'modern'
+                                            ? 'text-white/70 hover:bg-white/5 hover:text-white'
+                                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                                     }`}
                             >
                                 <item.icon className={`w-5 h-5 ${activeTab === item.id ? 'text-white' : 'text-indigo-400'}`} />
@@ -182,8 +185,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onClo
                         <button
                             onClick={() => navigate('/account')}
                             className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all active:scale-95 ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-800' :
-                                    theme === 'modern' ? 'text-white hover:bg-indigo-500/10' :
-                                        'text-gray-700 hover:bg-gray-100'
+                                theme === 'modern' ? 'text-white hover:bg-indigo-500/10' :
+                                    'text-gray-700 hover:bg-gray-100'
                                 }`}
                         >
                             <UserCircle className="w-5 h-5 text-cyan-400" />
@@ -226,8 +229,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onClo
                 <button
                     onClick={() => navigate('/role-selection')}
                     className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all active:scale-95 ${theme === 'dark' ? 'text-blue-400 hover:bg-blue-500/10' :
-                            theme === 'modern' ? 'text-cyan-400 hover:bg-cyan-500/10' :
-                                'text-blue-600 hover:bg-blue-50'
+                        theme === 'modern' ? 'text-cyan-400 hover:bg-cyan-500/10' :
+                            'text-blue-600 hover:bg-blue-50'
                         }`}
                 >
                     <ArrowLeftRight className="w-5 h-5" />
@@ -248,7 +251,7 @@ const AdminPage: React.FC = () => {
     const { theme, setTheme } = useTheme();
     const { t } = useTranslation();
 
-    const [activeTab, setActiveTab] = useState<'users' | 'jobs' | 'transfer'>('users');
+    const [activeTab, setActiveTab] = useState<'users' | 'jobs' | 'transfer' | 'pricing'>('users');
     const [users, setUsers] = useState<AdminUserDto[]>([]);
     const [jobs, setJobs] = useState<GroupedScheduleJobDto[]>([]);
     const [loading, setLoading] = useState(true);
@@ -306,7 +309,7 @@ const AdminPage: React.FC = () => {
     }, [activeTab]);
 
     const fetchData = async () => {
-        if (activeTab === 'transfer') {
+        if (activeTab === 'transfer' || activeTab === 'pricing') {
             setLoading(false);
             return;
         }
@@ -392,7 +395,7 @@ const AdminPage: React.FC = () => {
             )}
 
             {/* HEADER */}
-            <header className={`fixed top-0 left-0 right-0 lg:left-64 z-50 backdrop-blur-md border-b h-16 flex items-center justify-between px-4 sm:px-6 shadow-lg transition-colors duration-300 ${theme === 'dark'
+            <header className={`fixed top-0 left-0 right-0 lg:left-72 z-50 backdrop-blur-md border-b h-16 flex items-center justify-between px-4 sm:px-6 shadow-lg transition-colors duration-300 ${theme === 'dark'
                 ? 'bg-black/80 border-gray-800'
                 : theme === 'modern'
                     ? 'bg-gradient-to-r from-[#0E0A20]/90 shadow-2xl border-indigo-500/30 shadow-sm shadow-indigo-500/10'
@@ -402,15 +405,15 @@ const AdminPage: React.FC = () => {
                     <button
                         onClick={() => setIsSidebarOpen(true)}
                         className={`lg:hidden p-2 rounded-lg transition-all active:scale-95 z-[70] ${theme === 'dark' ? 'hover:bg-gray-800 text-white' :
-                                theme === 'modern' ? 'hover:bg-indigo-500/20 text-white' :
-                                    'hover:bg-gray-100 text-gray-700'
+                            theme === 'modern' ? 'hover:bg-indigo-500/20 text-white' :
+                                'hover:bg-gray-100 text-gray-700'
                             }`}
                     >
                         <Menu className="w-6 h-6" />
                     </button>
 
                     <div
-                        className={`text-xl sm:text-2xl font-black tracking-widest cursor-pointer transition-all hover:scale-105 active:scale-95 ${theme === 'modern'
+                        className={`lg:hidden text-xl sm:text-2xl font-black tracking-widest cursor-pointer transition-all hover:scale-105 active:scale-95 ${theme === 'modern'
                             ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-pink-300 to-rose-300 drop-shadow-sm'
                             : 'text-red-600'
                             }`}
@@ -598,124 +601,147 @@ const AdminPage: React.FC = () => {
                             </div>
                         )}
                     </div>
-                
-                    <button 
+
+                    <button
                         onClick={() => setIsSidebarOpen(true)}
-                        className={`lg:hidden p-1.5 rounded-full transition-all active:scale-95 ${
-                            theme === 'dark' ? 'bg-gray-800' : theme === 'modern' ? 'bg-indigo-500/20' : 'bg-gray-100'
-                        }`}
+                        className={`lg:hidden p-1.5 rounded-full transition-all active:scale-95 ${theme === 'dark' ? 'bg-gray-800' : theme === 'modern' ? 'bg-indigo-500/20' : 'bg-gray-100'
+                            }`}
                     >
                         <UserCircle className={`w-6 h-6 ${theme === 'modern' ? 'text-indigo-400' : 'text-red-500'}`} />
                     </button>
                 </div>
             </header>
 
-            <main className="pt-24 lg:pl-72 min-h-screen p-4 sm:p-6 w-full overflow-hidden">
-                <div className={`w-full max-w-7xl rounded-xl border shadow-sm h-fit ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'modern' ? 'bg-[#15102B]/80 border-indigo-500/30 backdrop-blur-xl' : 'bg-white border-gray-200'}`}>
+            <main className="lg:pl-72 min-h-screen px-4 sm:px-6 pb-6 w-full overflow-hidden flex justify-center items-center pt-20">
+                <div className={`w-full max-w-7xl mx-auto rounded-xl border shadow-sm h-fit ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'modern' ? 'bg-[#15102B]/80 border-indigo-500/30 backdrop-blur-xl' : 'bg-white border-gray-200'}`}>
                     {loading ? (
                         <div className="p-12 text-center">
                             <Loader2 className="w-10 h-10 animate-spin mx-auto text-red-600 mb-4" />
                             <p>Loading data...</p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto pb-10 sm:pb-20 custom-scrollbar w-full">
+                        <div className="p-6 sm:p-8">
+                            {/* Table Header Section - only for users and jobs tabs */}
+                            {(activeTab === 'users' || activeTab === 'jobs') && (
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                                    <div>
+                                        <h2 className={`text-2xl font-black uppercase tracking-tight ${theme === 'modern' ? 'text-white' : ''}`}>
+                                            {activeTab === 'users' ? t('Quản Lý Người Dùng') : t('Quản Lý Việc Chạy Ngầm')}
+                                        </h2>
+                                        <p className={`text-sm mt-1 ${theme === 'dark' ? 'text-gray-400' : theme === 'modern' ? 'text-indigo-200/60' : 'text-gray-500'}`}>
+                                            {activeTab === 'users' ? t('Viewing and managing all system users (CRUD operations)') : t('Monitoring system background schedules')}
+                                        </p>
+                                    </div>
+                                    {activeTab === 'users' && (
+                                        <button
+                                            onClick={() => { }}
+                                            className={`px-5 py-2.5 rounded-xl font-bold text-sm tracking-wide transition-all active:scale-95 ${theme === 'modern' ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-[0_0_15px_rgba(79,70,229,0.3)]' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+                                        >
+                                            + {t('Add New User')}
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+
                             {activeTab === 'users' && (
-                                <table className="w-full min-w-[900px] text-left text-sm">
-                                    <thead className={`border-b ${theme === 'dark' ? 'bg-gray-950 border-gray-800' : theme === 'modern' ? 'bg-[#0E0A20]' : 'bg-gray-50'}`}>
-                                        <tr>
-                                            <th className="px-6 py-4 font-bold whitespace-nowrap">Email</th>
-                                            <th className="px-6 py-4 font-bold whitespace-nowrap">{t('Full Name')}</th>
-                                            <th className="px-6 py-4 font-bold whitespace-nowrap">{t('Roles')}</th>
-                                            <th className="px-6 py-4 font-bold whitespace-nowrap">{t('Status')}</th>
-                                            <th className="px-6 py-4 font-bold whitespace-nowrap text-right pr-8">{t('Actions')}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-200 divide-opacity-20">
-                                        {users.map(u => (
-                                            <tr key={u.userId} className={`hover:bg-black/5 transaction-colors`}>
-                                                <td className="px-6 py-4 break-all max-w-[200px]">{u.userEmail}</td>
-                                                <td className="px-6 py-4 break-words max-w-[150px]">{u.userName || u.fullName || 'N/A'}</td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex flex-wrap gap-1 min-w-[120px]">
-                                                        {(u.userRoles || '').split(',').map((role, idx) => (
-                                                            <span key={idx} className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${role.trim() === 'Admin' ? 'bg-red-500/10 text-red-500 border-red-500/30' :
-                                                                role.trim() === 'TheaterManager' ? 'bg-pink-500/10 text-pink-500 border-pink-500/30' :
-                                                                    role.trim() === 'Customer' ? 'bg-blue-500/10 text-blue-500 border-blue-500/30' :
-                                                                        'bg-gray-500/10 text-gray-400 border-gray-500/30'
-                                                                }`}>
-                                                                {role.trim()}
-                                                            </span>
-                                                        ))}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    {u.accountStatus === 1 && <span className="px-2 py-1 rounded text-[10px] bg-green-500/20 text-green-500 font-bold border border-green-500/30 whitespace-nowrap"><CheckCircle className="inline w-3 h-3 mr-1" /> Active</span>}
-                                                    {u.accountStatus !== 1 && <span className="px-2 py-1 rounded text-[10px] bg-red-500/20 text-red-500 font-bold border border-red-500/30 whitespace-nowrap"><XCircle className="inline w-3 h-3 mr-1" /> Locked ({u.accountStatus})</span>}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center justify-end gap-2 pr-4">
-                                                        {u.accountStatus === 1 ? (
-                                                            u.userId !== user?.userId && (
-                                                                <button
-                                                                    onClick={(e) => { e.stopPropagation(); handleUpdateUserStatus(u.userId, 2); }}
-                                                                    className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${theme === 'modern' ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-red-600 hover:bg-red-700 text-white shadow-sm'}`}
-                                                                >
-                                                                    {t('Block')}
-                                                                </button>
-                                                            )
-                                                        ) : (
-                                                            <button
-                                                                onClick={(e) => { e.stopPropagation(); handleUpdateUserStatus(u.userId, 1); }}
-                                                                className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${theme === 'modern' ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30' : 'bg-green-600 hover:bg-green-700 text-white shadow-sm'}`}
-                                                            >
-                                                                {t('Activate')}
-                                                            </button>
-                                                        )}
-
-                                                        <div className="relative action-menu-container">
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    setActiveActionMenu(activeActionMenu === u.userId ? null : u.userId);
-                                                                }}
-                                                                className={`flex items-center gap-2 px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${theme === 'modern'
-                                                                    ? 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border border-indigo-500/30'
-                                                                    : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm'
-                                                                    }`}
-                                                            >
-                                                                <UserCog className="w-3.5 h-3.5" />
-                                                                Manage
-                                                                <ChevronDown className={`w-3 h-3 transition-transform ${activeActionMenu === u.userId ? 'rotate-180' : ''}`} />
-                                                            </button>
-
-                                                            {activeActionMenu === u.userId && (
-                                                                <div
-                                                                    className={`absolute right-0 top-full mt-1 w-40 rounded-xl shadow-2xl z-[100] border overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'modern' ? 'bg-[#1e1a3a] border-indigo-500/40 shadow-indigo-500/20' : 'bg-white border-gray-200'
-                                                                        }`}
-                                                                    onMouseDown={(e) => e.stopPropagation()}
-                                                                    onClick={(e) => e.stopPropagation()}
-                                                                >
-                                                                    <div className="py-1">
-                                                                        <button
-                                                                            onClick={() => { handleUpdateUserRole(u.userId, u.userEmail, u.userRoles); setActiveActionMenu(null); }}
-                                                                            className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-[10px] font-semibold transition-colors ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-800 hover:text-white' : theme === 'modern' ? 'text-white hover:bg-indigo-500/20 hover:text-indigo-300' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                                                                                }`}
-                                                                        >
-                                                                            <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
-                                                                            {t('Edit Roles')}
-                                                                        </button>
-
-
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </td>
+                                <div className={`overflow-x-auto rounded-xl border ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30' : 'border-gray-200'}`}>
+                                    <table className="w-full min-w-[900px] text-left text-sm">
+                                        <thead className={`${theme === 'dark' ? 'bg-gray-800 text-gray-300' : theme === 'modern' ? 'bg-indigo-950/50 text-indigo-300' : 'bg-gray-100 text-gray-700'} uppercase tracking-wider text-xs`}>
+                                            <tr>
+                                                <th className="px-6 py-4 font-black">Email</th>
+                                                <th className="px-6 py-4 font-black">{t('Full Name')}</th>
+                                                <th className="px-6 py-4 font-black">{t('Roles')}</th>
+                                                <th className="px-6 py-4 font-black">{t('Status')}</th>
+                                                <th className="px-6 py-4 font-black text-right pr-8">{t('Actions')}</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-200 divide-opacity-20">
+                                            {users.map(u => (
+                                                <tr key={u.userId} className={`hover:bg-black/5 transaction-colors`}>
+                                                    <td className="px-6 py-4 break-all max-w-[200px]">{u.userEmail}</td>
+                                                    <td className="px-6 py-4 break-words max-w-[150px]">{u.userName || u.fullName || 'N/A'}</td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex flex-wrap gap-1 min-w-[120px]">
+                                                            {(u.userRoles || '').split(',').map((role, idx) => (
+                                                                <span key={idx} className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${role.trim() === 'Admin' ? 'bg-red-500/10 text-red-500 border-red-500/30' :
+                                                                    role.trim() === 'TheaterManager' ? 'bg-pink-500/10 text-pink-500 border-pink-500/30' :
+                                                                        role.trim() === 'Customer' ? 'bg-blue-500/10 text-blue-500 border-blue-500/30' :
+                                                                            'bg-gray-500/10 text-gray-400 border-gray-500/30'
+                                                                    }`}>
+                                                                    {role.trim()}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        {u.accountStatus === 1 && <span className="px-2 py-1 rounded text-[10px] bg-green-500/20 text-green-500 font-bold border border-green-500/30 whitespace-nowrap"><CheckCircle className="inline w-3 h-3 mr-1" /> Active</span>}
+                                                        {u.accountStatus !== 1 && <span className="px-2 py-1 rounded text-[10px] bg-red-500/20 text-red-500 font-bold border border-red-500/30 whitespace-nowrap"><XCircle className="inline w-3 h-3 mr-1" /> Locked ({u.accountStatus})</span>}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center justify-end gap-2 pr-4">
+                                                            {u.accountStatus === 1 ? (
+                                                                u.userId !== user?.userId && (
+                                                                    <button
+                                                                        onClick={(e) => { e.stopPropagation(); handleUpdateUserStatus(u.userId, 2); }}
+                                                                        className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${theme === 'modern' ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-red-600 hover:bg-red-700 text-white shadow-sm'}`}
+                                                                    >
+                                                                        {t('Block')}
+                                                                    </button>
+                                                                )
+                                                            ) : (
+                                                                <button
+                                                                    onClick={(e) => { e.stopPropagation(); handleUpdateUserStatus(u.userId, 1); }}
+                                                                    className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${theme === 'modern' ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30' : 'bg-green-600 hover:bg-green-700 text-white shadow-sm'}`}
+                                                                >
+                                                                    {t('Activate')}
+                                                                </button>
+                                                            )}
+
+                                                            <div className="relative action-menu-container">
+                                                                <button
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setActiveActionMenu(activeActionMenu === u.userId ? null : u.userId);
+                                                                    }}
+                                                                    className={`flex items-center gap-2 px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${theme === 'modern'
+                                                                        ? 'bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border border-indigo-500/30'
+                                                                        : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm'
+                                                                        }`}
+                                                                >
+                                                                    <UserCog className="w-3.5 h-3.5" />
+                                                                    Manage
+                                                                    <ChevronDown className={`w-3 h-3 transition-transform ${activeActionMenu === u.userId ? 'rotate-180' : ''}`} />
+                                                                </button>
+
+                                                                {activeActionMenu === u.userId && (
+                                                                    <div
+                                                                        className={`absolute right-0 top-full mt-1 w-40 rounded-xl shadow-2xl z-[100] border overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 ${theme === 'dark' ? 'bg-gray-900 border-gray-800' : theme === 'modern' ? 'bg-[#1e1a3a] border-indigo-500/40 shadow-indigo-500/20' : 'bg-white border-gray-200'
+                                                                            }`}
+                                                                        onMouseDown={(e) => e.stopPropagation()}
+                                                                        onClick={(e) => e.stopPropagation()}
+                                                                    >
+                                                                        <div className="py-1">
+                                                                            <button
+                                                                                onClick={() => { handleUpdateUserRole(u.userId, u.userEmail, u.userRoles); setActiveActionMenu(null); }}
+                                                                                className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-[10px] font-semibold transition-colors ${theme === 'dark' ? 'text-gray-300 hover:bg-gray-800 hover:text-white' : theme === 'modern' ? 'text-white hover:bg-indigo-500/20 hover:text-indigo-300' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                                                                                    }`}
+                                                                            >
+                                                                                <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+                                                                                {t('Edit Roles')}
+                                                                            </button>
+
+
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             )}
 
                             {activeTab === 'jobs' && (
@@ -753,99 +779,105 @@ const AdminPage: React.FC = () => {
                                             </button>
                                         </div>
                                     </div>
-                                    <table className="w-full min-w-[800px] text-left text-sm">
-                                        <thead className={`border-b ${theme === 'dark' ? 'bg-gray-950 border-gray-800' : theme === 'modern' ? 'bg-[#0E0A20]' : 'bg-gray-50'}`}>
-                                            <tr>
-                                                <th className="px-4 py-4 font-bold whitespace-nowrap">Target & Category</th>
-                                                <th className="px-4 py-4 font-bold whitespace-nowrap">Start Schedule</th>
-                                                <th className="px-4 py-4 font-bold whitespace-nowrap">End Schedule</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-200 divide-opacity-20">
-                                            {[...jobs]
-                                                .filter(job => jobCategoryFilter === 'All' || job.jobCategory === jobCategoryFilter)
-                                                .sort((a, b) => {
-                                                    const idA = a.targetId || '';
-                                                    const idB = b.targetId || '';
-                                                    return jobSortOrder === 'asc' ? idA.localeCompare(idB) : idB.localeCompare(idA);
-                                                })
-                                                .map((group, idx) => (
-                                                    <tr key={group.targetId + idx} className={`hover:bg-black/5 transaction-colors`}>
-                                                        {/* Target Info */}
-                                                        <td className="px-4 py-4">
-                                                            <div className="flex flex-col gap-1">
-                                                                <span className="text-xs font-mono opacity-60 truncate max-w-[150px]" title={group.targetId}>{group.targetId}</span>
-                                                                <div className="flex items-center gap-2">
-                                                                    <span className={`w-2 h-2 rounded-full ${group.jobCategory === 'Schedules' ? 'bg-blue-500' : group.jobCategory === 'Movies' ? 'bg-cyan-500' : 'bg-purple-500'}`}></span>
-                                                                    <span className="text-xs font-bold">{group.jobCategory}</span>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-
-                                                        {/* Start Job Column */}
-                                                        <td className="px-4 py-4">
-                                                            {group.startScheduleJob ? (
+                                    <div className={`overflow-x-auto border-t ${theme === 'dark' ? 'border-gray-800' : theme === 'modern' ? 'border-indigo-500/30' : 'border-gray-200'}`}>
+                                        <table className="w-full min-w-[800px] text-left text-sm">
+                                            <thead className={`${theme === 'dark' ? 'bg-gray-800 text-gray-300' : theme === 'modern' ? 'bg-indigo-950/50 text-indigo-300' : 'bg-gray-100 text-gray-700'} uppercase tracking-wider text-xs border-b ${theme === 'modern' ? 'border-indigo-500/30' : 'border-gray-800'}`}>
+                                                <tr>
+                                                    <th className="px-6 py-5 font-black">Target & Category</th>
+                                                    <th className="px-6 py-5 font-black">Start Schedule</th>
+                                                    <th className="px-6 py-5 font-black">End Schedule</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-200 divide-opacity-20">
+                                                {[...jobs]
+                                                    .filter(job => jobCategoryFilter === 'All' || job.jobCategory === jobCategoryFilter)
+                                                    .sort((a, b) => {
+                                                        const idA = a.targetId || '';
+                                                        const idB = b.targetId || '';
+                                                        return jobSortOrder === 'asc' ? idA.localeCompare(idB) : idB.localeCompare(idA);
+                                                    })
+                                                    .map((group, idx) => (
+                                                        <tr key={group.targetId + idx} className={`hover:bg-black/5 transaction-colors`}>
+                                                            {/* Target Info */}
+                                                            <td className="px-4 py-4">
                                                                 <div className="flex flex-col gap-1">
+                                                                    <span className="text-xs font-mono opacity-60 truncate max-w-[150px]" title={group.targetId}>{group.targetId}</span>
                                                                     <div className="flex items-center gap-2">
-                                                                        <span
-                                                                            title={group.startScheduleJob.failedReason}
-                                                                            className={`text-[9px] px-2 py-0.5 rounded-full border ${group.startScheduleJob.scheduleJobStatus === 'Failed'
-                                                                                ? 'bg-red-500/10 text-red-400 border-red-500/20'
-                                                                                : group.startScheduleJob.scheduleJobStatus === 'Pending'
-                                                                                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                                                                                    : 'bg-green-500/10 text-green-400 border-green-500/20'
-                                                                                }`}
-                                                                        >
-                                                                            {group.startScheduleJob.scheduleJobStatus}
-                                                                        </span>
-                                                                        <span className="text-[10px] font-mono opacity-40">#{group.startScheduleJob.jobId}</span>
+                                                                        <span className={`w-2 h-2 rounded-full ${group.jobCategory === 'Schedules' ? 'bg-blue-500' : group.jobCategory === 'Movies' ? 'bg-cyan-500' : 'bg-purple-500'}`}></span>
+                                                                        <span className="text-xs font-bold">{group.jobCategory}</span>
                                                                     </div>
-                                                                    <span className="text-[10px] opacity-60 italic">{formatDate(group.startScheduleJob.jobStartedAt)}</span>
-                                                                    {group.startScheduleJob.failedReason && (
-                                                                        <span className="text-[9px] text-red-400/60 truncate max-w-[150px]">{group.startScheduleJob.failedReason}</span>
-                                                                    )}
                                                                 </div>
-                                                            ) : (
-                                                                <span className="text-[10px] opacity-20">N/A</span>
-                                                            )}
-                                                        </td>
+                                                            </td>
 
-                                                        {/* End Job Column */}
-                                                        <td className="px-4 py-4">
-                                                            {group.endScheduleJob ? (
-                                                                <div className="flex flex-col gap-1">
-                                                                    <div className="flex items-center gap-2">
-                                                                        <span
-                                                                            title={group.endScheduleJob.failedReason}
-                                                                            className={`text-[9px] px-2 py-0.5 rounded-full border ${group.endScheduleJob.scheduleJobStatus === 'Failed'
-                                                                                ? 'bg-red-500/10 text-red-400 border-red-500/20'
-                                                                                : group.endScheduleJob.scheduleJobStatus === 'Pending'
-                                                                                    ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                                                                                    : 'bg-green-500/10 text-green-400 border-green-500/20'
-                                                                                }`}
-                                                                        >
-                                                                            {group.endScheduleJob.scheduleJobStatus}
-                                                                        </span>
-                                                                        <span className="text-[10px] font-mono opacity-40">#{group.endScheduleJob.jobId}</span>
+                                                            {/* Start Job Column */}
+                                                            <td className="px-4 py-4">
+                                                                {group.startScheduleJob ? (
+                                                                    <div className="flex flex-col gap-1">
+                                                                        <div className="flex items-center gap-2">
+                                                                            <span
+                                                                                title={group.startScheduleJob.failedReason}
+                                                                                className={`text-[9px] px-2 py-0.5 rounded-full border ${group.startScheduleJob.scheduleJobStatus === 'Failed'
+                                                                                    ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                                                                                    : group.startScheduleJob.scheduleJobStatus === 'Pending'
+                                                                                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                                                                        : 'bg-green-500/10 text-green-400 border-green-500/20'
+                                                                                    }`}
+                                                                            >
+                                                                                {group.startScheduleJob.scheduleJobStatus}
+                                                                            </span>
+                                                                            <span className="text-[10px] font-mono opacity-40">#{group.startScheduleJob.jobId}</span>
+                                                                        </div>
+                                                                        <span className="text-[10px] opacity-60 italic">{formatDate(group.startScheduleJob.jobStartedAt)}</span>
+                                                                        {group.startScheduleJob.failedReason && (
+                                                                            <span className="text-[9px] text-red-400/60 truncate max-w-[150px]">{group.startScheduleJob.failedReason}</span>
+                                                                        )}
                                                                     </div>
-                                                                    <span className="text-[10px] opacity-60 italic">{formatDate(group.endScheduleJob.jobStartedAt)}</span>
-                                                                    {group.endScheduleJob.failedReason && (
-                                                                        <span className="text-[9px] text-red-400/60 truncate max-w-[150px]">{group.endScheduleJob.failedReason}</span>
-                                                                    )}
-                                                                </div>
-                                                            ) : (
-                                                                <span className="text-[10px] opacity-20">N/A</span>
-                                                            )}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                        </tbody>
-                                    </table>
+                                                                ) : (
+                                                                    <span className="text-[10px] opacity-20">N/A</span>
+                                                                )}
+                                                            </td>
+
+                                                            {/* End Job Column */}
+                                                            <td className="px-4 py-4">
+                                                                {group.endScheduleJob ? (
+                                                                    <div className="flex flex-col gap-1">
+                                                                        <div className="flex items-center gap-2">
+                                                                            <span
+                                                                                title={group.endScheduleJob.failedReason}
+                                                                                className={`text-[9px] px-2 py-0.5 rounded-full border ${group.endScheduleJob.scheduleJobStatus === 'Failed'
+                                                                                    ? 'bg-red-500/10 text-red-400 border-red-500/20'
+                                                                                    : group.endScheduleJob.scheduleJobStatus === 'Pending'
+                                                                                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                                                                        : 'bg-green-500/10 text-green-400 border-green-500/20'
+                                                                                    }`}
+                                                                            >
+                                                                                {group.endScheduleJob.scheduleJobStatus}
+                                                                            </span>
+                                                                            <span className="text-[10px] font-mono opacity-40">#{group.endScheduleJob.jobId}</span>
+                                                                        </div>
+                                                                        <span className="text-[10px] opacity-60 italic">{formatDate(group.endScheduleJob.jobStartedAt)}</span>
+                                                                        {group.endScheduleJob.failedReason && (
+                                                                            <span className="text-[9px] text-red-400/60 truncate max-w-[150px]">{group.endScheduleJob.failedReason}</span>
+                                                                        )}
+                                                                    </div>
+                                                                ) : (
+                                                                    <span className="text-[10px] opacity-20">N/A</span>
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </>
                             )}
 
                             {activeTab === 'transfer' && (
                                 <TransferRightsView />
+                            )}
+
+                            {activeTab === 'pricing' && (
+                                <TicketPricingConfig />
                             )}
                         </div>
                     )}

@@ -51,3 +51,9 @@ export interface TransferRightsRequest {
     transferType: number; // 1: Facilities (CSVC), 2: Theater (Vận hành), 3: Movie (Phim)
     itemId: string | null;
 }
+
+export interface AdminTicketPricingDto {
+    weekendSurchargePercent: number;
+    imaxExtraSurchargePercent: number;
+    studentExtraDiscountPercent: number;
+}

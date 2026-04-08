@@ -9,7 +9,8 @@ import {
     LogOut,
     Sun,
     Moon,
-    Sparkles
+    Sparkles,
+    ScanFace
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../../contexts/ThemeContext';
@@ -33,6 +34,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange, isOpen, onTog
 
     const menuItems = [
         { id: 'dashboard', label: t('Dashboard'), icon: LayoutDashboard },
+        { id: 'scanner', label: t('Kiểm Soát Vé'), icon: ScanFace },
         { id: 'employees', label: t('Employee Management'), icon: Users },
         { id: 'schedule', label: t('Schedule'), icon: CalendarDays },
     ];

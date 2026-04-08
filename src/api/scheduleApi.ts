@@ -58,4 +58,12 @@ export const scheduleApi = {
         );
         return response.data;
     },
+
+    /** POST /api/TheaterManager/MovieSchedules/{scheduleId}/clone-to-tomorrow */
+    cloneToTomorrow: async (scheduleId: string): Promise<ApiSuccessResponse<any>> => {
+        const response = await theaterAxios.post<ApiSuccessResponse<any>>(
+            `/TheaterManager/MovieSchedules/${scheduleId}/clone-to-tomorrow`
+        );
+        return response.data;
+    },
 };

@@ -99,8 +99,8 @@ const ScheduleManagerPage: React.FC<ScheduleManagerPageProps> = ({ embedded = fa
 
             const mappedMovies = Array.from(moviesMap.values());
 
-            const mappedAuds: ScheduleAuditorium[] = (audsRes.data?.auditoriums || []).map((a: any) => {
-                // ASP.NET returns lowercase property names: formats, formatId, formatName
+            const rawAuds = audsRes.data?.auditoriums || (Array.isArray(audsRes.data) ? audsRes.data : []);
+            const mappedAuds: ScheduleAuditorium[] = rawAuds.map((a: any) => {
                 const formatsFromApi = a.formats || a.formatInfos || [];
                 const supportedFormats = (Array.isArray(formatsFromApi) ? formatsFromApi : [])
                     .map((f: any) => ({
@@ -110,8 +110,8 @@ const ScheduleManagerPage: React.FC<ScheduleManagerPageProps> = ({ embedded = fa
                     .filter((f: any) => f.id);
 
                 return {
-                    id: a.auditoriumId,
-                    name: a.auditoriumNumber.toString(),
+                    id: a.auditoriumId || a.id,
+                    name: (a.auditoriumNumber || a.name || '').toString(),
                     supportedFormats: supportedFormats
                 };
             });
@@ -131,8 +131,8 @@ const ScheduleManagerPage: React.FC<ScheduleManagerPageProps> = ({ embedded = fa
         }
     };
 
-    const activeAuditorium = auditoriumsList.find(a => a.id === selectedAuditoriumId);
-    const filteredAuditoriums = activeAuditorium ? [activeAuditorium] : [];
+    const activeAuditorium = auditoriumsList.find(a => a.id === selectedAuditoriumId) || auditoriumsList[0];
+    const filteredAuditoriums = activeAuditorium ? [activeAuditorium] : auditoriumsList;
 
     const handleAddSlot = (auditoriumId: string, slot: ShowTimeSlot) => {
         setScheduleData(prev => {
@@ -202,6 +202,26 @@ const ScheduleManagerPage: React.FC<ScheduleManagerPageProps> = ({ embedded = fa
             }
             return { ...prev, data: newData };
         });
+    };
+
+    const handleCloneSlot = async (auditoriumId: string, slotId: string) => {
+        if (slotId.startsWith('new-')) {
+            toast.error('Vui lòng lưu lịch chiếu trước khi nhân bản!');
+            return;
+        }
+        try {
+            toast.loading('Đang nhân bản sang ngày mai...', { id: 'clone' });
+            await scheduleApi.cloneToTomorrow(slotId);
+            toast.success('Nhân bản thành công!', { id: 'clone' });
+            
+            // Re-fetch schedules to get the new slot
+            if (activeAuditorium) {
+                fetchSchedulesForAuditorium(auditoriumId);
+            }
+        } catch (error: any) {
+            const msg = error.response?.data?.message || 'Lỗi khi nhân bản.';
+            toast.error(msg, { id: 'clone' });
+        }
     };
 
     const handleSaveSchedule = async () => {
@@ -364,6 +384,7 @@ const ScheduleManagerPage: React.FC<ScheduleManagerPageProps> = ({ embedded = fa
                         onAddSlot={handleAddSlot}
                         onUpdateSlot={handleUpdateSlot}
                         onMoveSlot={handleMoveSlot}
+                        onCloneSlot={handleCloneSlot}
                     />
                     <TrashCan onDeleteSlot={handleDeleteSlot} />
                 </main>
